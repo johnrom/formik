@@ -19,17 +19,24 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *   ...
  * }
  *
- * export const MyInput: React.SFC<MyProps & FieldProps> = ({
+ * export const MyInput: React.SFC<MyProps & FieldConnectedProps> = ({
  *   field,
- *   form,
+ *   formik,
  *   ...props
  * }) =>
  *   <div>
- *     <input {...field} {...props}/>
- *     {form.touched[field.name] && form.errors[field.name]}
+ *     <input {...field} {...props} />
+ *     {formik.touched[field.name] && formik.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<Values = any, Key extends keyof Values = any> {
+
+/**
+ * FieldProps are the props accessible from:
+ * <Field render={(FieldProps) => {}},
+ * <Field>{(FieldProps) => {}</Field>} and
+ * <Field component={MyComponent = typeof React.ComponentType<FieldProps>} />
+ */
+export type FieldProps<Values = any, Key extends keyof Values = any> = {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: FormikHandlers['handleChange'];
@@ -40,8 +47,23 @@ export interface FieldProps<Values = any, Key extends keyof Values = any> {
     /* name of the input */
     name: Key;
   };
-  form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
-}
+  formik: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
+} & GenericFieldHTMLAttributes;
+
+/**
+ * FieldAttributes are the attributes accessible via <Field attributeOne={} attributeTwo={} />
+ */
+export type FieldAttributes<
+  Values,
+  Key extends keyof Values = any
+> = FieldConfig<Values, Key> & GenericFieldHTMLAttributes;
+
+type FieldInnerProps<Values, Key extends keyof Values = any> = FieldAttributes<
+  Values,
+  Key
+> & {
+  formik: FormikContext<Values>;
+};
 
 export interface FieldConfig<Values = any, Key extends keyof Values = any> {
   /**
@@ -55,12 +77,14 @@ export interface FieldConfig<Values = any, Key extends keyof Values = any> {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<Values>) => React.ReactNode);
+  render?: ((props: FieldProps<Values, Key>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<Values>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FieldProps<Values, Key>) => React.ReactNode)
+    | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -82,22 +106,8 @@ export interface FieldConfig<Values = any, Key extends keyof Values = any> {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<
-  Values,
-  Key extends keyof Values = any
-> = GenericFieldHTMLAttributes & FieldConfig<Values, Key>;
-
-type FieldOuterProps<Values, Key extends keyof Values = any> = FieldConfig<
-  Values,
-  Key
->;
-type FieldInnerProps<Values, Key extends keyof Values = any> = FieldAttributes<
-  Values,
-  Key
-> & { formik: FormikContext<Values> };
-
 export type TypedField<Values, Key extends keyof Values> = React.ComponentType<
-  FieldOuterProps<Values, Key>
+  FieldAttributes<Values, Key>
 >;
 export type TypedFieldList<Values> = {
   [fieldName in keyof Values]: TypedField<Values, fieldName>
@@ -111,9 +121,7 @@ class FieldInner<
   Values = {},
   Key extends keyof Values = any
 > extends React.Component<FieldInnerProps<Values, Key>, {}> {
-  constructor(
-    props: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
-  ) {
+  constructor(props: FieldInnerProps<Values, Key>) {
     super(props);
     const { render, children, component } = props;
     warning(
@@ -138,9 +146,7 @@ class FieldInner<
     this.props.formik.registerField(this.props.name, this);
   }
 
-  componentDidUpdate(
-    prevProps: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
-  ) {
+  componentDidUpdate(prevProps: FieldInnerProps<Values, Key>) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, this);
@@ -179,7 +185,7 @@ class FieldInner<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
     };
-    const bag = { field, form: restOfFormik };
+    const bag = { field, formik: restOfFormik };
 
     if (render) {
       return render(bag);
@@ -207,7 +213,8 @@ class FieldInner<
   }
 }
 
-export const Field = connect<FieldOuterProps<any>, any>(FieldInner);
+export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+
 export const typedFieldProxy = <TValues extends any>() =>
   new Proxy({} as TypedFieldList<TValues>, {
     get: () => Field,

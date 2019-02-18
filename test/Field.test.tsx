@@ -110,7 +110,7 @@ describe('Field / FastField', () => {
 
       injected.forEach(injectedProps => {
         const {
-          form: { Fields: InjectedFields, ...injectedForm },
+          formik: { Fields: InjectedFields, ...injectedForm },
           field: injectedField,
         } = injectedProps;
         const { Fields, ...formProps } = getFormProps();
@@ -126,10 +126,13 @@ describe('Field / FastField', () => {
     });
 
     it('<FastField />', () => {
-      let injected: FieldProps[] = [];
+      let injected: FastFieldProps[] = [];
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div>{TEXT}</div>;
+      const Component = (props: FastFieldProps) => {
+        injected.push(props);
+
+        return <div>{TEXT}</div>;
+      };
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
@@ -141,7 +144,7 @@ describe('Field / FastField', () => {
 
       injected.forEach(injectedProps => {
         const {
-          form: { Fields: InjectedFields, ...injectedForm },
+          formik: { Fields: InjectedFields, ...injectedForm },
           field: injectedField,
         } = injectedProps;
         const { Fields, ...formProps } = getFormProps();
