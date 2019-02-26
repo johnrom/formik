@@ -32,5 +32,15 @@
         "code": 5358
       }
     }
+  },
+  "./dist/@johnrom/formik.cjs.production.js": {
+    "bundled": 45547,
+    "minified": 22405,
+    "gzipped": 5686
+  },
+  "./dist/@johnrom/formik.cjs.development.js": {
+    "bundled": 46446,
+    "minified": 23288,
+    "gzipped": 6030
   }
 }
