@@ -24,6 +24,7 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import { FieldAttributes } from './Field';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -738,10 +739,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [imperativeMethods, props.onReset, resetForm, state.values]
   );
 
-  const getFieldMeta = React.useCallback(
-    (name: string) => {
+  const getFieldMeta: <Value>(
+    name: string
+  ) => FieldMetaProps<Value> = React.useCallback(
+    <Value extends any>(name: string) => {
       return {
-        value: getIn(state.values, name),
+        value: getIn(state.values, name) as Value,
         error: getIn(state.errors, name),
         touched: !!getIn(state.touched, name),
         initialValue: getIn(initialValues.current, name),
@@ -753,20 +756,24 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldProps = React.useCallback(
-    ({
+    <Values extends any, ValueType = any, ExtraProps = {}>({
       name,
       type,
       value: valueProp, // value is special for checkboxes
       as: is,
       multiple,
-    }): [FieldInputProps<any>, FieldMetaProps<any>] => {
+      ...props
+    }: FieldAttributes<ExtraProps, Values, ValueType> & {
+      multiple: boolean;
+    }): [FieldInputProps<ValueType, ExtraProps>, FieldMetaProps<ValueType>] => {
       const valueState = getIn(state.values, name);
 
-      const field: FieldInputProps<any> = {
+      const field: FieldInputProps<ValueType, ExtraProps> = {
         name,
         value: valueState,
         onChange: handleChange,
         onBlur: handleBlur,
+        ...props,
       };
 
       if (type === 'checkbox') {
@@ -782,10 +789,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         field.checked = valueState === valueProp;
         field.value = valueProp;
       } else if (is === 'select' && multiple) {
-        field.value = field.value || [];
+        field.value = field.value || ([] as any); // why
         field.multiple = true;
       }
-      return [field, getFieldMeta(name)];
+      return [field, getFieldMeta<ValueType>(name)];
     },
     [getFieldMeta, handleBlur, handleChange, state.values]
   );
@@ -844,8 +851,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
 export function Formik<
   Values extends FormikValues = FormikValues,
-  ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+  ExtraFormProps = {}
+>(props: FormikConfig<Values> & ExtraFormProps) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (

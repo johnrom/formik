@@ -9,36 +9,40 @@ import {
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
+import { __asyncValues } from 'tslib';
 
-export interface FieldProps<V = any> {
-  field: FieldInputProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
+export interface FieldProps<Values = any, ValueType = any, ExtraProps = {}> {
+  field: FieldInputProps<ValueType, ExtraProps>;
+  form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
+  meta: FieldMetaProps<ValueType>;
 }
 
-export interface FieldConfig {
+export type LegacyBag<Values, ValueType, ExtraProps = {}> = Omit<
+  FieldProps<Values, ValueType, ExtraProps>,
+  'meta'
+>;
+
+export interface FieldConfig<Values = any, ValueType = any, ExtraProps = {}> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    * @deprecated
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
-    | React.ComponentType;
+    | React.ComponentType<LegacyBag<Values, ValueType, ExtraProps>>;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<any>['field']>
-    | keyof JSX.IntrinsicElements
-    | React.ComponentType;
+    | React.ComponentType<FieldProps<Values, ValueType, ExtraProps>['field']>
+    | keyof JSX.IntrinsicElements;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<any>) => React.ReactNode;
+  render?: (props: LegacyBag<Values, ValueType, ExtraProps>) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
@@ -48,7 +52,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidator;
+  validate?: FieldValidator<ValueType>;
 
   /**
    * Field name
@@ -59,20 +63,24 @@ export interface FieldConfig {
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: ValueType;
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
-  T & { name: string };
+export type FieldAttributes<
+  ExtraProps = {},
+  Values = any,
+  ValueType = any
+> = GenericFieldHTMLAttributes &
+  FieldConfig<Values, ValueType, ExtraProps> &
+  ExtraProps;
 
-export function useField<Val = any>(
-  propsOrFieldName: string | FieldAttributes<Val>
+export function useField<Values = any, ExtraProps = {}, ValueType = any>(
+  propsOrFieldName: string | FieldAttributes<ExtraProps, Values, ValueType>
 ) {
-  const formik = useFormikContext();
+  const formik = useFormikContext<Values>();
   if (__DEV__) {
     invariant(
       formik,
@@ -83,7 +91,8 @@ export function useField<Val = any>(
   if (isObject(propsOrFieldName)) {
     if (process.env.NODE_ENV !== 'production') {
       invariant(
-        (propsOrFieldName as FieldAttributes<Val>).name,
+        (propsOrFieldName as FieldAttributes<ExtraProps, Values, ValueType>)
+          .name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
       );
     }
@@ -93,7 +102,7 @@ export function useField<Val = any>(
   return formik.getFieldProps({ name: propsOrFieldName });
 }
 
-export function Field({
+export function Field<Values = any, ExtraProps = {}, ValueType = any>({
   validate,
   name,
   render,
@@ -101,12 +110,12 @@ export function Field({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<ExtraProps, Values, ValueType>) {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
     ...formik
-  } = useFormikContext();
+  } = useFormikContext<Values>();
 
   React.useEffect(() => {
     if (__DEV__) {
@@ -146,8 +155,11 @@ export function Field({
       formik.unregisterField(name);
     };
   }, [formik, name, validate]);
-  const [field, meta] = formik.getFieldProps({ name, ...props });
-  const legacyBag = { field, form: formik };
+  const [field, meta] = formik.getFieldProps<ExtraProps, Values, ValueType>({
+    name,
+    ...props,
+  });
+  const legacyBag = { field, form: formik, ...props };
 
   if (render) {
     return render(legacyBag);

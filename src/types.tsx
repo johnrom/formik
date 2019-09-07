@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FieldAttributes } from './Field';
 /**
  * Values of fields in the form
  */
@@ -17,7 +18,7 @@ export type FormikErrors<Values> = {
       : string | string[]
     : Values[K] extends object
     ? FormikErrors<Values[K]>
-    : string
+    : string;
 };
 
 /**
@@ -30,7 +31,7 @@ export type FormikTouched<Values> = {
       : boolean
     : Values[K] extends object
     ? FormikTouched<Values[K]>
-    : boolean
+    : boolean;
 };
 
 /**
@@ -137,9 +138,9 @@ export interface FormikHandlers {
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
 
-  getFieldProps<Value = any>(
-    props: any
-  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
+  getFieldProps<ExtraProps = {}, Values = any, ValueType = any>(
+    props: string | FieldAttributes<ExtraProps, Values, ValueType>
+  ): [FieldInputProps<ValueType, ExtraProps>, FieldMetaProps<ValueType>];
 }
 
 /**
@@ -276,9 +277,9 @@ export interface FieldMetaProps<Value> {
 }
 
 /** Field input value, name, and event handlers */
-export interface FieldInputProps<Value> {
+export type FieldInputProps<ValueType, ExtraProps = {}> = {
   /** Value of the field */
-  value: Value;
+  value?: ValueType;
   /** Name of the field */
   name: string;
   /** Multiple select? */
@@ -289,6 +290,8 @@ export interface FieldInputProps<Value> {
   onChange: FormikHandlers['handleChange'];
   /** Blur event handler */
   onBlur: FormikHandlers['handleBlur'];
-}
+} & ExtraProps;
 
-export type FieldValidator = (value: any) => string | Promise<string | void>;
+export type FieldValidator<ValueType = any> = (
+  value: ValueType
+) => string | Promise<string | void>;
