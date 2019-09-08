@@ -102,15 +102,18 @@ export function useField<Values = any, ExtraProps = {}, ValueType = any>(
   return formik.getFieldProps({ name: propsOrFieldName });
 }
 
-export function Field<Values = any, ExtraProps = {}, ValueType = any>({
-  validate,
-  name,
-  render,
-  children,
-  as: is, // `as` is reserved in typescript lol
-  component,
-  ...props
-}: FieldAttributes<ExtraProps, Values, ValueType>) {
+export function Field<Values = any, ExtraProps = {}, ValueType = any>(
+  fieldAttributes: FieldAttributes<ExtraProps, Values, ValueType>
+) {
+  const {
+    validate,
+    name,
+    render,
+    children,
+    as: is, // `as` is reserved in typescript lol
+    component,
+    ...props
+  } = fieldAttributes;
   const {
     validate: _validate,
     validationSchema: _validationSchema,
@@ -155,10 +158,10 @@ export function Field<Values = any, ExtraProps = {}, ValueType = any>({
       formik.unregisterField(name);
     };
   }, [formik, name, validate]);
-  const [field, meta] = formik.getFieldProps<ExtraProps, Values, ValueType>({
-    name,
-    ...props,
-  });
+
+  const [field, meta] = formik.getFieldProps<ExtraProps, Values, ValueType>(
+    fieldAttributes
+  );
   const legacyBag = { field, form: formik, ...props };
 
   if (render) {
