@@ -6,16 +6,21 @@ import {
   FieldInputProps,
   FieldMetaProps,
   FieldValidator,
+  FormikState,
   isObject,
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
 import { selectRefGetFieldMeta } from '../ref-selectors';
 
+export type FieldIncludeFn<State, Return extends Partial<State>> = (
+  state: State
+) => Return;
 
 export type UseFieldProps<
   Value = any,
   FormValues = any,
+  State extends FormikState<FormValues> = FormikState<FormValues>
 > = {
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
@@ -61,6 +66,7 @@ export type UseFieldProps<
   /** Field value */
   value?: any;
 
+  include?: FieldIncludeFn<State>;
 };
 
 export function useField<FieldValues = any>(
@@ -97,14 +103,17 @@ export function useField<FieldValues = any>(
     formikState => {
       // we could use formikApi.getFieldMeta... but is that correct?
       // I think we should use the value passed to this callback
-      const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
+      const fieldMeta = selectRefGetFieldMeta(
+        () => formikState,
+        props.include
+      )(fieldName);
 
       if (!isEqual(fieldMeta, fieldMetaRef.current)) {
         fieldMetaRef.current = fieldMeta;
         setFieldMeta(fieldMeta);
       }
     },
-    [fieldName, setFieldMeta, fieldMetaRef]
+    [fieldName, setFieldMeta, fieldMetaRef, props.include]
   );
 
   React.useEffect(() => {

@@ -1,3 +1,4 @@
+import { FieldIncludeFn } from './hooks/useField';
 import {
   AnyDispatch,
   FieldMetaProps,
@@ -81,9 +82,13 @@ export const selectRefResetForm = <Values extends FormikValues>(
   }
 };
 
-export const selectRefGetFieldMeta = <Values extends FormikValues>(
-  getState: GetRefStateFn<Values>
-) => (name: string): FieldMetaProps<any> => {
+export const selectRefGetFieldMeta = <
+  Values extends FormikValues,
+  Return extends Partial<FormikRefState<Values>> = {}
+>(
+  getState: GetRefStateFn<Values>,
+  include?: FieldIncludeFn<FormikRefState<Values>, Return>
+) => (name: string): FieldMetaProps<any, Return> => {
   const state = getState();
 
   return {
@@ -93,5 +98,7 @@ export const selectRefGetFieldMeta = <Values extends FormikValues>(
     initialValue: getIn(state.initialValues, name),
     initialTouched: !!getIn(state.initialTouched, name),
     initialError: getIn(state.initialErrors, name),
+
+    include: include && include(state),
   };
 };

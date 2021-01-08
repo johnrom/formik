@@ -351,7 +351,7 @@ export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['textarea'];
 
 /** Field metadata */
-export interface FieldMetaProps<Value> {
+export interface FieldMetaProps<Value, Include = {}> {
   /** Value of the field */
   value: Value;
   /** Error message of the field */
@@ -364,6 +364,8 @@ export interface FieldMetaProps<Value> {
   initialTouched: boolean;
   /** Initial error message of the field */
   initialError?: string;
+
+  include?: Include;
 }
 
 /**
