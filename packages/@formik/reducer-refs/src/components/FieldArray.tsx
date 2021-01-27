@@ -9,7 +9,7 @@ import {
   useFieldArray,
   UseFieldArrayProps,
 } from '../hooks/useFieldArray';
-import { FormikRefApi, useFormikApi } from '../hooks/useFormikApi';
+import { FormikRefApi } from '../hooks/useFormikApi';
 
 export type FieldArrayRenderProps<Values, Value> = ArrayHelpers & {
   form: FormikRefApi<Values>;
@@ -58,12 +58,12 @@ export const FieldArray = <Values, Value>(
   );
 
   return component
-    ? React.createElement(component as any, renderProps)
+    ? React.createElement(component, renderProps)
     : render
-    ? (render as any)(renderProps)
+    ? render(renderProps)
     : children // children come last, always called
     ? typeof children === 'function'
-      ? (children as any)(renderProps)
+      ? children(renderProps)
       : !isEmptyChildren(children)
       ? React.Children.only(children)
       : null
