@@ -1,11 +1,10 @@
 {
-  
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
     "noImplicitAny": true,
-    "alwaysStrict": true,    
+    "alwaysStrict": true,
     // output .d.ts declaration files for consumers
     "declaration": true,
     // output .js.map sourcemap files for consumers

@@ -33,7 +33,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@formik/core": "^3.0.0-core1",
+    "@formik/react-context-selector": "^3.0.0-next.8",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.14",
@@ -51,7 +51,6 @@
     "@types/react-dom": "^16.9.9",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
-    "just-debounce-it": "^1.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "yup": "^0.28.1"

@@ -8,8 +8,11 @@
     "paths": {
       "formik": ["./packages/formik/src"],
       "formik-native": ["./packages/formik-native/src"],
+      "@formik/app-shared": ["./app/shared/src"],
       "@formik/core": ["./packages/@formik/core/src"],
-      "@formik/reducer-refs": ["./packages/@formik/reducer-refs/src"],
+      "@formik/react-mutable-source": ["./packages/@formik/react-mutable-source/src"],
+      "@formik/react-context-selector": ["./packages/@formik/react-context-selector/src"],
+      "@formik/react-subscriptions": ["./packages/@formik/react-subscriptions/src"],
       "$test/*": ["test/*"]
     }
   }

@@ -10,7 +10,7 @@
             "type": "node",
             "runtimeArgs": [
                 "run",
-                "dev"
+                "dev:mutable-source"
             ],
             "runtimeExecutable": "npm",
             "cwd": "${workspaceFolder}",
@@ -43,7 +43,7 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/app"
+            "webRoot": "${workspaceFolder}/app/context-selector"
         }
     ]
 }

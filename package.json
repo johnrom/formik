@@ -22,23 +22,28 @@
   },
   "resolutions": {
     "**/typescript": "^4.0.3",
-    "@types/react": "^16.9.55"
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "react": "0.0.0-experimental-27659559e",
+    "react-dom": "0.0.0-experimental-27659559e"
   },
   "workspaces": [
     "packages/*",
     "packages/@formik/*",
-    "app"
+    "app/*"
   ],
   "scripts": {
     "lerna": "lerna",
-    "dev": "yarn --cwd ./app run start",
+    "dev": "yarn --cwd ./app/context-selector run start",
+    "dev:subscriptions": "yarn --cwd ./app/subscriptions run start",
+    "dev:mutable-source": "yarn --cwd ./app/mutable-source run start",
     "test": "lerna run test --",
     "test:watch": "lerna run test --stream --no-sort -- --watch",
     "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
     "test:vscode": "lerna run test --stream --no-sort --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
-    "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
+    "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/*/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",
     "git-reset": "git reset --hard HEAD",
@@ -46,7 +51,7 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run start",
+    "start:app": "yarn --cwd ./app/context-selector run start",
     "unlink": "yarn --cwd node_modules/react unlink && yarn --cwd packages/formik unlink"
   },
   "lint-staged": {

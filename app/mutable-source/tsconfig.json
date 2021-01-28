@@ -1,0 +1,39 @@
+{
+  "root": true,
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "jsx": "preserve",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": "../../",
+    "paths": {
+      "formik": [
+        "packages/@formik/react-mutable-source/src"
+      ],
+      "@formik/core": [
+        "packages/@formik/core/src"
+      ],
+      "@formik/app-shared": [
+        "app/shared/src"
+      ],
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx" ]
+}
