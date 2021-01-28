@@ -17,30 +17,51 @@ import {
   Subscriber,
   selectCreateSubscriber,
 } from '../helpers/subscription-helpers';
+import {
+  // eslint-disable-next-line
+  // @ts-ignore
+  unstable_createMutableSource as createMutableSource,
+  // eslint-disable-next-line
+  // @ts-ignore
+  unstable_useMutableSource as useMutableSource,
+} from 'react';
 
 export type SubscriptionApi<State> = {
-  subscribe: SubscribeFn<State>;
+  mutableSource: MutableSource;
+  getSubscribeFn: SubscribeFn<State>;
   getSelector: GetSelectorFn<State>;
   createSelector: CreateSelectorFn<State>;
   createSubscriber: CreateSubscriberFn<State>;
 };
 
-export type SubscriptionCallback<Return> = (value: Return) => void;
-export type SubscribeFn<State> = <Args extends any[], Return>(
-  newSubscriber: Subscriber<State, Args, Return>,
-  callback: SubscriptionCallback<Return>
+export type MutableSource = any;
+export type SubscriptionCallback = () => void;
+export type MutableSubscribeFn<State> = (
+  source: State,
+  callback: SubscriptionCallback
 ) => UnsubscribeFn;
+
+export type SubscribeFn<State> = <Args extends any[], Return>(
+  newSubscriber: Subscriber<State, Args, Return>
+) => MutableSubscribeFn<State>;
 export type UnsubscribeFn = () => void;
 
 export interface Subscription<State, Args extends any[], Return> {
   subscriber: Subscriber<State, Args, Return>;
   selector: SliceFn<State, Return>;
-  listeners: SubscriptionCallback<Return>[];
+  listeners: SubscriptionCallback[];
   prevStateRef: MutableRefObject<Return>;
 }
 
-export const useSubscriptions = <State>(state: State) => {
+export const useSubscriptions = <State>(
+  stateRef: MutableRefObject<State>,
+  committedState: State
+) => {
   const subscriptionsRef = useRef<Subscription<State, any, any>[]>([]);
+  const mutableSource = useMemo(
+    () => createMutableSource(stateRef, () => stateRef.current),
+    [stateRef]
+  );
 
   const getSelector: GetSelectorFn<State> = useMemo(
     () => selectGetSelector(),
@@ -59,20 +80,20 @@ export const useSubscriptions = <State>(state: State) => {
   );
 
   const createSubscription = useCheckableEventCallback(
-    // should this use getState() ??
-    () => selectCreateSubscription(state, getSelector),
-    [getSelector, state]
+    () => selectCreateSubscription(stateRef.current, getSelector),
+    [getSelector, stateRef]
   );
 
   // TypeScript needs help inferring these generics.
-  const subscribe: <Args extends any[], Return>(
-    newSubscriber: Subscriber<State, Args, Return>,
-    callback: SubscriptionCallback<Return>
-  ) => UnsubscribeFn = useCheckableEventCallback(
+  //
+  // We tell useMutableSource to update when we detect a change, not _always_
+  //
+  const getSubscribeFn: <Args extends any[], Return>(
+    newSubscriber: Subscriber<State, Args, Return>
+  ) => MutableSubscribeFn<State> = useCheckableEventCallback(
     () => <Args extends any[], Return>(
-      newSubscriber: Subscriber<State, Args, Return>,
-      callback: SubscriptionCallback<Return>
-    ): UnsubscribeFn => {
+      newSubscriber: Subscriber<State, Args, Return>
+    ): MutableSubscribeFn<State> => (_source, callback) => {
       const subscription = getOrCreateSubscription(
         subscriptionsRef.current,
         newSubscriber,
@@ -104,22 +125,24 @@ export const useSubscriptions = <State>(state: State) => {
     [createSubscription]
   );
 
+  // updates to useMutableSource will only be triggered by Formik's dispatches
   useIsomorphicLayoutEffect(() => {
     unstable_batchedUpdates(() => {
       subscriptionsRef.current.forEach(subscription => {
         const prevState = subscription.prevStateRef.current;
-        const newState = subscription.selector(state);
+        const newState = subscription.selector(stateRef.current);
 
         if (!subscription.subscriber.comparer(prevState, newState)) {
           subscription.prevStateRef.current = newState;
-          subscription.listeners.forEach(listener => listener(newState));
+          subscription.listeners.forEach(listener => listener());
         }
       });
     });
-  }, [state]);
+  }, [committedState]);
 
   return {
-    subscribe,
+    mutableSource,
+    getSubscribeFn,
     createSelector,
     getSelector,
     createSubscriber,

@@ -8,9 +8,9 @@ import {
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormik } from '../hooks/useFormik';
-import { FormikApiContext } from '../contexts/FormikApiContext';
 import { FormikRefState } from '../types';
 import { useFullFormikState } from '../hooks/useFullFormikState';
+import { FormikContext } from '../contexts/FormikContext';
 
 export function Formik<
   Values extends FormikValues = FormikValues,
@@ -46,7 +46,7 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikApiContext.Provider value={formikApi}>
+    <FormikContext.Provider value={formikApi}>
       {component
         ? React.createElement(component, formikBag)
         : render
@@ -58,6 +58,6 @@ export function Formik<
           ? React.Children.only(children)
           : null
         : null}
-    </FormikApiContext.Provider>
+    </FormikContext.Provider>
   );
 }

@@ -5,7 +5,6 @@ export * from './components/FieldArray';
 export * from './components/Form';
 export * from './components/Formik';
 export * from './connect';
-export * from './contexts/FormikApiContext';
 export * from './contexts/FormikContext';
 export * from './hooks/useField';
 export * from './hooks/useFormik';

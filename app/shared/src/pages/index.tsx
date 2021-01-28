@@ -36,6 +36,21 @@ export function IndexPage() {
             <a>Performance Test: 500 Inputs</a>
           </Link>
         </li>
+        <li>
+          <Link href="/perf500-same">
+            <a>Performance Test: 500 Inputs</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/sign-in">
+            <a>Sign In Example</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/v3">
+            <a>V3</a>
+          </Link>
+        </li>
       </ul>
     </main>
   );

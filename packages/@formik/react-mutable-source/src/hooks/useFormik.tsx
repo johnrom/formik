@@ -18,16 +18,6 @@ import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
 import { useSubscriptions } from './useSubscriptions';
 import { FormikRefApi } from './useFormikApi';
-import {
-  // eslint-disable-next-line
-  // @ts-ignore
-  unstable_createMutableSource as createMutableSource,
-  // eslint-disable-next-line
-  // @ts-ignore
-  unstable_useMutableSource as useMutableSource,
-} from 'react';
-
-console.log(createMutableSource, useMutableSource);
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -115,7 +105,14 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     [stateRef]
   );
 
+  /**
+   * Get the current state from anywhere. Not safe to use during render.
+   */
   const getState = useCallback(() => stateRef.current, [stateRef]);
+
+  /**
+   * Dispatch and pass committed updates to useMutableSource
+   */
   const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
 
   // override some APIs to dispatch additional information
@@ -130,18 +127,29 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   });
 
   const {
-    subscribe,
+    mutableSource,
+    getSubscribeFn,
     createSelector,
     createSubscriber,
     getSelector,
-  } = useSubscriptions(state);
+  } = useSubscriptions(stateRef, state);
 
   const getFieldMeta = useCheckableEventCallback(
     () => selectRefGetFieldMeta(getState),
     [getState]
   );
 
-  const resetForm = useCheckableEventCallback(() =>
+  // todo, sometimes we can include resetForm in imperative methods,
+  // and sometimes it just breaks compilation completely
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const resetForm = useCallback(() => {}, []);
+
+  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+    ...formikCoreApi,
+    resetForm: resetForm as any,
+  };
+
+  imperativeMethods.resetForm = useCheckableEventCallback(() =>
     selectRefResetForm(
       getState,
       dispatch,
@@ -154,14 +162,9 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   );
 
   const handleReset = useCheckableEventCallback(
-    () => selectHandleReset(resetForm),
-    [resetForm]
+    () => selectHandleReset(imperativeMethods.resetForm),
+    [imperativeMethods.resetForm]
   );
-
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
-    ...formikCoreApi,
-    resetForm,
-  };
 
   const { validateForm } = imperativeMethods;
 
@@ -255,7 +258,8 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       createSelector,
       getSelector,
       createSubscriber,
-      subscribe,
+      mutableSource,
+      getSubscribeFn,
       // config
       validateOnBlur,
       validateOnChange,
@@ -270,7 +274,8 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     createSelector,
     getSelector,
     createSubscriber,
-    subscribe,
+    mutableSource,
+    getSubscribeFn,
     validateOnBlur,
     validateOnChange,
     validateOnMount,

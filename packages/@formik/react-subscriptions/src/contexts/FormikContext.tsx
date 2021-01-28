@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { FormikContextType } from '@formik/core';
 import { useFormikContext } from '../hooks/useFormikContext';
+import { FormikRefApi } from '../hooks/useFormikApi';
 
-export const FormikContext = React.createContext<FormikContextType<any>>(
-  undefined as any
+export const FormikContext = React.createContext<FormikRefApi<any> | undefined>(
+  undefined
 );
 export const FormikProvider = FormikContext.Provider;
 

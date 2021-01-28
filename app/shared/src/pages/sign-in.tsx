@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { ErrorMessage, Field, Form, FormikProvider, useFormik } from 'formik';
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  FormikProvider,
+  useFormik,
+  useFullFormikState,
+} from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 
@@ -8,7 +15,7 @@ type SignInValues = {
   password: string;
 };
 
-const SignIn = () => {
+export const SignInPage = () => {
   const router = useRouter();
   const [errorLog, setErrorLog] = React.useState<any[]>([]);
 
@@ -27,41 +34,42 @@ const SignIn = () => {
     },
   });
 
+  const state = useFullFormikState(formik);
+
   React.useEffect(() => {
-    if (formik.errors.username && formik.touched.username) {
+    if (state.errors.username && state.touched.username) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'username',
-          value: formik.values.username,
-          error: formik.errors.username,
+          value: state.values.username,
+          error: state.errors.username,
         },
       ]);
     }
 
-    if (formik.errors.password && formik.touched.password) {
+    if (state.errors.password && state.touched.password) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'password',
-          value: formik.values.password,
-          error: formik.errors.password,
+          value: state.values.password,
+          error: state.errors.password,
         },
       ]);
     }
   }, [
-    formik.values.username,
-    formik.errors.username,
-    formik.touched.username,
-    formik.values.password,
-    formik.errors.password,
-    formik.touched.password,
+    state.values.username,
+    state.errors.username,
+    state.touched.username,
+    state.values.password,
+    state.errors.password,
+    state.touched.password,
   ]);
 
   return (
     <div>
       <h1>Sign In</h1>
-
       <FormikProvider value={formik}>
         <Form>
           <div>
@@ -74,7 +82,7 @@ const SignIn = () => {
             <ErrorMessage name="password" component="p" />
           </div>
 
-          <button type="submit" disabled={!formik.isValid}>
+          <button type="submit" disabled={!state.isValid}>
             Submit
           </button>
 
@@ -93,5 +101,3 @@ const SignIn = () => {
     </div>
   );
 };
-
-export default SignIn;

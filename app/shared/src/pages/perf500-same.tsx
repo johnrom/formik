@@ -5,11 +5,17 @@ import { Collapse } from '../components/debugging/Collapse';
 const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
+  const committedRenders = React.useRef(0);
+  React.useLayoutEffect(() => {
+    committedRenders.current++;
+  });
   return (
     <>
       <label>{p.name} </label>
       <input {...field} />
-      <div>{renders.current++}</div>
+      <div>
+        {renders.current++}, {committedRenders.current}
+      </div>
       {meta.touched && meta.error ? <div>{meta.error.toString()}</div> : null}
       <small>
         <pre>{JSON.stringify(meta, null, 2)}</pre>
@@ -39,7 +45,7 @@ export function Perf500SamePage() {
       <div>
         <h1>Formik v3 with 500 controlled fields</h1>
         <div>
-          <span>#</span> = number of renders
+          <span>#, #</span> = number of renders, number of committed renders
         </div>
       </div>
       <Formik onSubmit={onSubmit} initialValues={initialValues}>
