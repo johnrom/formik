@@ -131,7 +131,17 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     [getState]
   );
 
-  const resetForm = useCheckableEventCallback(() =>
+  // todo, sometimes we can include resetForm in imperative methods,
+  // and sometimes it just breaks compilation completely
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const resetForm = useCallback(() => {}, []);
+
+  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+    ...formikCoreApi,
+    resetForm: resetForm as any,
+  };
+
+  imperativeMethods.resetForm = useCheckableEventCallback(() =>
     selectRefResetForm(
       getState,
       dispatch,
@@ -147,11 +157,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     () => selectHandleReset(resetForm),
     [resetForm]
   );
-
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
-    ...formikCoreApi,
-    resetForm,
-  };
 
   const { validateForm } = imperativeMethods;
 

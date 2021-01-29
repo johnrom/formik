@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "next dev",
+    "start": "next dev -p 3002",
     "serve": "next start"
   },
   "dependencies": {

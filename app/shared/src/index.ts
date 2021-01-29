@@ -10,4 +10,5 @@ export * from './pages/perf';
 export * from './pages/perf500';
 export * from './pages/perf500-same';
 export * from './pages/sign-in';
+export * from './pages/tearing';
 export * from './pages/v3';

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Formik, Form, useField, FieldConfig } from 'formik';
 import { Collapse } from '../components/debugging/Collapse';
+import { useIsomorphicLayoutEffect } from '@formik/core';
+import { selectRange } from '../helpers/array-helpers';
 
 const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   const committedRenders = React.useRef(0);
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     committedRenders.current++;
   });
   return (
@@ -28,9 +30,10 @@ const isRequired = (v: string) => {
   return v && v.trim() !== '' ? undefined : 'Required';
 };
 
-const fieldsArray = new Array(500).fill(undefined);
-const initialValues = fieldsArray.reduce((prev, _curr, idx) => {
-  prev[`Input ${idx}`] = '';
+const fieldsArray = selectRange(500);
+const initialValues = fieldsArray.reduce<Record<string, string>>((prev, id) => {
+  prev[`Input ${id}`] = '';
+
   return prev;
 }, {});
 
@@ -52,8 +55,8 @@ export function Perf500SamePage() {
         <Form>
           <Input name={'Input'} validate={isRequired} />
           <Collapse>
-            {fieldsArray.map((_, i) => (
-              <Input key={`input-${i}`} name={'Input'} validate={isRequired} />
+            {fieldsArray.map(id => (
+              <Input key={`input-${id}`} name={'Input'} validate={isRequired} />
             ))}
           </Collapse>
           <Input name={'Input'} validate={isRequired} />

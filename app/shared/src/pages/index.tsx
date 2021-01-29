@@ -32,13 +32,18 @@ export function IndexPage() {
           </Link>
         </li>
         <li>
+          <Link href="/tearing">
+            <a>Tearing Test</a>
+          </Link>
+        </li>
+        <li>
           <Link href="/perf500">
             <a>Performance Test: 500 Inputs</a>
           </Link>
         </li>
         <li>
           <Link href="/perf500-same">
-            <a>Performance Test: 500 Inputs</a>
+            <a>Performance Test: 500 Inputs, All The Same</a>
           </Link>
         </li>
         <li>

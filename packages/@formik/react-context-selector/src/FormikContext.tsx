@@ -5,7 +5,7 @@ import {
   useContextSelector,
 } from 'use-context-selector';
 import invariant from 'tiny-warning';
-import { FormikContextType } from '@formik/core';
+import { FormikContextType, FormikProps } from '@formik/core';
 
 export const FormikContext = createContext<FormikContextType<any>>(
   undefined as any
@@ -37,3 +37,6 @@ export function useFormikContextSelector<Values = any, Slice = any>(
 ): Slice {
   return useContextSelector(FormikContext, selector);
 }
+
+export const useFullFormikState = <Values,>(_api?: FormikProps<Values>) =>
+  useFormikContext<Values>();

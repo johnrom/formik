@@ -1,7 +1,6 @@
 import isEqual from 'react-fast-compare';
 import {
   FormikConfig,
-  FormikState,
   FormikValues,
   FormikMessage,
   emptyErrors,
@@ -15,7 +14,14 @@ import invariant from 'tiny-warning';
 import { FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
-import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  useReducer,
+  useMemo,
+  Reducer,
+} from 'react';
 import { useSubscriptions } from './useSubscriptions';
 import { FormikRefApi } from './useFormikApi';
 
@@ -84,28 +90,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   });
 
   /**
-   * Breaking all the rules, re: "must be side-effect free"
-   * BUT that's probably OK
-   *
-   * The only things that should use stateRef are side effects / event callbacks
-   *
-   */
-  const refBoundFormikReducer = useCallback(
-    (
-      state: FormikState<Values> & FormikRefState<Values>,
-      msg: FormikMessage<Values, FormikRefState<Values>>
-    ) => {
-      // decorate the core Formik reducer with one which tracks dirty and initialX in state
-      const result = formikRefReducer(state, msg);
-
-      stateRef.current = result;
-
-      return result;
-    },
-    [stateRef]
-  );
-
-  /**
    * Get the current state from anywhere. Not safe to use during render.
    */
   const getState = useCallback(() => stateRef.current, [stateRef]);
@@ -113,7 +97,23 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   /**
    * Dispatch and pass committed updates to useMutableSource
    */
-  const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
+  const [state, internalDispatch] = useReducer<
+    Reducer<
+      FormikRefState<Values>,
+      FormikMessage<Values, FormikRefState<Values>>
+    >
+  >(formikRefReducer, stateRef.current);
+
+  // rewrite dispatch to update ref and useReducer separately
+  // so that the ref update doesn't get prioritized by the dispatcher.
+  const dispatch = useCallback<
+    React.Dispatch<FormikMessage<Values, FormikRefState<Values>>>
+  >(msg => {
+    // update ref, AND dispatch separately
+    stateRef.current = formikRefReducer<Values>(stateRef.current, msg);
+
+    internalDispatch(msg);
+  }, []);
 
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
@@ -197,6 +197,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     resetForm,
     validateOnMount,
     validateForm,
+    dispatch,
   ]);
 
   useEffect(() => {
@@ -210,7 +211,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialErrors || emptyErrors,
       });
     }
-  }, [enableReinitialize, props.initialErrors]);
+  }, [dispatch, enableReinitialize, props.initialErrors]);
 
   useEffect(() => {
     if (
@@ -223,7 +224,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialTouched || emptyTouched,
       });
     }
-  }, [enableReinitialize, props.initialTouched]);
+  }, [dispatch, enableReinitialize, props.initialTouched]);
 
   useEffect(() => {
     if (
@@ -236,7 +237,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialStatus,
       });
     }
-  }, [enableReinitialize, props.initialStatus]);
+  }, [dispatch, enableReinitialize, props.initialStatus]);
 
   /**
    * Here, we memoize the API so that

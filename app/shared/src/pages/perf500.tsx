@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Formik, Form, useField, FieldConfig } from 'formik';
+import { useIsomorphicLayoutEffect } from '@formik/core';
+import { selectRange } from '../helpers/array-helpers';
 
 const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   const committedRenders = React.useRef(0);
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     committedRenders.current++;
   });
   return (
@@ -27,10 +29,9 @@ const isRequired = (v: string) => {
   return v && v.trim() !== '' ? undefined : 'Required';
 };
 
-const array = new Array(500).fill(undefined);
-
-const initialValues = array.reduce((prev, _curr, idx) => {
-  prev[`Input ${idx}`] = '';
+const array = selectRange(500);
+const initialValues = array.reduce<Record<string, string>>((prev, id) => {
+  prev[`Input ${id}`] = '';
   return prev;
 }, {});
 
@@ -39,8 +40,8 @@ const onSubmit = async (values: typeof initialValues) => {
   alert(JSON.stringify(values, null, 2));
 };
 
-const kids = array.map((_, i) => (
-  <Input key={`input-${i}`} name={`Input ${i}`} validate={isRequired} />
+const kids = array.map(id => (
+  <Input key={`input-${id}`} name={`Input ${id}`} validate={isRequired} />
 ));
 
 export function Perf500Page() {

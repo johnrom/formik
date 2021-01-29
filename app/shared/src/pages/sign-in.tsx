@@ -34,7 +34,7 @@ export const SignInPage = () => {
     },
   });
 
-  const state = useFullFormikState(formik);
+  const state = useFullFormikState<SignInValues>(formik);
 
   React.useEffect(() => {
     if (state.errors.username && state.touched.username) {

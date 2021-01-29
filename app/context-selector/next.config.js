@@ -26,12 +26,6 @@ module.exports = {
           __DEV__: process.env.NODE_ENV === 'development',
         })
       );
-
-      // there can only be one
-      config.resolve.alias['react'] = path.resolve(
-        config.context,
-        '../../node_modules/react'
-      );
     }
 
     return config;
