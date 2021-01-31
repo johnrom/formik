@@ -78,4 +78,12 @@ export const useAutoUpdate = () => {
       }
     }
   }, []);
+
+  // SSR
+  if (typeof performance !== 'undefined') {
+    const start = performance?.now();
+    while (performance?.now() - start < 20) {
+      // empty
+    }
+  }
 };
