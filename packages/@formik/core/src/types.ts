@@ -311,7 +311,6 @@ export interface FormikConfig<
  * of <Formik/>.
  */
 export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &
   FieldHelpers &

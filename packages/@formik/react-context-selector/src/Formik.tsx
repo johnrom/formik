@@ -21,7 +21,7 @@ import {
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): FormikProps<Values> {
+): [FormikState<Values>, FormikProps<Values>] {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -179,7 +179,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
   const ctx = {
-    ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
     initialTouched: initialTouched.current,
@@ -192,18 +191,19 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     validateOnMount,
   };
 
-  return ctx;
+  return [state, ctx];
 }
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const formikbag = useFormik<Values>(props);
+  const [state, formik] = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
+  const formikBag = { ...state, ...formik };
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikbag);
+  React.useImperativeHandle(innerRef, () => formikBag);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -216,14 +216,14 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikbag}>
+    <FormikProvider value={formikBag}>
       {component
-        ? React.createElement(component, formikbag)
+        ? React.createElement(component, formikBag)
         : render
-        ? render(formikbag)
+        ? render(formikBag)
         : children // children come last, always called
         ? isFunction(children)
-          ? children(formikbag)
+          ? children(formikBag)
           : !isEmptyChildren(children)
           ? React.Children.only(children)
           : null

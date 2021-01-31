@@ -19,7 +19,7 @@ export const SignInPage = () => {
   const router = useRouter();
   const [errorLog, setErrorLog] = React.useState<any[]>([]);
 
-  const formik = useFormik<SignInValues>({
+  const [, formik] = useFormik<SignInValues>({
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',

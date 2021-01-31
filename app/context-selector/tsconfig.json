@@ -17,14 +17,17 @@
     "isolatedModules": true,
     "baseUrl": "../../",
     "paths": {
+      "@formik/app-shared": [
+        "app/shared/src"
+      ],
       "formik": [
         "packages/formik/src"
       ],
+      "@formik/react-context-selector": [
+        "packages/@formik/react-context-selector/src"
+      ],
       "@formik/core": [
         "packages/@formik/core/src"
-      ],
-      "@formik/app-shared": [
-        "app/shared/src"
       ],
     }
   },
@@ -34,6 +37,6 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "../shared/src/pages/components.tsx"  ]
+    "**/*.tsx",
+  ]
 }

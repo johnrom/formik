@@ -42,7 +42,7 @@ import {
   selectHandleBlur,
   selectGetFieldMeta,
 } from '../selectors';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 export const useFormikCore = <
   Values extends FormikValues,
@@ -236,9 +236,8 @@ export const useFormikCore = <
     [dispatch, executeSubmit, getState, refs.isMounted, validateForm]
   );
 
-  const resetForm = useCheckableEventCallback(() =>
-    selectResetForm(getState, dispatch, props, refs, imperativeMethods)
-  );
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const resetForm = useCallback(() => {}, []);
 
   // This is a bag of stable, imperative methods.
   // These should all be constant functions or the result of useCheckableEventCallback.
@@ -275,6 +274,11 @@ export const useFormikCore = <
       submitForm,
       resetForm,
     ]
+  );
+
+  imperativeMethods.resetForm = useCheckableEventCallback(
+    () => selectResetForm(getState, dispatch, props, refs, imperativeMethods),
+    [dispatch, getState, imperativeMethods, props, refs]
   );
 
   const handleSubmit = useCheckableEventCallback(

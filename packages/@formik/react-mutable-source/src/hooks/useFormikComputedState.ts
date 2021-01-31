@@ -21,10 +21,13 @@ export const useFormikComputedStateInternal = (
     return isFormValid(state.errors, state.dirty);
   }, [isFormValid, state.errors, state.dirty]);
 
-  return {
-    isValid,
-    dirty: state.dirty,
-  };
+  return useMemo(
+    () => ({
+      isValid,
+      dirty: state.dirty,
+    }),
+    [isValid, state.dirty]
+  );
 };
 
 const selectComputedState = (state: FormikRefState<any>) => ({

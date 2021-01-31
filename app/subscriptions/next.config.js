@@ -6,6 +6,10 @@
 const path = require('path');
 
 module.exports = {
+  reactStrictMode: true,
+  experimental: {
+    reactMode: 'concurrent',
+  },
   webpack: (config, { defaultLoaders, webpack }) => {
     if (config.mode === 'development') {
       config.module.rules = [

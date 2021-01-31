@@ -7,19 +7,20 @@ import {
 import {
   FieldConfig,
   Form,
-  Formik,
+  FormikProvider,
   useField,
   useFormik,
   useFormikApi,
   useFullFormikState,
 } from 'formik';
 import { selectRandomArrayItem, selectRange } from '../helpers/array-helpers';
-import { useCheckTearing } from '../helpers/concurrent-helpers';
+import { useCheckTearing } from '../helpers/tearing-helpers';
 import {
   DynamicValues,
   useAutoUpdate,
   useChaosHelpers,
 } from '../helpers/chaos-helpers';
+import { useFormikComputedStateInternal } from 'packages/@formik/react-subscriptions/src/hooks/useFormikComputedState';
 
 const Input = (p: FieldConfig<string>) => {
   useField(p);
@@ -55,9 +56,11 @@ const kids = inputs.map(id => (
 ));
 
 export function TearingPage() {
-  const didTear = useCheckTearing(array.length);
-
-  const formik = useFormik({ onSubmit, initialValues });
+  const [unsafeState, formik] = useFormik({ onSubmit, initialValues });
+  const unsafeFullState = {
+    ...unsafeState,
+    ...useFormikComputedStateInternal(formik, unsafeState),
+  };
   const fullState = useFullFormikState(formik);
   const chaosHelpers = useChaosHelpers(formik, array);
 
@@ -73,11 +76,33 @@ export function TearingPage() {
     });
   }, [chaosHelpers]);
 
+  // fullState isn't accessible with useContextSelector
+  // because there is no Context at this level,
+  // so we only check the inputs
+  const didTear = useCheckTearing(array.length, fullState ? 0 : 1);
+
+  // lets check the unsafe state returned from useFormik
+  // this doesn't work from useContextSelector, which sucks because
+  // it's the most important test for useContextSelector
+  const didRawStateTear = useCheckTearing(array.length + 1, fullState ? 0 : 1);
+
+  // useContextSelector provides the full value to Provider
+  const providerValue = fullState ? formik : { ...formik, ...unsafeState };
+
   return (
     <div>
       <div>
         <h1>Formik Tearing Tests: {didTear ? 'TORE' : 'No Tearing Yet.'}</h1>
         <h2>Transitioning? {isPending ? 'Yes' : 'No'}</h2>
+        <h3>
+          Did state returned from useFormik tear?{' '}
+          {didRawStateTear ? 'Yes' : 'No'}
+        </h3>
+        <p>
+          <small>
+            The second tear check doesn't work for useContextSelector.
+          </small>
+        </p>
         <button
           type="button"
           id="update-without-transition"
@@ -93,15 +118,18 @@ export function TearingPage() {
           Update Formik with Transition
         </button>
       </div>
-      <Formik onSubmit={onSubmit} initialValues={initialValues}>
+      <FormikProvider value={providerValue}>
         <Form>
           <div className="state" id={parentId.toString()}>
             {JSON.stringify(fullState)}
           </div>
           {kids}
+          <div className="state unsafe" id={parentId.toString()}>
+            {JSON.stringify(unsafeFullState)}
+          </div>
           <button type="submit">Submit</button>
         </Form>
-      </Formik>
+      </FormikProvider>
     </div>
   );
 }

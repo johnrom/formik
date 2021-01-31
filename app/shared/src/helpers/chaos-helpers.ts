@@ -1,5 +1,5 @@
 import { FormikCoreApi } from '@formik/core';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { selectRandomInt } from './random-helpers';
 
 export type DynamicValues = Record<string, string>;
@@ -69,17 +69,13 @@ let skipCount = 0;
  * https://github.com/dai-shi/will-this-react-global-state-work-in-concurrent-mode
  */
 export const useAutoUpdate = () => {
-  // SSR
-  if (typeof performance !== 'undefined') {
-    skipCount += 1;
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      skipCount += 1;
 
-    if (skipCount % 10 === 0) {
-      document.getElementById('update-without-transition')?.click();
+      if (skipCount % 10 === 0) {
+        document.getElementById('update-without-transition')?.click();
+      }
     }
-
-    const start = performance?.now();
-    while (performance?.now() - start < 20) {
-      // empty
-    }
-  }
+  }, []);
 };

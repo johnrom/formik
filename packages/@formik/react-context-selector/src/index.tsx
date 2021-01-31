@@ -8,3 +8,4 @@ export * from './ErrorMessage';
 export * from './FormikContext';
 export * from './FastField';
 export * from './hooks';
+export * from './useFormikApi';
