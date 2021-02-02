@@ -5,22 +5,22 @@ import {
   useContextSelector,
 } from 'use-context-selector';
 import invariant from 'tiny-warning';
-import { FormikContextType, FormikProps } from '@formik/core';
+import { FormikContextWithState } from '@formik/core';
 
-export const FormikContext = createContext<FormikContextType<any>>(
+export const FormikContext = createContext<FormikContextWithState<any>>(
   undefined as any
 );
 
 export const FormikProvider = FormikContext.Provider;
 
 export function useFormikContext<Values>() {
-  return useContext<FormikContextType<Values>>(FormikContext);
+  return useContext<FormikContextWithState<Values>>(FormikContext);
 }
 
 export function FormikConsumer<Values = any>({
   children,
 }: {
-  children: (formik: FormikContextType<Values>) => React.ReactNode;
+  children: (formik: FormikContextWithState<Values>) => React.ReactNode;
 }) {
   const formik = useFormikContext<Values>();
 
@@ -33,10 +33,11 @@ export function FormikConsumer<Values = any>({
 }
 
 export function useFormikContextSelector<Values = any, Slice = any>(
-  selector: (value: FormikContextType<Values>) => Slice
+  selector: (value: FormikContextWithState<Values>) => Slice
 ): Slice {
   return useContextSelector(FormikContext, selector);
 }
 
-export const useFullFormikState = <Values,>(_api?: FormikProps<Values>) =>
-  useFormikContext<Values>();
+export const useFullFormikState = <Values,>(
+  context?: FormikContextWithState<Values>
+) => context;

@@ -8,7 +8,6 @@ import {
   FormikConfig,
   FormikErrors,
   FormikMessage,
-  FormikProps,
   formikReducer,
   FormikState,
   FormikTouched,
@@ -17,11 +16,12 @@ import {
   useFormikCore,
   isEmptyChildren,
   useEventCallback,
+  FormikContextWithState,
 } from '@formik/core';
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): [FormikState<Values>, FormikProps<Values>] {
+): FormikContextWithState<Values> {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -179,6 +179,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
   const ctx = {
+    ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
     initialTouched: initialTouched.current,
@@ -191,19 +192,18 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     validateOnMount,
   };
 
-  return [state, ctx];
+  return ctx;
 }
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const [state, formik] = useFormik<Values>(props);
+  const formik = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
-  const formikBag = { ...state, ...formik };
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikBag);
+  React.useImperativeHandle(innerRef, () => formik);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -216,14 +216,14 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikBag}>
+    <FormikProvider value={formik}>
       {component
-        ? React.createElement(component, formikBag)
+        ? React.createElement(component, formik)
         : render
-        ? render(formikBag)
+        ? render(formik)
         : children // children come last, always called
         ? isFunction(children)
-          ? children(formikBag)
+          ? children(formik)
           : !isEmptyChildren(children)
           ? React.Children.only(children)
           : null

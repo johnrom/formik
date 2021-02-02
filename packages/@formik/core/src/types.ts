@@ -329,6 +329,8 @@ export interface FormikRegistration {
  */
 export type FormikContextType<Values> = FormikProps<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+export type FormikContextWithState<Values> = FormikContextType<Values> &
+  FormikState<Values>;
 
 export interface SharedRenderProps<T> {
   /**

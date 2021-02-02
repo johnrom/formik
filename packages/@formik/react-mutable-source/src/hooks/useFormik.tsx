@@ -27,7 +27,7 @@ import { FormikRefApi } from './useFormikApi';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
-): [FormikRefState<Values>, FormikRefApi<Values>] => {
+): FormikRefApi<Values> => {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -246,42 +246,39 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * We don't useMemo because we're purposely
    * only updating when the config updates
    */
-  return [
-    state,
-    useMemo(() => {
-      return {
-        // the core api
-        ...formikCoreApi,
-        // the overrides
-        resetForm,
-        handleReset,
-        getFieldMeta,
-        // extra goodies
-        getState,
-        createSelector,
-        getSelector,
-        createSubscriber,
-        mutableSource,
-        getSubscribeFn,
-        // config
-        validateOnBlur,
-        validateOnChange,
-        validateOnMount,
-      };
-    }, [
-      formikCoreApi,
+  return useMemo(() => {
+    return {
+      // the core api
+      ...formikCoreApi,
+      // the overrides
       resetForm,
       handleReset,
       getFieldMeta,
+      // extra goodies
       getState,
       createSelector,
       getSelector,
       createSubscriber,
       mutableSource,
       getSubscribeFn,
+      // config
       validateOnBlur,
       validateOnChange,
       validateOnMount,
-    ]),
-  ];
+    };
+  }, [
+    formikCoreApi,
+    resetForm,
+    handleReset,
+    getFieldMeta,
+    getState,
+    createSelector,
+    getSelector,
+    createSubscriber,
+    mutableSource,
+    getSubscribeFn,
+    validateOnBlur,
+    validateOnChange,
+    validateOnMount,
+  ]);
 };

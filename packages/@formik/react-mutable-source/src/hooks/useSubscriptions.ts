@@ -21,9 +21,6 @@ import {
   // eslint-disable-next-line
   // @ts-ignore
   unstable_createMutableSource as createMutableSource,
-  // eslint-disable-next-line
-  // @ts-ignore
-  unstable_useMutableSource as useMutableSource,
 } from 'react';
 
 export type SubscriptionApi<State> = {
