@@ -29,7 +29,9 @@ const Input = (p: FieldConfig<string>) => {
 
   return (
     <div className="state" id={p.name}>
-      {JSON.stringify(state)}
+      <pre>
+        <code>{JSON.stringify(state, null, 2)}</code>
+      </pre>
     </div>
   );
 };
@@ -49,10 +51,10 @@ const onSubmit = async (values: DynamicValues) => {
   console.log(JSON.stringify(values, null, 2));
 };
 
-const [parentId, ...inputs] = array;
+const [parentId, lastId, ...inputs] = array;
 
 const kids = inputs.map(id => (
-  <Input key={`input-${id}`} name={`Input ${id}`} validate={isRequired} />
+  <Input key={`input-${id}`} name={`input-${id}`} validate={isRequired} />
 ));
 
 export function TearingPage() {
@@ -82,8 +84,30 @@ export function TearingPage() {
   const didFormStateTearWithInputs = useCheckTearing(array.length);
 
   return (
-    <div>
+    <div className="tearing-page">
       <div>
+        <style jsx global>
+          {`
+            .state-container {
+              display: flex;
+              max-height: 500px;
+              overflow-x: hidden;
+              align-items: flex-start;
+            }
+            .state {
+              width: 20%;
+            }
+            .middle {
+              position: relative;
+              display: flex;
+              width: 60%;
+              overflow: auto;
+            }
+            .middle .state {
+              min-width: 33.333%;
+            }
+          `}
+        </style>
         <h1>Formik Tearing Tests</h1>
         <h2>Transitioning? {isPending ? 'Yes' : 'No'}</h2>
         <h3>
@@ -110,10 +134,19 @@ export function TearingPage() {
       </div>
       <FormikProvider value={formik}>
         <Form>
-          <div className="state" id={parentId.toString()}>
-            {JSON.stringify(fullState)}
+          <div className="state-container">
+            <div className="state" id={`input-${parentId.toString()}`}>
+              <pre>
+                <code>{JSON.stringify(fullState, null, 2)}</code>
+              </pre>
+            </div>
+            <div className="middle">{kids}</div>
+            <div className="state" id={`input-${lastId.toString()}`}>
+              <pre>
+                <code>{JSON.stringify(fullState, null, 2)}</code>
+              </pre>
+            </div>
           </div>
-          {kids}
           <button type="submit">Submit</button>
         </Form>
       </FormikProvider>

@@ -13,12 +13,10 @@ export const useCheckTearing = (elementCount: number, skip = 0) => {
   ]);
   const checkMatches = useCallback(() => {
     const [first, ...rest] = ids;
-    const firstValue = document.querySelector(
-      `.state:nth-of-type(${first + 1})`
-    )?.innerHTML;
+    const firstValue = document.querySelector(`#input-${first} code`)
+      ?.innerHTML;
     return rest.every(id => {
-      const thisValue = document.querySelector(`.state:nth-of-type(${id + 1})`)
-        ?.innerHTML;
+      const thisValue = document.querySelector(`#input-${id} code`)?.innerHTML;
       const tore = thisValue !== firstValue;
       if (tore) {
         console.log('useCheckTearing: tore');

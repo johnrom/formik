@@ -578,7 +578,7 @@ function useFieldMeta<Values>(name: string) {
  * @param shouldAddFormEffect whether to continue listening for FormikState changes
  */
 export const useFormikComputedStateInternal = (
-  api: any,
+  _api: any,
   state: Pick<FormikContextWithState<any>, 'isValid' | 'dirty'>
 ): FormikComputedState => {
   return React.useMemo(
