@@ -34,9 +34,9 @@
   ],
   "scripts": {
     "lerna": "lerna",
-    "dev": "yarn --cwd ./app/context-selector run start",
-    "dev:subscriptions": "yarn --cwd ./app/subscriptions run start",
-    "dev:mutable-source": "yarn --cwd ./app/mutable-source run start",
+    "dev:react-context-selector": "yarn --cwd ./app/react-context-selector run start",
+    "dev:react-subscriptions": "yarn --cwd ./app/react-subscriptions run start",
+    "dev:react-mutable-source": "yarn --cwd ./app/react-mutable-source run start",
     "test": "lerna run test --",
     "test:watch": "lerna run test --stream --no-sort -- --watch",
     "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
@@ -51,7 +51,7 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app/context-selector run start",
+    "start:app": "yarn --cwd ./app/react-context-selector run start",
     "unlink": "yarn --cwd node_modules/react unlink && yarn --cwd packages/formik unlink"
   },
   "lint-staged": {

@@ -1,49 +1,102 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Run NPM Dev",
-            "request": "launch",
-            "type": "node",
-            "runtimeArgs": [
-                "run",
-                "dev:mutable-source"
-            ],
-            "runtimeExecutable": "npm",
-            "cwd": "${workspaceFolder}",
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },
-        {
-            "type": "node",
-            "name": "vscode-jest-tests",
-            "request": "launch",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/lerna",
-            "args": [
-                "run",
-                "test",
-                "--",
-                "--runInBand",
-                // when filtering, every package not matching will have no tests
-                "--passWithNoTests",
-                "--testTimeout=9999"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "protocol": "inspector",
-            "internalConsoleOptions": "neverOpen",
-            "disableOptimisticBPs": true
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/app/mutable-source"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dev:react-context-selector",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["run", "dev:react-context-selector"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "dev:react-mutable-source",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["run", "dev:react-mutable-source"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "dev:react-subscriptions",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["run", "dev:react-subscriptions"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:react-context-selector",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/app/react-context-selector",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/${workspaceRoot}/*": "${workspaceRoot}/*",
+        "webpack://_N_E/./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:react-subscriptions",
+      "url": "http://localhost:3001",
+      "webRoot": "${workspaceFolder}/app/react-subscriptions",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/${workspaceRoot}/*": "${workspaceRoot}/*",
+        "webpack://_N_E/./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:react-mutable-source",
+      "url": "http://localhost:3002",
+      "sourceMapPathOverrides": {
+        "webpack://_N_E/${workspaceRoot}/*": "${workspaceRoot}/*",
+        "webpack://_N_E/./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/lerna",
+      "args": [
+        "run",
+        "test",
+        "--",
+        "--runInBand",
+        // when filtering, every package not matching will have no tests
+        "--passWithNoTests",
+        "--testTimeout=9999"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "protocol": "inspector",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
+    }
+  ]
 }
