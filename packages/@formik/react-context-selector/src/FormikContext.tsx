@@ -39,5 +39,5 @@ export function useFormikContextSelector<Values = any, Slice = any>(
 }
 
 export const useFullFormikState = <Values,>(
-  context?: FormikContextWithState<Values>
+  context: FormikContextWithState<Values>
 ) => context;

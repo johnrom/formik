@@ -39,6 +39,7 @@
       "webRoot": "${workspaceFolder}/app/react-context-selector",
       "sourceMapPathOverrides": {
         "webpack://_N_E/${workspaceRoot}/*": "${workspaceRoot}/*",
+        "webpack://_N_E/../*": "${workspaceRoot}/app/*",
         "webpack://_N_E/./*": "${webRoot}/*",
         "webpack:///src/*": "${webRoot}/*",
         "webpack:///./*": "${webRoot}/*",

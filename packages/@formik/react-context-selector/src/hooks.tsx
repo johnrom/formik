@@ -1,6 +1,6 @@
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import { useFormikContext, useFormikContextSelector } from './FormikContext';
+import { useFormikContextSelector } from './FormikContext';
 import {
   defaultFormatFn,
   defaultParseFn,
@@ -10,7 +10,6 @@ import {
   FieldValidator,
   FormikComputedState,
   FormikContextWithState,
-  FormikCoreApi,
   getIn,
   isInputEvent,
   isObject,

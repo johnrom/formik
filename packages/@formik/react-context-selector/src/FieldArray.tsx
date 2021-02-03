@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { connect } from './connect';
 import isEqual from 'react-fast-compare';
 import {
-  FormikContextType,
+  FormikContextWithState,
   FormikProps,
   FormikState,
   getIn,
@@ -118,14 +118,16 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
 };
 
 class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContextType<Values> },
+  FieldArrayConfig & { formik: FormikContextWithState<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
+  constructor(
+    props: FieldArrayConfig & { formik: FormikContextWithState<Values> }
+  ) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     // @todo Fix TS 3.2.1
@@ -134,7 +136,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   }
 
   componentDidUpdate(
-    prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
+    prevProps: FieldArrayConfig & { formik: FormikContextWithState<Values> }
   ) {
     if (
       this.props.validateOnChange &&
