@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@formik/react-subscriptions": "^3.0.0-core1",
+    "@formik/react-mutable-source": "^3.0.0-core1",
     "@formik/app-shared": "^0.1.0-core1",
+    "@formik/webpack": "^0.0.1-alpha1",
     "format-string-by-pattern": "^1.2.1",
     "formik": "^3.0.0-next.7",
     "next": "9.5.3",

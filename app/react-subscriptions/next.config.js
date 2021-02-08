@@ -4,12 +4,20 @@
 //
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { FormikWebpackPlugin } = require('@formik/webpack');
+
+const concurrent = true;
 
 module.exports = {
-  reactStrictMode: true,
-  experimental: {
-    reactMode: 'concurrent',
-  },
+  ...(concurrent
+    ? {
+        reactStrictMode: true,
+        experimental: {
+          reactMode: 'concurrent',
+        },
+      }
+    : {}),
   webpack: (config, { defaultLoaders, webpack }) => {
     if (config.mode === 'development') {
       config.module.rules = [
@@ -28,6 +36,12 @@ module.exports = {
       config.plugins.push(
         new webpack.DefinePlugin({
           __DEV__: process.env.NODE_ENV === 'development',
+        })
+      );
+
+      config.plugins.push(
+        new FormikWebpackPlugin({
+          concurrent,
         })
       );
 

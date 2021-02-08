@@ -18,7 +18,13 @@
     "baseUrl": "../../",
     "paths": {
       "formik": [
-        "packages/@formik/react-subscriptions/src"
+        "packages/formik/src"
+      ],
+      "@formik/react-context-selector": [
+        "packages/@formik/react-context-selector/src"
+      ],
+      "@formik/react-mutable-source": [
+        "packages/@formik/react-mutable-source/src"
       ],
       "@formik/core": [
         "packages/@formik/core/src"

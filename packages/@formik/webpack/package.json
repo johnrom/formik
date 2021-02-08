@@ -1,0 +1,11 @@
+{
+  "name": "@formik/webpack",
+  "version": "0.0.1-alpha1",
+  "scripts": {
+    "start": "npm run build:watch",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "build:watch": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "lint": "tsdx lint",
+    "prepublish": "npm run build"
+  }
+}
