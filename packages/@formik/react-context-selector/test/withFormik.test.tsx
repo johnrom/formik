@@ -4,13 +4,13 @@ import * as Yup from 'yup';
 
 import { withFormik } from '../src';
 import { noop } from './testHelpers';
-import { FormikProps } from '@formik/core';
+import { FormikContextType } from '@formik/core';
 
 interface Values {
   name: string;
 }
 
-const Form: React.FC<FormikProps<Values>> = ({
+const Form: React.FC<FormikContextType<Values>> = ({
   values,
   handleSubmit,
   handleChange,

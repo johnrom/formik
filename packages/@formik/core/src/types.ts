@@ -188,8 +188,11 @@ export interface FormikHelpers<
 
 export interface FieldHelpers {
   getValueFromEvent: GetValueFromEventFn;
-  getFieldProps: <Value = any>(props: any) => FieldInputProps<Value>;
   getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
+  getFieldProps: <Value = any>(
+    props: any,
+    fieldMeta?: FieldMetaProps<Value>
+  ) => FieldInputProps<Value>;
   getFieldHelpers: GetFieldHelpersFn;
 }
 
@@ -245,19 +248,19 @@ export interface FormikConfig<
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>>;
+  component?: React.ComponentType<FormikContextType<Values>>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FormikProps<Values>) => React.ReactNode;
+  render?: (props: FormikContextType<Values>) => React.ReactNode;
 
   /**
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
+    | ((props: FormikContextType<Values>) => React.ReactNode)
     | React.ReactNode;
 
   /**
@@ -327,9 +330,10 @@ export interface FormikRegistration {
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikContextType<Values> = FormikProps<Values> &
+export type FormikApiContext<Values> = FormikProps<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
-export type FormikContextWithState<Values> = FormikContextType<Values> &
+
+export type FormikContextType<Values> = FormikApiContext<Values> &
   FormikState<Values>;
 
 export interface SharedRenderProps<T> {

@@ -1,7 +1,6 @@
 import isEqual from 'react-fast-compare';
 import {
   FormikConfig,
-  FormikState,
   FormikValues,
   FormikMessage,
   emptyErrors,
@@ -15,7 +14,14 @@ import invariant from 'tiny-warning';
 import { FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
-import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  useReducer,
+  useMemo,
+  Reducer,
+} from 'react';
 import { useSubscriptions } from './useSubscriptions';
 import { FormikRefApi } from './useFormikApi';
 
@@ -83,30 +89,24 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     dirty: false,
   });
 
-  /**
-   * Breaking all the rules, re: "must be side-effect free"
-   * BUT that's probably OK
-   *
-   * The only things that should use stateRef are side effects / event callbacks
-   *
-   */
-  const refBoundFormikReducer = useCallback(
-    (
-      state: FormikState<Values> & FormikRefState<Values>,
-      msg: FormikMessage<Values, FormikRefState<Values>>
-    ) => {
-      // decorate the core Formik reducer with one which tracks dirty and initialX in state
-      const result = formikRefReducer(state, msg);
-
-      stateRef.current = result;
-
-      return result;
-    },
-    [stateRef]
-  );
-
   const getState = useCallback(() => stateRef.current, [stateRef]);
-  const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
+  const [state, internalDispatch] = useReducer<
+    Reducer<
+      FormikRefState<Values>,
+      FormikMessage<Values, FormikRefState<Values>>
+    >
+  >(formikRefReducer, stateRef.current);
+
+  // rewrite dispatch to update ref and useReducer separately
+  // so that the ref update doesn't get prioritized by the dispatcher.
+  const dispatch = useCallback<
+    React.Dispatch<FormikMessage<Values, FormikRefState<Values>>>
+  >(msg => {
+    // update ref, AND dispatch separately
+    stateRef.current = formikRefReducer<Values>(stateRef.current, msg);
+
+    internalDispatch(msg);
+  }, []);
 
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
@@ -131,27 +131,29 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     [getState]
   );
 
-  // todo, sometimes we can include resetForm in imperative methods,
-  // and sometimes it just breaks compilation completely
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const resetForm = useCallback(() => {}, []);
-
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+  let imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
     ...formikCoreApi,
-    resetForm: resetForm as any,
+    resetForm: useCheckableEventCallback(() =>
+      selectRefResetForm(
+        getState,
+        dispatch,
+        props.initialErrors,
+        props.initialTouched,
+        props.initialStatus,
+        props.onReset,
+        imperativeMethods
+      )
+    ),
   };
 
-  imperativeMethods.resetForm = useCheckableEventCallback(() =>
-    selectRefResetForm(
-      getState,
-      dispatch,
-      props.initialErrors,
-      props.initialTouched,
-      props.initialStatus,
-      props.onReset,
-      imperativeMethods
-    )
-  );
+  // can't memoize this correctly because imperativeMethods is a circular reference
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  imperativeMethods = useMemo(() => imperativeMethods, [
+    formikCoreApi,
+    imperativeMethods.resetForm,
+  ]);
+
+  const { resetForm } = imperativeMethods;
 
   const handleReset = useCheckableEventCallback(
     () => selectHandleReset(resetForm),
@@ -189,6 +191,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     resetForm,
     validateOnMount,
     validateForm,
+    dispatch,
   ]);
 
   useEffect(() => {
@@ -202,7 +205,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialErrors || emptyErrors,
       });
     }
-  }, [enableReinitialize, props.initialErrors]);
+  }, [dispatch, enableReinitialize, props.initialErrors]);
 
   useEffect(() => {
     if (
@@ -215,7 +218,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialTouched || emptyTouched,
       });
     }
-  }, [enableReinitialize, props.initialTouched]);
+  }, [dispatch, enableReinitialize, props.initialTouched]);
 
   useEffect(() => {
     if (
@@ -228,7 +231,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
         payload: props.initialStatus,
       });
     }
-  }, [enableReinitialize, props.initialStatus]);
+  }, [dispatch, enableReinitialize, props.initialStatus]);
 
   /**
    * Here, we memoize the API so that

@@ -1,6 +1,6 @@
 import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
-import { FormikValues, FormikErrors } from './types';
+import { FormikValues, FormikErrors, FieldMetaProps } from './types';
 import { isPlainObject } from 'lodash';
 import deepmerge from 'deepmerge';
 import {
@@ -400,3 +400,17 @@ export const numberParseFn = (value: any, _name: string) => {
 
 export const defaultFormatFn = (value: unknown, _name: string) =>
   value === undefined ? '' : value;
+
+/**
+ * Example of an optimized comparer.
+ */
+export const fieldMetaIsEqual = <Value>(
+  prev: FieldMetaProps<Value>,
+  next: FieldMetaProps<Value>
+) =>
+  prev.value === next.value &&
+  prev.touched === next.touched &&
+  prev.error === next.error &&
+  prev.initialValue === next.initialValue &&
+  prev.initialTouched === next.initialTouched &&
+  prev.initialError === next.initialError;

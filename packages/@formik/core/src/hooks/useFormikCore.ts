@@ -7,6 +7,7 @@ import {
   selectSetStatus,
   selectSetSubmitting,
   selectGetFieldHelpers,
+  selectResetForm,
 } from './../selectors';
 import {
   GetStateFn,
@@ -34,7 +35,6 @@ import {
   selectSetFieldTouched,
   selectSetFormikState,
   selectSubmitForm,
-  selectResetForm,
   selectExecuteBlur,
   selectHandleSubmit,
   selectExecuteChange,
@@ -42,7 +42,7 @@ import {
   selectHandleBlur,
   selectGetFieldMeta,
 } from '../selectors';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 export const useFormikCore = <
   Values extends FormikValues,
@@ -236,50 +236,26 @@ export const useFormikCore = <
     [dispatch, executeSubmit, getState, refs.isMounted, validateForm]
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const resetForm = useCallback(() => {}, []);
+  const imperativeMethods: FormikHelpers<Values, FormikState<Values>> = {
+    isFormValid,
+    validateForm,
+    validateField,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    setFormikState,
+    submitForm,
+    resetForm: useCheckableEventCallback(() =>
+      selectResetForm(getState, dispatch, props, refs, imperativeMethods)
+    ),
+  };
 
-  // This is a bag of stable, imperative methods.
-  // These should all be constant functions or the result of useCheckableEventCallback.
-  const imperativeMethods: FormikHelpers<Values> = useMemo(
-    () => ({
-      isFormValid,
-      validateForm,
-      validateField,
-      setErrors,
-      setFieldError,
-      setFieldTouched,
-      setFieldValue,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      setFormikState,
-      submitForm,
-      resetForm,
-    }),
-    [
-      isFormValid,
-      validateForm,
-      validateField,
-      setErrors,
-      setFieldError,
-      setFieldTouched,
-      setFieldValue,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      setFormikState,
-      submitForm,
-      resetForm,
-    ]
-  );
-
-  imperativeMethods.resetForm = useCheckableEventCallback(
-    () => selectResetForm(getState, dispatch, props, refs, imperativeMethods),
-    [dispatch, getState, imperativeMethods, props, refs]
-  );
+  const { resetForm } = imperativeMethods;
 
   const handleSubmit = useCheckableEventCallback(
     () => selectHandleSubmit(submitForm),
@@ -322,13 +298,13 @@ export const useFormikCore = <
   const getFieldProps = useCheckableEventCallback(
     () =>
       selectGetFieldProps(
-        getState,
+        getFieldMeta,
         handleChange,
         handleBlur,
         setFieldValue,
         getValueFromEvent
       ),
-    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
+    [getFieldMeta, handleChange, handleBlur, setFieldValue, getValueFromEvent]
   );
 
   return useMemo(
@@ -339,7 +315,20 @@ export const useFormikCore = <
       handleSubmit,
       unregisterField,
       registerField,
-      ...imperativeMethods,
+      isFormValid: imperativeMethods.isFormValid,
+      validateForm: imperativeMethods.validateForm,
+      validateField: imperativeMethods.validateField,
+      setErrors: imperativeMethods.setErrors,
+      setFieldError: imperativeMethods.setFieldError,
+      setFieldTouched: imperativeMethods.setFieldTouched,
+      setFieldValue: imperativeMethods.setFieldValue,
+      setStatus: imperativeMethods.setStatus,
+      setSubmitting: imperativeMethods.setSubmitting,
+      setTouched: imperativeMethods.setTouched,
+      setValues: imperativeMethods.setValues,
+      setFormikState: imperativeMethods.setFormikState,
+      submitForm: imperativeMethods.submitForm,
+      resetForm: imperativeMethods.resetForm,
       getFieldMeta,
       getFieldHelpers,
       getFieldProps,
@@ -354,7 +343,20 @@ export const useFormikCore = <
       handleChange,
       handleReset,
       handleSubmit,
-      imperativeMethods,
+      imperativeMethods.isFormValid,
+      imperativeMethods.resetForm,
+      imperativeMethods.setErrors,
+      imperativeMethods.setFieldError,
+      imperativeMethods.setFieldTouched,
+      imperativeMethods.setFieldValue,
+      imperativeMethods.setFormikState,
+      imperativeMethods.setStatus,
+      imperativeMethods.setSubmitting,
+      imperativeMethods.setTouched,
+      imperativeMethods.setValues,
+      imperativeMethods.submitForm,
+      imperativeMethods.validateField,
+      imperativeMethods.validateForm,
       registerField,
       unregisterField,
     ]

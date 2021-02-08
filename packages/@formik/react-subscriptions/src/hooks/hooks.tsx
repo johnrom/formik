@@ -5,10 +5,10 @@ import {
   SetErrorsFn,
   SetTouchedFn,
   SetValuesFn,
+  fieldMetaIsEqual,
 } from '@formik/core';
 import { selectFieldMetaByName } from '../ref-selectors';
 import { FormikRefState } from '../types';
-import { fieldMetaIsEqual } from './useField';
 import { useFormikComputedState } from './useFormikComputedState';
 import { useFormikState } from './useFormikState';
 

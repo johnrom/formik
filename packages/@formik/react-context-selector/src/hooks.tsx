@@ -9,7 +9,7 @@ import {
   FieldMetaProps,
   FieldValidator,
   FormikComputedState,
-  FormikContextWithState,
+  FormikContextType,
   getIn,
   isInputEvent,
   isObject,
@@ -68,10 +68,10 @@ export type UseFieldProps<Value = any> = {
  */
 export function useSetFieldValue<
   Values
->(): FormikContextWithState<Values>['setFieldValue'] {
+>(): FormikContextType<Values>['setFieldValue'] {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setFieldValue']
+    FormikContextType<Values>['setFieldValue']
   >(ctx => ctx.setFieldValue);
 }
 
@@ -81,10 +81,10 @@ export function useSetFieldValue<
  */
 export function useSetFieldTouched<
   Values
->(): FormikContextWithState<Values>['setFieldTouched'] {
+>(): FormikContextType<Values>['setFieldTouched'] {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setFieldTouched']
+    FormikContextType<Values>['setFieldTouched']
   >(ctx => ctx.setFieldTouched);
 }
 
@@ -247,7 +247,7 @@ export function useFieldError<Values>(
 
   const set = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setFieldError']
+    FormikContextType<Values>['setFieldError']
   >(ctx => ctx.setFieldError);
 
   const setState = React.useCallback(
@@ -324,7 +324,7 @@ export function useFieldInitialError<Values>(name: string) {
 export function useInitialValues<Values>() {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['initialValues']
+    FormikContextType<Values>['initialValues']
   >(ctx => ctx.initialValues);
 }
 
@@ -335,7 +335,7 @@ export function useInitialValues<Values>() {
 export function useInitialTouched<Values>() {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['initialTouched']
+    FormikContextType<Values>['initialTouched']
   >(ctx => ctx.initialTouched);
 }
 
@@ -346,7 +346,7 @@ export function useInitialTouched<Values>() {
 export function useInitialErrors<Values>() {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['initialErrors']
+    FormikContextType<Values>['initialErrors']
   >(ctx => ctx.initialErrors);
 }
 
@@ -357,7 +357,7 @@ export function useInitialErrors<Values>() {
 export function useInitialStatus<Values>() {
   return useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['initialStatus']
+    FormikContextType<Values>['initialStatus']
   >(ctx => ctx.initialStatus);
 }
 
@@ -368,11 +368,11 @@ export function useInitialStatus<Values>() {
 export function useErrors<Values>() {
   const state = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['errors']
+    FormikContextType<Values>['errors']
   >(ctx => ctx.errors);
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setErrors']
+    FormikContextType<Values>['setErrors']
   >(ctx => ctx.setErrors);
   return [state, update];
 }
@@ -384,11 +384,11 @@ export function useErrors<Values>() {
 export function useValues<Values>() {
   const state = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['values']
+    FormikContextType<Values>['values']
   >(ctx => ctx.values);
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setValues']
+    FormikContextType<Values>['setValues']
   >(ctx => ctx.setValues);
   return [state, update];
 }
@@ -400,11 +400,11 @@ export function useValues<Values>() {
 export function useTouched<Values>() {
   const state = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['touched']
+    FormikContextType<Values>['touched']
   >(ctx => ctx.touched);
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setTouched']
+    FormikContextType<Values>['setTouched']
   >(ctx => ctx.setTouched);
   return [state, update];
 }
@@ -416,7 +416,7 @@ export function useTouched<Values>() {
 export function useSetTouched<Values>() {
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setTouched']
+    FormikContextType<Values>['setTouched']
   >(ctx => ctx.setTouched);
   return update;
 }
@@ -428,7 +428,7 @@ export function useSetTouched<Values>() {
 export function useSetValues<Values>() {
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setValues']
+    FormikContextType<Values>['setValues']
   >(ctx => ctx.setValues);
   return update;
 }
@@ -440,7 +440,7 @@ export function useSetValues<Values>() {
 export function useSetErrors<Values>() {
   const update = useFormikContextSelector<
     Values,
-    FormikContextWithState<Values>['setErrors']
+    FormikContextType<Values>['setErrors']
   >(ctx => ctx.setErrors);
   return update;
 }
@@ -452,11 +452,11 @@ export function useSetErrors<Values>() {
 export function useStatus<T>() {
   const state: T = useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['status']
+    FormikContextType<unknown>['status']
   >(ctx => ctx.status);
   const update = useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['setStatus']
+    FormikContextType<unknown>['setStatus']
   >(ctx => ctx.setStatus);
   return [state, update];
 }
@@ -468,7 +468,7 @@ export function useStatus<T>() {
 export function useSetStatus() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['setStatus']
+    FormikContextType<unknown>['setStatus']
   >(ctx => ctx.setStatus);
 }
 
@@ -479,7 +479,7 @@ export function useSetStatus() {
 export function useSubmitForm() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['submitForm']
+    FormikContextType<unknown>['submitForm']
   >(ctx => ctx.submitForm);
 }
 
@@ -490,7 +490,7 @@ export function useSubmitForm() {
 export function useIsSubmitting() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['isSubmitting']
+    FormikContextType<unknown>['isSubmitting']
   >(ctx => ctx.isSubmitting);
 }
 
@@ -501,7 +501,7 @@ export function useIsSubmitting() {
 export function useResetForm() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['resetForm']
+    FormikContextType<unknown>['resetForm']
   >(ctx => ctx.resetForm);
 }
 
@@ -513,7 +513,7 @@ export function useResetForm() {
 export function useIsValid() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['isValid']
+    FormikContextType<unknown>['isValid']
   >(ctx => ctx.isValid);
 }
 
@@ -522,10 +522,9 @@ export function useIsValid() {
  * @public
  */
 export function useIsDirty() {
-  return useFormikContextSelector<
-    unknown,
-    FormikContextWithState<unknown>['dirty']
-  >(ctx => ctx.dirty);
+  return useFormikContextSelector<unknown, FormikContextType<unknown>['dirty']>(
+    ctx => ctx.dirty
+  );
 }
 
 /**
@@ -535,7 +534,7 @@ export function useIsDirty() {
 export function useValidateForm() {
   return useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['validateForm']
+    FormikContextType<unknown>['validateForm']
   >(ctx => ctx.validateForm);
 }
 
@@ -546,7 +545,7 @@ export function useValidateForm() {
 export function useValidateField(fieldName?: string) {
   const validateField = useFormikContextSelector<
     unknown,
-    FormikContextWithState<unknown>['validateField']
+    FormikContextType<unknown>['validateField']
   >(ctx => ctx.validateField);
   return React.useCallback(() => {
     return fieldName ? validateField(fieldName) : validateField;
@@ -578,7 +577,7 @@ function useFieldMeta<Values>(name: string) {
  */
 export const useFormikComputedStateInternal = (
   _api: any,
-  state: Pick<FormikContextWithState<any>, 'isValid' | 'dirty'>
+  state: Pick<FormikContextType<any>, 'isValid' | 'dirty'>
 ): FormikComputedState => {
   return React.useMemo(
     () => ({

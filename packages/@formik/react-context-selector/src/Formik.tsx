@@ -16,12 +16,12 @@ import {
   useFormikCore,
   isEmptyChildren,
   useEventCallback,
-  FormikContextWithState,
+  FormikContextType,
 } from '@formik/core';
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): FormikContextWithState<Values> {
+): FormikContextType<Values> {
   const {
     validateOnChange = true,
     validateOnBlur = true,

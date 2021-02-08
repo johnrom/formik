@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Formik } from './components/Formik';
 import {
   FormikHelpers,
-  FormikProps,
+  FormikContextType,
   FormikSharedConfig,
   FormikValues,
   FormikTouched,
@@ -15,9 +15,10 @@ import {
  * State, handlers, and helpers injected as props into the wrapped form component.
  * Used with withFormik()
  *
- * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
+ * @deprecated  Use `OuterProps & FormikContextType<Values>` instead.
  */
-export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+export type InjectedFormikProps<Props, Values> = Props &
+  FormikContextType<Values>;
 
 /**
  * Formik actions + { props }
@@ -115,10 +116,10 @@ export function withFormik<
   ...config
 }: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
   OuterProps,
-  OuterProps & FormikProps<Values>
+  OuterProps & FormikContextType<Values>
 > {
   return function createFormik(
-    Component: CompositeComponent<OuterProps & FormikProps<Values>>
+    Component: CompositeComponent<OuterProps & FormikContextType<Values>>
   ): React.ComponentClass<OuterProps> {
     const componentDisplayName =
       Component.displayName ||
@@ -152,7 +153,7 @@ export function withFormik<
       /**
        * Just avoiding a render callback for perf here
        */
-      renderFormComponent = (formikProps: FormikProps<Values>) => {
+      renderFormComponent = (formikProps: FormikContextType<Values>) => {
         return <Component {...this.props} {...formikProps} />;
       };
 
@@ -183,7 +184,7 @@ export function withFormik<
 
     return hoistNonReactStatics(
       C,
-      Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
+      Component as React.ComponentClass<OuterProps & FormikContextType<Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<OuterProps>;
   };
 }

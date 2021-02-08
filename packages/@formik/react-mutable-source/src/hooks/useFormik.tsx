@@ -139,31 +139,33 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     [getState]
   );
 
-  // todo, sometimes we can include resetForm in imperative methods,
-  // and sometimes it just breaks compilation completely
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const resetForm = useCallback(() => {}, []);
-
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+  let imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
     ...formikCoreApi,
-    resetForm: resetForm as any,
+    resetForm: useCheckableEventCallback(() =>
+      selectRefResetForm(
+        getState,
+        dispatch,
+        props.initialErrors,
+        props.initialTouched,
+        props.initialStatus,
+        props.onReset,
+        imperativeMethods
+      )
+    ),
   };
 
-  imperativeMethods.resetForm = useCheckableEventCallback(() =>
-    selectRefResetForm(
-      getState,
-      dispatch,
-      props.initialErrors,
-      props.initialTouched,
-      props.initialStatus,
-      props.onReset,
-      imperativeMethods
-    )
-  );
+  // can't memoize this correctly because imperativeMethods is a circular reference
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  imperativeMethods = useMemo(() => imperativeMethods, [
+    formikCoreApi,
+    imperativeMethods.resetForm,
+  ]);
+
+  const { resetForm } = imperativeMethods;
 
   const handleReset = useCheckableEventCallback(
-    () => selectHandleReset(imperativeMethods.resetForm),
-    [imperativeMethods.resetForm]
+    () => selectHandleReset(resetForm),
+    [resetForm]
   );
 
   const { validateForm } = imperativeMethods;
@@ -242,9 +244,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   /**
    * Here, we memoize the API so that
    * React's Context doesn't update on every render.
-   *
-   * We don't useMemo because we're purposely
-   * only updating when the config updates
    */
   return useMemo(() => {
     return {

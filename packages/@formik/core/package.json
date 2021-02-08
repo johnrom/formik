@@ -26,8 +26,9 @@
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
-    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "start": "npm run build:watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
+    "build:watch": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "lint": "tsdx lint",
     "prepublish": "npm run build"
   },

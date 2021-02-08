@@ -21,8 +21,9 @@
   "typings": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "start": "npm run build:watch",
     "build": "tsdx build --tsconfig tsconfig.build.json",
+    "build:watch": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepublish": "npm run build"

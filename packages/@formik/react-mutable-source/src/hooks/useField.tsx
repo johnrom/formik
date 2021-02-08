@@ -114,8 +114,7 @@ export function useField<Value = any, FormValues = any>(
   );
 
   return [
-    // todo: this could go out of sync with fieldMeta
-    getFieldProps(props),
+    getFieldProps(props, fieldMeta),
     fieldMeta,
     getFieldHelpers(fieldName),
   ];

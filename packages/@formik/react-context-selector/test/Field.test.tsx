@@ -17,7 +17,7 @@ import {
   FieldComponentProps,
 } from '../src';
 import { noop } from './testHelpers';
-import { FormikConfig, FormikProps } from '@formik/core';
+import { FormikConfig, FormikContextType } from '@formik/core';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
@@ -29,24 +29,24 @@ function renderForm(
   ui?: React.ReactNode,
   props?: Partial<FormikConfig<Values>>
 ) {
-  let injected: FormikProps<Values>;
+  let injected: FormikContextType<Values>;
   const { rerender, ...rest } = render(
     <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-      {(formikProps: FormikProps<Values>) =>
+      {(formikProps: FormikContextType<Values>) =>
         (injected = formikProps) && ui ? ui : null
       }
     </Formik>
   );
 
   return {
-    getFormProps(): FormikProps<Values> {
+    getFormProps(): FormikContextType<Values> {
       return injected;
     },
     ...rest,
     rerender: () =>
       rerender(
         <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-          {(formikProps: FormikProps<Values>) =>
+          {(formikProps: FormikContextType<Values>) =>
             (injected = formikProps) && ui ? ui : null
           }
         </Formik>

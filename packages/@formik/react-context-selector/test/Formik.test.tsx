@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import { Formik } from '../src';
 import { noop } from './testHelpers';
 import {
-  FormikProps,
+  FormikContextType,
   FormikConfig,
   prepareDataForValidation,
 } from '@formik/core';
@@ -32,7 +32,7 @@ function Form({
   status,
   errors,
   isSubmitting,
-}: FormikProps<Values>) {
+}: FormikContextType<Values>) {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -61,7 +61,7 @@ const InitialValues = {
 };
 
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
-  let injected: FormikProps<V>;
+  let injected: FormikContextType<V>;
   const { rerender, ...rest } = render(
     <Formik
       onSubmit={noop as any}
@@ -70,13 +70,13 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     >
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+          <Form {...((formikProps as unknown) as FormikContextType<Values>)} />
         )
       }
     </Formik>
   );
   return {
-    getProps(): FormikProps<V> {
+    getProps(): FormikContextType<V> {
       return injected;
     },
     ...rest,
@@ -89,7 +89,9 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
         >
           {formikProps =>
             (injected = formikProps) && (
-              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+              <Form
+                {...((formikProps as unknown) as FormikContextType<Values>)}
+              />
             )
           }
         </Formik>

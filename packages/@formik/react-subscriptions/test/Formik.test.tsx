@@ -1,6 +1,6 @@
 import {
   FormikConfig,
-  FormikProps,
+  FormikContextType,
   prepareDataForValidation,
 } from '@formik/core';
 import * as React from 'react';
@@ -31,7 +31,7 @@ const Form = <Values extends TestValues = TestValues>({
   errors,
   isSubmitting,
   children,
-}: React.PropsWithChildren<FormikProps<Values>>) => {
+}: React.PropsWithChildren<FormikContextType<Values>>) => {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -87,7 +87,7 @@ function renderFormik<Values extends TestValues = TestValues>(
 
   return {
     ...rest,
-    getProps(): FormikProps<Values> {
+    getProps(): FormikContextType<Values> {
       return injected;
     },
     getFormikState(): [

@@ -2,9 +2,9 @@ import * as React from 'react';
 import {
   FormikConfig,
   FormikValues,
-  FormikProps,
   isFunction,
   isEmptyChildren,
+  FormikContextType,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormik } from '../hooks/useFormik';
@@ -30,7 +30,7 @@ export function Formik<
   // This allows folks to pass a ref to the Formik API
   React.useImperativeHandle(innerRef, () => formikApi);
 
-  const formikBag: FormikProps<Values> = {
+  const formikBag: FormikContextType<Values> = {
     ...formikApi,
     ...formikState,
   };

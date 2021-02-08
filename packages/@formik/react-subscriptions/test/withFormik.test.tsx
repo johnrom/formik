@@ -3,14 +3,14 @@ import { render, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
 import { withFormik } from '../src';
-import { FormikProps } from '@formik/core';
+import { FormikContextType } from '@formik/core';
 import { noop } from './testHelpers';
 
 interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormikProps<Values>> = ({
+const Form: React.SFC<FormikContextType<Values>> = ({
   values,
   handleSubmit,
   handleChange,

@@ -772,84 +772,92 @@ export type GetFieldPropsFn = <Value extends any>(
 ) => FieldInputProps<Value>;
 
 export const selectGetFieldProps = <Values extends FormikValues>(
-  getState: GetStateFn<Values>,
+  getFieldMeta: GetFieldMetaFn,
   handleChange: HandleChangeFn,
   handleBlur: ReturnType<typeof selectHandleBlur>,
   setFieldValue: SetFieldValueFn<Values>,
   getValueFromEvent: ReturnType<typeof selectGetValueFromEvent>
-): GetFieldPropsFn => <V>(nameOrOptions: any): FieldInputProps<V> => {
-  const state = getState();
-  const isAnObject = isObject(nameOrOptions);
-  const name = isAnObject
-    ? nameOrOptions.name
+): GetFieldPropsFn =>
+  /**
+   * Get the field props for a given render by passing `forFieldMeta`,
+   * or leave it out to use this function programatically with the latest state.
+   */
+  <V>(
+    nameOrOptions: any,
+    forFieldMeta?: FieldMetaProps<V>
+  ): FieldInputProps<V> => {
+    const isAnObject = isObject(nameOrOptions);
+    const name = isAnObject
       ? nameOrOptions.name
-      : nameOrOptions.id
-    : nameOrOptions;
-  const valueState = getIn(state.values, name);
-  const touchedState = getIn(state.touched, name);
+        ? nameOrOptions.name
+        : nameOrOptions.id
+      : nameOrOptions;
+    const fieldMeta = forFieldMeta ?? getFieldMeta(name);
+    const valueState = fieldMeta.value;
+    const touchedState = fieldMeta.touched;
 
-  const field: FieldInputProps<any> = {
-    name,
-    value: valueState,
-    onChange: handleChange,
-    onBlur: handleBlur,
-  };
-  if (isAnObject) {
-    const {
-      type,
-      value: valueProp, // value is special for checkboxes
-      as: is,
-      multiple,
-      parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
-      format = defaultFormatFn,
-      formatOnBlur = false,
-    } = nameOrOptions;
+    const field: FieldInputProps<any> = {
+      name,
+      value: valueState,
+      onChange: handleChange,
+      onBlur: handleBlur,
+    };
+    if (isAnObject) {
+      const {
+        type,
+        value: valueProp, // value is special for checkboxes
+        as: is,
+        multiple,
+        parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
+        format = defaultFormatFn,
+        formatOnBlur = false,
+      } = nameOrOptions;
 
-    if (type === 'checkbox') {
-      if (valueProp === undefined) {
-        field.checked = !!valueState;
-      } else {
-        field.checked = !!(
-          Array.isArray(valueState) && ~valueState.indexOf(valueProp)
-        );
+      if (type === 'checkbox') {
+        if (valueProp === undefined) {
+          field.checked = !!valueState;
+        } else {
+          field.checked = !!(
+            Array.isArray(valueState) && ~valueState.indexOf(valueProp)
+          );
+          field.value = valueProp;
+        }
+      } else if (type === 'radio') {
+        field.checked = valueState === valueProp;
         field.value = valueProp;
+      } else if (is === 'select' && multiple) {
+        field.value = field.value || [];
+        field.multiple = true;
       }
-    } else if (type === 'radio') {
-      field.checked = valueState === valueProp;
-      field.value = valueProp;
-    } else if (is === 'select' && multiple) {
-      field.value = field.value || [];
-      field.multiple = true;
-    }
 
-    if (type !== 'radio' && type !== 'checkbox' && !!format) {
-      if (formatOnBlur === true) {
-        if (touchedState === true) {
+      if (type !== 'radio' && type !== 'checkbox' && !!format) {
+        if (formatOnBlur === true) {
+          if (touchedState === true) {
+            field.value = format(field.value);
+          }
+        } else {
           field.value = format(field.value);
         }
-      } else {
-        field.value = format(field.value);
+      }
+
+      // We incorporate the fact that we know the `name` prop by scoping `onChange`.
+      // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
+      // instead re-implement it's guts.
+      if (type !== 'radio' && type !== 'checkbox') {
+        field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
+          if (isInputEvent(eventOrValue)) {
+            if (eventOrValue.persist) {
+              eventOrValue.persist();
+            }
+            setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
+          } else {
+            setFieldValue(name, parse(eventOrValue));
+          }
+        };
       }
     }
-
-    // We incorporate the fact that we know the `name` prop by scoping `onChange`.
-    // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
-    // instead re-implement it's guts.
-    if (type !== 'radio' && type !== 'checkbox') {
-      field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
-        if (isInputEvent(eventOrValue)) {
-          if (eventOrValue.persist) {
-            eventOrValue.persist();
-          }
-          setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
-        } else {
-          setFieldValue(name, parse(eventOrValue));
-        }
-      };
-    }
-  }
-  return field;
-};
+    return field;
+  };
 
 export type GetFieldMetaFn = <Value extends any>(
   name: string

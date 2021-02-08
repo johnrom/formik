@@ -55,20 +55,6 @@ export type UseFieldProps<Value = any> = {
   value?: Value;
 };
 
-/**
- * Example of an optimized comparer.
- */
-export const fieldMetaIsEqual = <Value,>(
-  prev: FieldMetaProps<Value>,
-  next: FieldMetaProps<Value>
-) =>
-  prev.value === next.value &&
-  prev.touched === next.touched &&
-  prev.error === next.error &&
-  prev.initialValue === next.initialValue &&
-  prev.initialTouched === next.initialTouched &&
-  prev.initialError === next.initialError;
-
 export function useField<Value = any, FormValues = any>(
   nameOrOptions: string | UseFieldProps<Value>
 ): [FieldInputProps<Value>, FieldMetaProps<Value>, FieldHelperProps<Value>] {

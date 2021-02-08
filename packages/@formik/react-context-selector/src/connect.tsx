@@ -1,4 +1,4 @@
-import { FormikContextWithState } from '@formik/core';
+import { FormikContextType } from '@formik/core';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import invariant from 'tiny-warning';
@@ -9,13 +9,11 @@ import { FormikConsumer } from './FormikContext';
  * @param Comp React Component
  */
 export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<
-    OuterProps & { formik: FormikContextWithState<Values> }
-  >
+  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
 ) {
   const C: React.FC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer
-      children={(formik: FormikContextWithState<Values>) => {
+      children={(formik: FormikContextType<Values>) => {
         invariant(
           !!formik,
           `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${Comp.name}`
@@ -41,7 +39,7 @@ export function connect<OuterProps, Values = {}>(
   return hoistNonReactStatics(
     C,
     Comp as React.ComponentClass<
-      OuterProps & { formik: FormikContextWithState<Values> }
+      OuterProps & { formik: FormikContextType<Values> }
     > // cast type to ComponentClass (even if SFC)
   ) as React.ComponentType<OuterProps>;
 }

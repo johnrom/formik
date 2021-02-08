@@ -277,7 +277,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
     this.updateArrayField(
-      // so this gets call 3 times
+      // so this gets call 3 times for each dispatch. with Subscriptions this is twice,
+      // with concurrent mode, this could be any number of times.
       (array?: any[]) => {
         const copy = array ? copyArrayLike(array) : [];
         if (!result) {
@@ -297,23 +298,41 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   handleRemove = (index: number) => () => this.remove<any>(index);
 
-  pop<T>(): T {
-    // Remove relevant pieces of `touched` and `errors` too!
-    let result: any;
+  /**
+   * A Special Array Helper which removes the last item of the array
+   * from values[name], errors[name] and touched[name].
+   *
+   * If value is not an array, it will leave it alone and return nothing.
+   * If error or touched are not arrays, it will leave them alone.
+   */
+  pop<T>(): T | undefined {
+    let result: T | undefined;
+
     this.updateArrayField(
-      // so this gets call 3 times
-      (array: any[]) => {
-        const tmp = array;
-        if (!result) {
-          result = tmp && tmp.pop && tmp.pop();
+      (arrayValue: T[] | Record<string | number | symbol, T> | undefined) => {
+        // if it's an array, let's get a copy
+        const newArray = arrayValue
+          ? Array.isArray(arrayValue)
+            ? [...arrayValue]
+            : arrayValue
+          : undefined;
+
+        // we can only really manipulate arrays here, and preserve objects
+        if (Array.isArray(newArray)) {
+          const poppedValue = newArray?.pop();
+
+          if (!result) {
+            result = poppedValue;
+          }
         }
-        return tmp;
+
+        return newArray;
       },
       true,
       true
     );
 
-    return result as T;
+    return result;
   }
 
   handlePop = () => () => this.pop<any>();

@@ -3,14 +3,14 @@ import { render, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
 import { withFormik } from '../src';
-import { FormikProps } from '@formik/core';
+import { FormikContextType } from '@formik/core';
 import { noop } from './testHelpers';
 
 interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormikProps<Values>> = ({
+const Form: React.SFC<FormikContextType<Values>> = ({
   values,
   handleSubmit,
   handleChange,
@@ -89,7 +89,8 @@ describe('withFormik()', () => {
       createSelector: expect.any(Function),
       getSelector: expect.any(Function),
       createSubscriber: expect.any(Function),
-      subscribe: expect.any(Function),
+      getSubscribeFn: expect.any(Function),
+      mutableSource: expect.any(Object),
       isFormValid: expect.any(Function),
       getState: expect.any(Function),
       handleBlur: expect.any(Function),
