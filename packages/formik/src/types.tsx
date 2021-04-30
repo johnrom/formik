@@ -187,10 +187,6 @@ export type ValueMatchingPath<Values, Path extends PathOf<Values>> =
             ? NextPath extends PathOf<Values[number]>
               ? ValueMatchingPath<Values[number], NextPath>
               : never
-            : Path extends `0.${infer NextPath}`
-              ? NextPath extends PathOf<Values[number]>
-                ? ValueMatchingPath<Values[number], NextPath>
-                : never
             : SingleValue
           : Path extends keyof Values
             ? Values[Path]
