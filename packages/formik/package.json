@@ -1,7 +1,7 @@
 {
   "name": "@johnrom/formik-v3",
   "description": "Build forms in React, without the tears",
-  "version": "3.1.0-types6",
+  "version": "3.1.0-types7",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -47,7 +47,6 @@
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "prepublish": "npm run build",
     "build": "tsdx build --tsconfig tsconfig.build.json && npm run build-untyped",
     "build-untyped": "tsc --emitDeclarationOnly --noEmit false --project tsconfig.build.json --outDir dist-untyped && mv -f dist-untyped/helpers/path-helpers.untyped.d.ts dist-untyped/helpers/path-helpers.d.ts",
     "lint": "tsdx lint"
