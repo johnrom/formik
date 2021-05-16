@@ -10,7 +10,7 @@ import invariant from 'tiny-warning';
 import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
-import { FieldConfig, FieldHookConfig } from './Field.types';
+import { FieldConfig, FieldHookConfig, InputElements } from './Field.types';
 
 export function useField<
   Value = any,
@@ -73,8 +73,9 @@ export function useField<
 export function Field<
   Value = any,
   Values = any,
+  Element extends InputElements = "input"
 >(
-  props: FieldConfig<Value, Values>
+  props: FieldConfig<Value, Values, Element>
 ) {
 
   if (__DEV__) {
@@ -190,7 +191,7 @@ export function Field<
   return React.createElement(
     props.as || props.component || "input",
     // field has FieldValue<> while HTML expects
-    { ref: props.innerRef, ...field, ...htmlProps },
+    { ref: props.innerRef, ...field, ...htmlProps as JSX.IntrinsicElements[Element] },
     children
   );
 }

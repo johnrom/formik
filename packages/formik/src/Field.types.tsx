@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   FormikProps,
-  GenericFieldHTMLAttributes,
   FieldMetaProps,
   FieldInputProps,
   FieldValidator,
@@ -11,20 +10,22 @@ import {
   FormatFn,
 } from './types';
 
+export type InputElements = "input" | "textarea" | "select";
+
 export interface FieldHookConfig<Value, Values> extends
   FieldPassThroughConfig<Value, Values>
 {
   as?: any
 };
 
-export type FieldConfig<Value, Values> =
-  FieldAsStringConfig<Value, Values> |
+export type FieldConfig<Value, Values, Element extends InputElements = "input"> =
+  FieldAsStringConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
   FieldAsComponentConfig<Value, Values> |
-  FieldStringComponentConfig<Value, Values> |
+  FieldStringComponentConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
   FieldComponentConfig<Value, Values> |
   FieldRenderConfig<Value, Values> |
   FieldChildrenConfig<Value, Values> |
-  FieldDefaultConfig<Value, Values>;
+  FieldDefaultConfig<Value, Values> & GenericFieldHTMLConfig<Element>;
 
 /**
  * CustomField, AsField, ComponentField definitions
@@ -36,13 +37,13 @@ export type CustomField<Value> = <
 ) =>
   React.ReactElement | null;
 
-export type TypedField<Values> = <Value>(
-  props: FieldConfig<Value, Values>
+export type TypedField<Values> = <Value, Element extends InputElements = "input">(
+  props: FieldConfig<Value, Values, Element>
 ) =>
   React.ReactElement | null;
 
-export type FieldByValue<Value, Values> = (
-  props: FieldConfig<Value, Values>
+export type FieldByValue<Value, Values, Element extends InputElements = "input"> = (
+  props: FieldConfig<Value, Values, Element>
 ) =>
   React.ReactElement | null;
 
@@ -161,8 +162,8 @@ type FieldComponentComponent<Value, Values> =
     Values
   >>;
 
-type GenericFieldHTMLConfig = Omit<
-  GenericFieldHTMLAttributes,
+type GenericFieldHTMLConfig<Element extends InputElements> = Omit<
+  JSX.IntrinsicElements[Element],
   keyof FieldPassThroughConfig<any, any>
 >;
 
@@ -207,12 +208,11 @@ export type TypedComponentField<Value> = <Values>(
  *
  * @private
  */
-export interface FieldAsStringConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>,
-  GenericFieldHTMLConfig
+export interface FieldAsStringConfig<Value, Values, Element extends keyof JSX.IntrinsicElements> extends
+  FieldPassThroughConfig<Value, Values>
 {
   children?: React.ReactNode
-  as: string,
+  as: Element,
   component?: undefined,
   render?: undefined,
 }
@@ -229,19 +229,18 @@ export interface FieldAsComponentConfig<Value, Values> extends
   as: TypedAsField<Value> | FieldAsComponent<Value, Values>;
   component?: undefined,
   render?: undefined,
-} ;
+};
 
 /**
  * `field.component = string`
  *
  * @private
  */
-export interface FieldStringComponentConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>,
-  GenericFieldHTMLConfig
+export interface FieldStringComponentConfig<Value, Values, Element extends InputElements> extends
+  FieldPassThroughConfig<Value, Values>
 {
   children?: React.ReactNode
-  component: string,
+  component: Element,
   as?: undefined,
   render?: undefined,
 };
@@ -294,8 +293,7 @@ export interface FieldChildrenConfig<Value, Values> extends
  * @private
  */
 export interface FieldDefaultConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>,
-  GenericFieldHTMLConfig
+  FieldPassThroughConfig<Value, Values>
 {
   as?: undefined,
   component?: undefined,
