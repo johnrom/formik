@@ -1,5 +1,4 @@
 import {
-    CustomField,
     Field,
     FieldAsProps,
     FieldComponentClass,
@@ -12,7 +11,6 @@ import {
     FormikProvider,
     TypedAsField,
     TypedComponentField,
-    useCustomField,
     useFormik,
     useTypedField
   } from "formik";
@@ -56,11 +54,17 @@ import {
   const proplessFC = () => null;
   const propsAnyFC = (props: any) => null;
   const partialPropsFC = (props: { name: string }) => null;
+  const propsOnlyExtraFC = (props: { what: true }) => null;
+
   const asAnyFC = (props: FieldAsProps<any, any>) => null;
   const asNumberFC: TypedAsField<number> = (props) => null;
   const asStringFC: TypedAsField<string> = (props) => null;
+  const asNumberExtraFC: TypedAsField<number, { what: true }> = (props) => null;
+
   const componentAnyFC = (props: FieldComponentProps<any, any>) => null;
   const componentNumberFC: TypedComponentField<number> = (props) => null;
+  const componentNumberExtraFC: TypedComponentField<number, { what: true }> = (props) => null;
+
   const renderAnyFn: FieldRenderFunction<any, any> = (props) => null;
   const renderNumberFN = <Value, Values>(
     props: FieldRenderProps<Value, Values>
@@ -89,7 +93,7 @@ import {
     }
   }
 
-  const CustomNumberFC: CustomField<number> = <Values extends any>(
+  const CustomNumberFC = <Values extends any>(
     props: FieldConfig<number, Values>
   ) => {
     const InnerTypedField = useTypedField<Values>();
@@ -151,7 +155,6 @@ const FormTests = () => {
 
 const FieldTests = (props: FieldConfig<number, Person>) => {
   const TypedField = useTypedField<Person>();
-  const TypedNumberFC = useCustomField<Person>()(CustomNumberFC);
 
   return (
     <Formik initialValues={person} onSubmit={noopVoid}>
@@ -167,8 +170,8 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         {/* @ts-expect-error name doesn't match PathOf<Values> */}
         <TypedField name="friends.NOPE.name.first" />
 
-        <Field name="age" format={(value: string) => {}} />
-        <TypedField name="age" format={(value: number) => {}} />
+        <Field name="age" format={(value) => {}} />
+        <TypedField name="age" format={(value) => {}} />
         {/* @ts-expect-error TypedField must match value */}
         <TypedField name="age" format={(value: string) => {}} />
 
@@ -177,7 +180,9 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField name="friends.0.name.first" aria-required={true} />
 
         {/* FieldAsString */}
-        <Field name="age" as="select" />
+        <Field name="age" as="select" size={1} />
+        <Field name="motto" as="textarea" onClick={event => {}} rows={4} />
+        <TypedField name="motto" as="textarea" onClick={event => {}} rows={4} />
 
         {/* FieldStringComponent */}
         <Field name="age" component="select" />
@@ -195,9 +200,15 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <Field name="age" as={asAnyFC} />
         <Field name="age" as={asNumberFC} />
         <TypedField name="age" as={asNumberFC} />
+        <TypedField name="age" as={asAnyFC} />
+        <Field name="age" as={asNumberExtraFC} what={true} />
+        <TypedField name="age" as={asNumberExtraFC} what={true} />
         <Field name="age" as={asAnyFC}>
           <div />
         </Field>
+        <TypedField name="age" as={asAnyFC}>
+          <div />
+        </TypedField>
         <Field name="age" as={asNumberFC}>
           <div />
         </Field>
@@ -209,9 +220,10 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
 
         <TypedField name="age" as={PropsAnyClass} />
         <TypedField name="age" as={PartialPropsClass} />
+        <Field name="age" as={propsOnlyExtraFC} what={true} />
+        <TypedField name="age" as={propsOnlyExtraFC} what={true} />
 
-        {/* @ts-expect-error field value should match */}
-        <TypedField name="motto" as={asNumberFC} />
+        <TypedField name="age" as={asNumberFC} />
         {/* @ts-expect-error field value should match */}
         <TypedField name="motto" as={AsNumberClass} />
 
@@ -226,6 +238,8 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <Field name="age" component={componentAnyFC} />
         <Field name="age" component={componentNumberFC} />
         <TypedField name="age" component={componentNumberFC} />
+        <Field name="age" component={componentNumberExtraFC} what={true} />
+        <TypedField name="age" component={componentNumberExtraFC} what={true} />
         <Field name="age" component={componentAnyFC}>
           <div />
         </Field>
@@ -244,6 +258,22 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField name="motto" component={componentNumberFC} />
         {/* @ts-expect-error field value should match */}
         <TypedField name="motto" component={ComponentNumberClass} />
+        {/* @ts-expect-error ExtraProps is required */}
+        <Field name="age" as={asNumberExtraFC} />
+        {/* @ts-expect-error ExtraProps is required */}
+        <TypedField name="age" as={asNumberExtraFC} />
+        {/* @ts-expect-error ExtraProps should match */}
+        <Field name="age" as={asNumberExtraFC} what={false} />
+        {/* @ts-expect-error ExtraProps should match */}
+        <TypedField name="age" as={asNumberExtraFC} what={false} />
+        {/* @ts-expect-error ExtraProps is required */}
+        <Field name="age" component={componentNumberExtraFC} />
+        {/* @ts-expect-error ExtraProps is required */}
+        <TypedField name="age" component={componentNumberExtraFC} />
+        {/* @ts-expect-error ExtraProps should match */}
+        <Field name="age" component={componentNumberExtraFC} what={false} />
+        {/* @ts-expect-error ExtraProps should match */}
+        <TypedField name="age" component={componentNumberExtraFC} what={false} />
 
         {/* FieldRender */}
         <Field name="age" render={renderAnyFn} />
@@ -275,12 +305,9 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField {...props} />
 
         {/* Custom Fields */}
+        <CustomNumberFC<Person> name="age" format={(value) => {}} />
         {/* Untyped Custom Fields can have anything */}
-        <CustomNumberFC name="age" format={(value) => {}} />
-        <TypedNumberFC name="age" format={(value) => {}} />
         <CustomNumberFC name="motto" />
-        {/* @ts-expect-error field value should match */}
-        <TypedNumberFC name="motto" />
 
         {/* @ts-expect-error should match number */}
         <TypedField name="partner.age" value="" />
