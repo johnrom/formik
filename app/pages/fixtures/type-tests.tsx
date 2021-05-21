@@ -4,6 +4,7 @@ import {
     FieldComponentClass,
     FieldComponentProps,
     FieldConfig,
+    FieldElements,
     FieldRenderFunction,
     FieldRenderProps,
     Form,
@@ -57,20 +58,16 @@ import {
   const propsOnlyExtraFC = (props: { what: true }) => null;
 
   const asAnyFC = (props: FieldAsProps<any, any>) => null;
-  const asNumberFC: TypedAsField<number> = (props) => null;
+  const asNumberFC = <Values,>(props: FieldAsProps<number, Values>) => null;
   const asStringFC: TypedAsField<string> = (props) => null;
-  const asNumberExtraFC: TypedAsField<number, { what: true }> = (props) => null;
-
-  const componentAnyFC = (props: FieldComponentProps<any, any>) => null;
-  const componentNumberFC: TypedComponentField<number> = (props) => null;
-  const componentNumberExtraFC: TypedComponentField<number, { what: true }> = (props) => null;
+  const asNumberExtraFC: TypedAsField<number> = (props) => null;
 
   const renderAnyFn: FieldRenderFunction<any, any> = (props) => null;
   const renderNumberFN = <Value, Values>(
     props: FieldRenderProps<Value, Values>
   ) => null;
 
-  class PropsAnyClass extends React.Component<any> {
+  class PropsAnyClass extends React.Component {
     render() {
       return null;
     }
@@ -93,8 +90,8 @@ import {
     }
   }
 
-  const CustomNumberFC = <Values extends any>(
-    props: FieldConfig<number, Values>
+  const CustomNumberFC = <Values extends any, Element extends FieldElements<number, Values>>(
+    props: FieldConfig<number, Values, Element>
   ) => {
     const InnerTypedField = useTypedField<Values>();
 
@@ -153,7 +150,7 @@ const FormTests = () => {
   );
 };
 
-const FieldTests = (props: FieldConfig<number, Person>) => {
+const FieldTests = (props: FieldConfig<number, Person, "input">) => {
   const TypedField = useTypedField<Person>();
 
   return (
@@ -185,8 +182,8 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField name="motto" as="textarea" onClick={event => {}} rows={4} />
 
         {/* FieldStringComponent */}
-        <Field name="age" component="select" />
-        <TypedField name="age" component="select" />
+        <Field name="age" as="select" onClick={event => {}} />
+        <TypedField name="age" as="select" />
 
         {/* FieldAsComponent */}
         <Field name="age" as={proplessFC} />

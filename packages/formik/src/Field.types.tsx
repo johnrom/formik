@@ -4,58 +4,69 @@ import {
   FieldMetaProps,
   FieldInputProps,
   FieldValidator,
-  PathMatchingValue,
   SingleValue,
   ParseFn,
   FormatFn,
+  ValueMatchingPath,
+  PathOf,
+  PathMatchingValue,
 } from './types';
 
 export type InputElements = "input" | "textarea" | "select";
 
-export interface FieldHookConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
+export interface FieldHookConfig<Values, Path extends PathOf<Values>> extends
+  FieldPassThroughConfig<Values, Path>
 {
   as?: any
 };
 
-export type FieldConfig<Value, Values, Element extends InputElements = "input"> =
-  FieldAsStringConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
-  FieldAsComponentConfig<Value, Values> |
-  FieldStringComponentConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
-  FieldComponentConfig<Value, Values> |
-  FieldRenderConfig<Value, Values> |
-  FieldChildrenConfig<Value, Values> |
-  FieldDefaultConfig<Value, Values> & GenericFieldHTMLConfig<Element>;
+export type FieldElements<Values, Path extends PathOf<Values>> =
+  | InputElements
+  | React.JSXElementConstructor<FieldAsProps<ValueMatchingPath<Values, Path>, Values>>;
+
+export type ElementExtraProps<Element extends FieldElements<any, any>, CalculatedProps> = Omit<React.ComponentProps<Element>,
+keyof CalculatedProps>;
+
+export type FieldConfig<
+  Values,
+  Path extends PathOf<Values>,
+  Element extends FieldElements<Values, Path>
+> =
+    (FieldAsConfig<Values, Path, Element> & ElementExtraProps<Element, FieldInputProps<any, any>>)
+    | (FieldDefaultConfig<Values, Path> & ElementExtraProps<"input", FieldInputProps<any, any>>)
+    | FieldRenderConfig<Values, Path>
+    | FieldChildrenConfig<Values, Path>;
 
 /**
  * CustomField, AsField, ComponentField definitions
  */
 export type CustomField<Value> = <
   Values,
+  Element extends FieldElements<Values, PathMatchingValue<Value, Values>>
 >(
-  props: FieldConfig<Value, Values>
+  props: FieldConfig<Values, PathMatchingValue<Value, Values>, Element>
 ) =>
   React.ReactElement | null;
 
-export type TypedField<Values> = <Value, Element extends InputElements = "input">(
-  props: FieldConfig<Value, Values, Element>
+export type TypedField<Values> = <Path extends PathOf<Values>, Element extends FieldElements<Values, Path>>(
+  props: FieldConfig<Values, Path, Element>
 ) =>
   React.ReactElement | null;
 
-export type FieldByValue<Value, Values, Element extends InputElements = "input"> = (
-  props: FieldConfig<Value, Values, Element>
+export type FieldByValue<Value, Values, Element extends FieldElements<Values, PathMatchingValue<Value, Values>>> = (
+  props: FieldConfig<Values, PathMatchingValue<Value, Values>, Element>
 ) =>
   React.ReactElement | null;
 
 /**
  * AsField
  */
-export type FieldAsProps<
+export interface FieldAsProps<
   Value = any,
   Values = any
-> =
-  FieldPassThroughConfig<Value, Values> &
-  FieldInputProps<Value, Values>;
+> extends
+  Omit<FieldPassThroughConfig<Values, PathMatchingValue<Value, Values>>, 'value'>,
+  FieldInputProps<Value, Values> {};
 
 export type TypedAsField<Value> = <Values>(
   props: React.PropsWithChildren<FieldAsProps<
@@ -76,12 +87,11 @@ export abstract class FieldAsClass<
 /**
  * ComponentField
  */
-export type FieldComponentProps<
-  Value = any,
-  Values = any
-> =
-  FieldPassThroughConfig<Value, Values> &
-  LegacyBag<Value, Values>;
+export interface FieldComponentProps<
+  Values = any,
+  Path extends PathOf<Values> = any,
+> extends FieldPassThroughConfig<Values, Path>,
+  LegacyBag<Values, Path> {};
 
 export abstract class FieldComponentClass<
   Value,
@@ -96,29 +106,29 @@ export abstract class FieldComponentClass<
 /**
 * @deprecated use `FieldConfig`
 */
-export type FieldAttributes<Value, Values> =
-  FieldConfig<Value, Values>;
+export type FieldAttributes<Values, Path extends PathOf<Values>, Element extends FieldElements<Values, Path>> =
+  FieldConfig<Values, Path, Element>;
 
 /**
  * These props are passed from FieldConfig to FieldProps.
  *
  * @private
  */
-export type FieldPassThroughConfig<Value, Values> = {
+export type FieldPassThroughConfig<Values, Path extends PathOf<Values>> = {
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidator<SingleValue<Value>>;
+  validate?: FieldValidator<SingleValue<ValueMatchingPath<Values, Path>>>;
 
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: ParseFn<SingleValue<Value>>;
+  parse?: ParseFn<SingleValue<ValueMatchingPath<Values, Path>>>;
 
   /**
    * Function to transform value passed to input
    */
-  format?: FormatFn<SingleValue<Value>>;
+  format?: FormatFn<SingleValue<ValueMatchingPath<Values, Path>>>;
 
   /**
    * Wait until blur event before formatting input value?
@@ -134,13 +144,13 @@ export type FieldPassThroughConfig<Value, Values> = {
   /**
    * Field name
    */
-  name: PathMatchingValue<Value, Values>;
+  name: Path;
 
   /** HTML input type */
   type?: string;
 
   /** checkbox value to match against current value */
-  value?: SingleValue<Value>;
+  value?: SingleValue<ValueMatchingPath<Values, Path>>;
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
@@ -154,24 +164,11 @@ export type FieldAsComponent<Value, Values> =
         Values
       >>;
 
-type FieldComponentComponent<Value, Values> =
-  any extends Values
-  ? React.ComponentType<any>
-  : React.ComponentType<FieldComponentProps<
-    Value,
-    Values
-  >>;
-
-type GenericFieldHTMLConfig<Element extends InputElements> = Omit<
-  JSX.IntrinsicElements[Element],
-  keyof FieldPassThroughConfig<any, any>
->;
-
 /**
  * Passed to `<Field component={Component} />`.
  */
-type LegacyBag<Value, Values> = {
-  field: FieldInputProps<Value, Values>;
+type LegacyBag<Values, Path extends PathOf<Values>> = {
+  field: FieldInputProps<ValueMatchingPath<Values, Path>, Values>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
 }
@@ -179,14 +176,14 @@ type LegacyBag<Value, Values> = {
 /**
  * Passed to `render={Function}` or `children={Function}`.
  */
-export interface FieldRenderProps<Value = any, Values = any>
-  extends LegacyBag<Value, Values>
+export interface FieldRenderProps<Values = any, Path extends PathOf<Values> = any>
+  extends LegacyBag<Values, Path>
 {
-  meta: FieldMetaProps<Value>;
+  meta: FieldMetaProps<ValueMatchingPath<Values, Path>>;
 }
 
-export type FieldRenderFunction<Value, Values> = (
-  props: FieldRenderProps<Value, Values>
+export type FieldRenderFunction<Values, Path extends PathOf<Values>> = (
+  props: FieldRenderProps<Values, Path>
 ) => React.ReactElement | null;
 
 /**
@@ -196,78 +193,32 @@ export type FieldRenderFunction<Value, Values> = (
  * FieldAsProps: `field.as = Component`,
  * FieldRenderProps: `field.render, field.children = Function`
  */
-export type FieldProps<Value, Values> =
-  FieldRenderProps<Value, Values>;
-
-export type TypedComponentField<Value> = <Values>(
-  props: FieldComponentProps<Value, Values>
-) => React.ReactElement | null;
-
-/**
- * `field.as = string`
- *
- * @private
- */
-export interface FieldAsStringConfig<Value, Values, Element extends keyof JSX.IntrinsicElements> extends
-  FieldPassThroughConfig<Value, Values>
-{
-  children?: React.ReactNode
-  as: Element,
-  component?: undefined,
-  render?: undefined,
-}
+export type FieldProps<Values, Path extends PathOf<Values>> =
+  FieldRenderProps<Values, Path>;
 
 /**
  * `field.as = Component`
  *
  * @private
  */
-export interface FieldAsComponentConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
+export interface FieldAsConfig<Values, Path extends PathOf<Values>, Element> extends
+  FieldPassThroughConfig<Values, Path>
 {
   children?: React.ReactNode
-  as: TypedAsField<Value> | FieldAsComponent<Value, Values>;
+  as: Element;
   component?: undefined,
   render?: undefined,
 };
-
-/**
- * `field.component = string`
- *
- * @private
- */
-export interface FieldStringComponentConfig<Value, Values, Element extends InputElements> extends
-  FieldPassThroughConfig<Value, Values>
-{
-  children?: React.ReactNode
-  component: Element,
-  as?: undefined,
-  render?: undefined,
-};
-
-/**
- * `field.component = Component`
- *
- * @private
- */
-export interface FieldComponentConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
-{
-  children?: React.ReactNode
-  component: FieldComponentComponent<Value, Values>;
-  as?: undefined,
-  render?: undefined,
-}
 
 /**
  * `field.render = Function`
  *
  * @private
  */
-export interface FieldRenderConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
+export interface FieldRenderConfig<Values, Path extends PathOf<Values>> extends
+  FieldPassThroughConfig<Values, Path>
 {
-  render: FieldRenderFunction<Value, Values>;
+  render: FieldRenderFunction<Values, Path>;
   as?: undefined,
   component?: undefined,
   children?: undefined
@@ -278,10 +229,10 @@ export interface FieldRenderConfig<Value, Values> extends
  *
  * @private
  */
-export interface FieldChildrenConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
+export interface FieldChildrenConfig<Values, Path extends PathOf<Values>> extends
+  FieldPassThroughConfig<Values, Path>
 {
-  children: FieldRenderFunction<Value, Values>;
+  children: FieldRenderFunction<Values, Path>;
   as?: undefined,
   component?: undefined,
   render?: undefined,
@@ -292,8 +243,8 @@ export interface FieldChildrenConfig<Value, Values> extends
  *
  * @private
  */
-export interface FieldDefaultConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
+export interface FieldDefaultConfig<Values, Path extends PathOf<Values>> extends
+  FieldPassThroughConfig<Values, Path>
 {
   as?: undefined,
   component?: undefined,

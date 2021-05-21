@@ -6,7 +6,6 @@ import {
     FieldRenderFunction,
     FieldRenderProps,
     TypedAsField,
-    TypedComponentField,
     PathMatchingValue,
     FieldComponentClass,
     FieldConfig,
@@ -15,6 +14,7 @@ import {
     useCustomField,
     ValueMatchingPath,
     PathOf,
+    FieldElements,
 } from "../src";
 
 type BasePerson = {
@@ -49,8 +49,8 @@ const componentAnyFC =
 const renderAnyFn: FieldRenderFunction<any, any> =
   (props) => props.meta.value ? null : null;
 
-const asNumberFC: TypedAsField<number> =
-  (props) => props.value ? null : null;
+const asNumberFC =
+  <Values,>(props: FieldAsProps<number, Values>) => props.value ? null : null;
 
 const asStringFC: TypedAsField<string> =
   (props) => props.value ? null : null;
@@ -60,29 +60,23 @@ class AsNumberClass<Values> extends React.Component<FieldAsProps<number, Values>
     return this.props.value ? null : null;
   }
 }
-const componentNumberFC: TypedComponentField<number> =
-  (props) => props.field ? null : null;
 const partialPropsFC = (props: {name: string}) => props.name ? null : null;
-class ComponentNumberClass extends FieldComponentClass<number> {
-  render() {
-    return this.props.value ? null : null;
-  }
-}
 class PartialPropsClass extends React.Component<{name: string}> {
   render() {
     return this.props.name ? null : null;
   }
 }
-const renderNumberFN = <Value, Values>(
-  props: FieldRenderProps<Value, Values>
+const renderNumberFN = <Values, Path extends PathMatchingValue<number, Values>>(
+  props: FieldRenderProps<Values, Path>
 ) => props.meta.value ? null : null;
 
-const CustomNumberFC: CustomField<number> = <Values,>(
-  props: FieldConfig<number, Values>
+const CustomNumberFC: CustomField<number> = <Values, Element extends FieldElements<Values, PathMatchingValue<number, Values>>>(
+  props: FieldConfig<Values, PathMatchingValue<number, Values>, Element>
 ) => {
   const InnerTypedField = useTypedField<Values>();
 
   return <>
+    <InnerTypedField name={props.name} />
     <InnerTypedField name={props.name} format={value => {}} />
     <InnerTypedField
       name={props.name}
@@ -100,7 +94,7 @@ const CustomNumberFC: CustomField<number> = <Values,>(
   </>
 }
 
-const fieldTests = (props: FieldConfig<"age", Person>) => {
+const fieldTests = (props: FieldConfig<Person, "age", "input">) => {
   const TypedField = useTypedField<Person>();
   const TypedNumberFC = useCustomField<Person>()(CustomNumberFC);
 
@@ -131,10 +125,7 @@ const fieldTests = (props: FieldConfig<"age", Person>) => {
 
     {/* FieldAsString */}
     <Field name="age" as="select" />
-
-    {/* FieldStringComponent */}
-    <Field name="age" component="select" />
-    <TypedField name="age" component="select" />
+    <TypedField name="age" as="select" />
 
     {/* FieldAsComponent */}
     <Field name="age" as={proplessFC} />
@@ -161,25 +152,6 @@ const fieldTests = (props: FieldConfig<"age", Person>) => {
     <TypedField name="motto" as={asNumberFC} />
     {/* @ts-expect-error field value should match */}
     <TypedField name="motto" as={AsNumberClass} />
-
-    {/* FieldComponent */}
-    <Field name="age" component={proplessFC} />
-    <TypedField name="age" component={proplessFC} />
-    <Field name="age" component={propsAnyFC} />
-    <TypedField name="age" component={propsAnyFC} />
-    <Field name="age" component={PropsAnyClass} />
-    <Field name="age" component={partialPropsFC} />
-    <Field name="age" component={PartialPropsClass} />
-    <Field name="age" component={componentAnyFC} />
-    <Field name="age" component={componentNumberFC} />
-    <TypedField name="age" component={componentNumberFC} />
-    <Field name="age" component={componentAnyFC}><div /></Field>
-    <Field name="age" component={componentNumberFC}><div /></Field>
-    <TypedField name="age" component={componentNumberFC}><div /></TypedField>
-    <TypedField name="age" component={PropsAnyClass} />
-    <TypedField name="age" component={PartialPropsClass} />
-    <Field name="age" component={ComponentNumberClass} />
-    <TypedField name="age" component={ComponentNumberClass} />
 
     {/* @ts-expect-error field value should match */}
     <TypedField name="motto" component={componentNumberFC} />

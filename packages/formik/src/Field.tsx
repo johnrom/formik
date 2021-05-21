@@ -4,13 +4,14 @@ import {
   FieldHelperProps,
   FieldInputProps,
   PathMatchingValue,
+  PathOf,
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
-import { FieldConfig, FieldHookConfig, InputElements } from './Field.types';
+import { FieldConfig, FieldElements, FieldHookConfig } from './Field.types';
 
 export function useField<
   Value = any,
@@ -71,11 +72,11 @@ export function useField<
 }
 
 export function Field<
-  Value = any,
   Values = any,
-  Element extends InputElements = "input"
+  Path extends PathOf<Values> = any,
+  Element extends FieldElements<Values, Path> = any
 >(
-  props: FieldConfig<Value, Values, Element>
+  props: FieldConfig<Values, Path, Element>
 ) {
 
   if (__DEV__) {
@@ -156,23 +157,6 @@ export function Field<
     );
   }
 
-  if (props.component && typeof props.component !== 'string') {
-    const {
-      render,
-      children,
-      as,
-      component,
-      ...componentProps
-    } = props;
-
-    // We don't pass `meta` for backwards compat
-    return React.createElement(
-      component,
-      { field, ...componentProps, form },
-      children
-    );
-  }
-
   const {
     innerRef,
     validate,
@@ -189,7 +173,7 @@ export function Field<
   } = props;
 
   return React.createElement(
-    props.as || props.component || "input",
+    props.as || "input",
     // field has FieldValue<> while HTML expects
     { ref: props.innerRef, ...field, ...htmlProps as JSX.IntrinsicElements[Element] },
     children
