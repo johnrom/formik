@@ -10,6 +10,8 @@ import {
   FormatFn,
 } from './types';
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export type InputElements = "input" | "textarea" | "select";
 
 export interface FieldHookConfig<Value, Values> extends
@@ -18,31 +20,49 @@ export interface FieldHookConfig<Value, Values> extends
   as?: any
 };
 
-export type FieldConfig<Value, Values, Element extends InputElements = "input"> =
-  FieldAsStringConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
-  FieldAsComponentConfig<Value, Values> |
-  FieldStringComponentConfig<Value, Values, Element> & GenericFieldHTMLConfig<Element> |
-  FieldComponentConfig<Value, Values> |
+export type FieldElements<Value, Values> =
+| InputElements
+| FieldAsComponent<Value, Values>
+| TypedAsField<Value>
+| FieldComponentComponent<Value, Values>
+| TypedComponentField<Value>;
+
+export type FieldAsElements<Value, Values> =
+  | InputElements
+  | FieldAsComponent<Value, Values>
+  | TypedAsField<Value>;
+
+export type FieldComponentElements<Value, Values> =
+  | InputElements
+  | FieldComponentComponent<Value, Values>
+  | TypedComponentField<Value>;
+
+export type ElementExtraProps<Element extends FieldElements<any, any>, CalculatedProps> =
+  Omit<React.ComponentProps<Element>, keyof CalculatedProps>;
+
+export type FieldConfig<Value, Values, Element> =
+  FieldAsConfig<Value, Values, Element> |
+  FieldComponentConfig<Value, Values, Element> |
   FieldRenderConfig<Value, Values> |
   FieldChildrenConfig<Value, Values> |
-  FieldDefaultConfig<Value, Values> & GenericFieldHTMLConfig<Element>;
+  FieldDefaultConfig<Value, Values>;
 
 /**
  * CustomField, AsField, ComponentField definitions
  */
 export type CustomField<Value> = <
-  Values,
+  Values, Element extends FieldElements<Value, Values>
 >(
-  props: FieldConfig<Value, Values>
-) =>
-  React.ReactElement | null;
-
-export type TypedField<Values> = <Value, Element extends InputElements = "input">(
   props: FieldConfig<Value, Values, Element>
 ) =>
   React.ReactElement | null;
 
-export type FieldByValue<Value, Values, Element extends InputElements = "input"> = (
+export type TypedField<Values> = <Value, Element extends FieldElements<Value, Values>>(
+  props: FieldConfig<Value, Values, Element>
+) =>
+  React.ReactElement | null;
+
+export type FieldByValue<Value, Values, Element extends FieldElements<Value, Values>> = (
   props: FieldConfig<Value, Values, Element>
 ) =>
   React.ReactElement | null;
@@ -50,12 +70,12 @@ export type FieldByValue<Value, Values, Element extends InputElements = "input">
 /**
  * AsField
  */
-export type FieldAsProps<
+export interface FieldAsProps<
   Value = any,
   Values = any
-> =
-  FieldPassThroughConfig<Value, Values> &
-  FieldInputProps<Value, Values>;
+> extends
+  Omit<FieldPassThroughConfig<Value, Values>, 'value'>,
+  FieldInputProps<Value, Values> {}
 
 export type TypedAsField<Value> = <Values>(
   props: React.PropsWithChildren<FieldAsProps<
@@ -76,12 +96,12 @@ export abstract class FieldAsClass<
 /**
  * ComponentField
  */
-export type FieldComponentProps<
+export interface FieldComponentProps<
   Value = any,
   Values = any
-> =
-  FieldPassThroughConfig<Value, Values> &
-  LegacyBag<Value, Values>;
+> extends
+  FieldPassThroughConfig<Value, Values>,
+  LegacyBag<Value, Values> {}
 
 export abstract class FieldComponentClass<
   Value,
@@ -96,8 +116,8 @@ export abstract class FieldComponentClass<
 /**
 * @deprecated use `FieldConfig`
 */
-export type FieldAttributes<Value, Values> =
-  FieldConfig<Value, Values>;
+export type FieldAttributes<Value, Values, Element extends FieldElements<Value, Values>> =
+  FieldConfig<Value, Values, Element>;
 
 /**
  * These props are passed from FieldConfig to FieldProps.
@@ -154,18 +174,13 @@ export type FieldAsComponent<Value, Values> =
         Values
       >>;
 
-type FieldComponentComponent<Value, Values> =
+export type FieldComponentComponent<Value, Values> =
   any extends Values
   ? React.ComponentType<any>
   : React.ComponentType<FieldComponentProps<
     Value,
     Values
   >>;
-
-type GenericFieldHTMLConfig<Element extends InputElements> = Omit<
-  JSX.IntrinsicElements[Element],
-  keyof FieldPassThroughConfig<any, any>
->;
 
 /**
  * Passed to `<Field component={Component} />`.
@@ -208,56 +223,38 @@ export type TypedComponentField<Value> = <Values>(
  *
  * @private
  */
-export interface FieldAsStringConfig<Value, Values, Element extends keyof JSX.IntrinsicElements> extends
+export interface FieldAsConfigRaw<Value, Values, Element> extends
   FieldPassThroughConfig<Value, Values>
 {
   children?: React.ReactNode
-  as: Element,
+  as: Element & FieldAsElements<Value, Values>,
   component?: undefined,
   render?: undefined,
 }
 
-/**
- * `field.as = Component`
- *
- * @private
- */
-export interface FieldAsComponentConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
-{
-  children?: React.ReactNode
-  as: TypedAsField<Value> | FieldAsComponent<Value, Values>;
-  component?: undefined,
-  render?: undefined,
-};
+export type FieldAsConfig<Value, Values, Element> =
+  Element extends FieldAsElements<Value, Values>
+    ? FieldAsConfigRaw<Value, Values, Element> & ElementExtraProps<Element, FieldInputProps<Value, Values>>
+    : never;
 
 /**
  * `field.component = string`
  *
  * @private
  */
-export interface FieldStringComponentConfig<Value, Values, Element extends InputElements> extends
+export interface FieldComponentConfigRaw<Value, Values, Element> extends
   FieldPassThroughConfig<Value, Values>
 {
   children?: React.ReactNode
-  component: Element,
+  component: Element & FieldComponentElements<Value, Values>,
   as?: undefined,
   render?: undefined,
 };
 
-/**
- * `field.component = Component`
- *
- * @private
- */
-export interface FieldComponentConfig<Value, Values> extends
-  FieldPassThroughConfig<Value, Values>
-{
-  children?: React.ReactNode
-  component: FieldComponentComponent<Value, Values>;
-  as?: undefined,
-  render?: undefined,
-}
+export type FieldComponentConfig<Value, Values, Element> =
+  Element extends FieldComponentElements<Value, Values>
+    ? FieldComponentConfigRaw<Value, Values, Element> & ElementExtraProps<Element, LegacyBag<Value, Values>>
+    : never;
 
 /**
  * `field.render = Function`
@@ -292,7 +289,7 @@ export interface FieldChildrenConfig<Value, Values> extends
  *
  * @private
  */
-export interface FieldDefaultConfig<Value, Values> extends
+export interface FieldDefaultConfigRaw<Value, Values> extends
   FieldPassThroughConfig<Value, Values>
 {
   as?: undefined,
@@ -300,3 +297,6 @@ export interface FieldDefaultConfig<Value, Values> extends
   render?: undefined,
   children?: undefined,
 }
+
+export type FieldDefaultConfig<Value, Values> =
+  FieldDefaultConfigRaw<Value, Values> & ElementExtraProps<"input", FieldInputProps<Value, Values>>;

@@ -10,7 +10,7 @@ import invariant from 'tiny-warning';
 import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
-import { FieldConfig, FieldHookConfig, InputElements } from './Field.types';
+import { FieldConfig, FieldElements, FieldHookConfig } from './Field.types';
 
 export function useField<
   Value = any,
@@ -73,7 +73,7 @@ export function useField<
 export function Field<
   Value = any,
   Values = any,
-  Element extends InputElements = "input"
+  Element extends FieldElements<Value, Values> = "input"
 >(
   props: FieldConfig<Value, Values, Element>
 ) {
@@ -109,7 +109,7 @@ export function Field<
     }, []);
   }
 
-  const [field, meta] = useField(props);
+  const [field, meta] = useField<Value, Values>(props);
 
   /**
    * If we use render function or use functional children, we continue to
@@ -168,7 +168,7 @@ export function Field<
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, ...componentProps, form },
+      { ...componentProps, field, form },
       children
     );
   }
