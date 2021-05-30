@@ -1,9 +1,14 @@
 import {
     Field,
+  FieldAsConfig,
     FieldAsProps,
     FieldComponentClass,
     FieldComponentProps,
     FieldConfig,
+    FieldDefaultConfig,
+    FieldComponentConfig,
+    FieldRenderConfig,
+    FieldChildrenConfig,
     FieldElements,
     FieldRenderFunction,
     FieldRenderProps,
@@ -13,7 +18,8 @@ import {
     TypedAsField,
     TypedComponentField,
     useFormik,
-    useTypedField
+    useTypedField,
+    FieldAsElements
   } from "formik";
   import * as React from "react";
 
@@ -58,7 +64,7 @@ import {
   const propsOnlyExtraFC = (props: { what: true }) => null;
 
   const asAnyFC = (props: FieldAsProps<any, any>) => null;
-  const asNumberFC: TypedAsField<number> = (props) => null;
+  const asNumberFC = <Values,>(props: FieldAsProps<number, Values>) => props.format ? null : null;
   const asStringFC: TypedAsField<string> = (props) => null;
   const asNumberExtraFC = <Values,>(props: FieldAsProps<
     number,
@@ -98,24 +104,32 @@ import {
   }
 
   const CustomNumberFC = <
-    Values extends any,
+    Values,
     Element extends FieldElements<number, Values>
   >(
     props: FieldConfig<number, Values, Element>
   ) => {
-    const InnerTypedField = useTypedField<Values>();
-
     return (
       <>
-        <InnerTypedField<number, "input"> name={props.name} format={(value) => {}} />
-        <InnerTypedField name={props.name} format={(value) => {}} />
-        <InnerTypedField name={props.name} as={asNumberFC} />
-        <InnerTypedField name={props.name} as={asAnyFC} />
-        {/** @ts-expect-error value must match `number` */}
-        <InnerTypedField
-          as={asStringFC}
-          name={props.name}
-        />
+        {/*
+          Uhh... these crash TypeScript
+          <Field {...props} format={(value) => ""} />
+          <Field {...props} format={(value: string) => {}} />
+        */}
+      </>
+    );
+  };
+
+  const CustomNumberAsDefaultFC = <
+    Values,
+  >(
+    props: FieldDefaultConfig<number, Values>
+  ) => {
+    return (
+      <>
+        <Field {...props} format={(value) => ""} />
+        {/* @ts-expect-error value must match */}
+        <Field {...props} format={(value: string) => {}} />
       </>
     );
   };
@@ -165,6 +179,13 @@ const handleClick = (event: React.MouseEvent<any>) => {};
 
 const FieldTests = (props: FieldConfig<number, Person, "input">) => {
   const TypedField = useTypedField<Person>();
+  const childrenConfig: FieldComponentConfig<number, Person, typeof componentNumberExtraFC> = {
+    name: "age" as const,
+    component: componentNumberExtraFC,
+    what: true,
+  };
+
+  const test: TypedAsField<number> & FieldAsElements<string, Person> = asNumberFC;
 
   return (
     <Formik initialValues={person} onSubmit={noopVoid}>
@@ -181,7 +202,7 @@ const FieldTests = (props: FieldConfig<number, Person, "input">) => {
         <TypedField name="friends.NOPE.name.first" />
 
         <Field name="age" format={(value) => {}} />
-        <TypedField<number, "input"> name="age" format={(value) => {}} />
+        <Field<number, Person> name="age" format={(value) => {}} />
         <TypedField name="age" format={(value) => {}} />
         <TypedField name="age" format={(value: number) => {}} />
         {/* @ts-expect-error TypedField must match value */}
@@ -246,7 +267,7 @@ const FieldTests = (props: FieldConfig<number, Person, "input">) => {
         <TypedField name="age" as={asNumberFC} />
 
         {/* @ts-expect-error field value should match */}
-        <TypedField name="motto" as={AsNumberFC} />
+        <TypedField name="motto" as={asNumberFC} />
         {/* @ts-expect-error field value should match */}
         <TypedField name="motto" as={AsNumberClass} />
 
@@ -319,8 +340,8 @@ const FieldTests = (props: FieldConfig<number, Person, "input">) => {
 
         {/* FieldRender */}
         <TypedField name="age" render={renderNumberFN} />
-        {/* @ts-expect-error render function doesn't have child component */}
         <TypedField name="age" render={renderNumberFN}>
+          {/* @ts-expect-error render function doesn't have child component */}
           <div />
         </TypedField>
 
@@ -335,6 +356,8 @@ const FieldTests = (props: FieldConfig<number, Person, "input">) => {
         <CustomNumberFC<Person, "input"> name="age" format={(value) => {}} />
         {/* Untyped Custom Fields can have anything */}
         <CustomNumberFC name="motto" />
+
+        <CustomNumberAsDefaultFC<Person> name="age" format={(value) => {}} />
 
         {/* @ts-expect-error should match number */}
         <TypedField name="partner.age" value="" />

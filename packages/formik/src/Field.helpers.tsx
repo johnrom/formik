@@ -1,6 +1,4 @@
-import { values } from "lodash";
 import * as React from "react";
-import { Field } from "./Field";
 import {
   CustomField,
   FieldByValue,
@@ -24,23 +22,4 @@ export const useCustomField = <Values,>() => <Value, Element extends FieldElemen
 ) => React.useMemo(
   () => createCustomField<Values>()<Value, Element>(FieldType),
   [FieldType]
-);
-
-/**
- * Create a typed field from anywhere.
- */
-export const createTypedField = <Values,>(
-  FieldType: TypedField<Values> = Field
-): TypedField<Values> => FieldType;
-
-/**
- * Create a TypedField from within Formik.
- *
- * @private
- */
-export const useTypedField = <Values,>(
-  FieldType: TypedField<Values> = Field
-) => React.useMemo(
-  () => createTypedField<Values>(FieldType),
-  []
 );

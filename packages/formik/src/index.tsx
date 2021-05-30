@@ -5,6 +5,7 @@ export * from './Formik';
 export * from './Field';
 export * from './Field.helpers';
 export * from './Field.types';
+export * from './TypedField';
 export * from './FieldArray';
 export * from './FieldArray.helpers';
 export * from './FieldArray.types';
