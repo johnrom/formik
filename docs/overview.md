@@ -77,7 +77,7 @@ or
 yarn add formik
 ```
 
-Formik is compatible with React v15+ and works with ReactDOM and React Native.
+Formik is compatible with React v16.8+ and works with ReactDOM and React Native.
 
 You can also try before you buy with this
 **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
@@ -103,11 +103,9 @@ You can play with Formik in your web browser with these live online playgrounds.
 
 ## The Gist
 
-Formik keeps track of your form's state and then exposes it plus a few reusable
-methods and event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to
-your form via `props`. `handleChange` and `handleBlur` work exactly as
-expected--they use a `name` or `id` attribute to figure out which field to
-update.
+The essence of Formik is a combination of form state and an API to access and update that state. It provides a combination of React Hooks and Context to allow developers to create reusable components to access and manage that state.
+
+Formik keeps track of your form's state and then exposes it via variety of hooks plus a few reusable methods and event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly as expected--they use a `name` or `id` attribute to figure out which field to update.
 
 ```jsx
 import React from 'react';
@@ -177,10 +175,9 @@ export default Basic;
 
 ### Reducing boilerplate
 
-The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />`, `<Field />`, and `<ErrorMessage />`. They use React context to hook into the parent `<Formik />` state/methods.
+The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />`, `<Field />`, and `<ErrorMessage />`. They use React context and the API provided by Formik to access and manage state.
 
 ```jsx
-// Render Prop
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
