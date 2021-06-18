@@ -75,8 +75,6 @@ function formikReducer<Values>(
       }
 
       return { ...state, errors: msg.payload };
-    case 'SET_STATUS':
-      return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
     case 'SET_ISVALIDATING':
