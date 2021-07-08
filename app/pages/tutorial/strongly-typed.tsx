@@ -3,7 +3,6 @@ import {
   Formik,
   Form,
   ErrorMessage,
-  Field,
 } from 'formik';
 import * as Yup from 'yup';
 import { NumberAsField } from 'app/components/fields/number-as-field';
@@ -23,9 +22,11 @@ type BasePerson = {
   name: NameValue,
   email: string,
   hasNicknames: boolean,
+  age: number | '',
+  favoriteFood: string,
+  favoriteNumber: number,
   nicknames: string[],
   favoriteFoods: string[],
-  age: number | '',
   favoriteNumbers: (number | "")[];
   motto: string;
 }
@@ -43,6 +44,8 @@ const basePerson: BasePerson = {
   email: "",
   hasNicknames: false,
   nicknames: [],
+  favoriteFood: "",
+  favoriteNumber: 0,
   favoriteFoods: [],
   age: 21,
   favoriteNumbers: [],
@@ -141,26 +144,26 @@ const StronglyTypedPage = () => (
         <div id="checkbox-group">Checkbox Group</div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <Field type="checkbox" name="favoriteFoods" value="Pizza" />
+            <fields.Field type="checkbox" name="favoriteFood" value="Pizza" />
             Pizza
           </label>
           <label>
-            <Field type="checkbox" name="favoriteFoods" value="Falafel" />
+            <fields.Field type="checkbox" name="favoriteFood" value="Falafel" />
             Falafel
           </label>
           <label>
-            <Field type="checkbox" name="favoriteFoods" value="Dim Sum" />
+            <fields.Field type="checkbox" name="favoriteFood" value="Dim Sum" />
             Dim Sum
           </label>
         </div>
         <div id="my-radio-group">Picked</div>
         <div role="group" aria-labelledby="my-radio-group">
           <label>
-            <Field type="radio" name="favoriteNumbers" value={1} />
+            <fields.Field type="radio" name="favoriteNumber" value={1} parse={val => typeof val === "string" ? parseInt(val, 10) : ""} />
             1
           </label>
           <label>
-            <Field type="radio" name="favoriteNumbers" value={2} />
+            <fields.Field type="radio" name="favoriteNumber" value={2} />
             2
           </label>
         </div>
