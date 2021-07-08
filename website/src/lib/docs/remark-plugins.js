@@ -18,6 +18,10 @@ module.exports = [
       maxDepth: 6,
     },
   ],
+  [
+    require('@johnrom/remark-code-import'),
+    { basePath: process.cwd() }
+  ],
   require('remark-emoji'),
   require('remark-footnotes'),
   require('remark-images'),

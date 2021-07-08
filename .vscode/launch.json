@@ -19,6 +19,20 @@
             ]
         },
         {
+            "name": "Develop Website",
+            "request": "launch",
+            "type": "node",
+            "runtimeArgs": [
+                "run",
+                "dev",
+            ],
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}/website",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
             "type": "node",
             "name": "vscode-jest-tests",
             "request": "launch",

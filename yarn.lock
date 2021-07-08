@@ -14353,6 +14353,15 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
+snippet-collector@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/snippet-collector/-/snippet-collector-1.0.6.tgz#67d2f52c8ab2986c965e056f339aa56fe6b10788"
+  integrity sha512-XSHVQVVXVCSCxakR/qtsHmmoMB6dgAGT1XhNsedINPujvfvIqWzUlFIU8zw+QORMJ1vYRkiIn0lipR2iHzxOdQ==
+  dependencies:
+    fs-extra "^8.1.0"
+    glob "^7.1.6"
+    minimist "^1.2.0"
+
 sntp@2.x.x:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/sntp/-/sntp-2.1.0.tgz#2c6cec14fedc2222739caf9b5c3d85d1cc5a2cc8"

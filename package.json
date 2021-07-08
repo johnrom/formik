@@ -36,7 +36,8 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev",
+    "start:website": "yarn --cwd ./website run dev"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [
