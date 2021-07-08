@@ -66,14 +66,8 @@ export const useFieldProps = <Value, Values>(
           field.value = valueProp;
         }
       } else if (type === 'radio') {
-        field.checked = valueState === valueProp!;
-        // we need to force value on radio and multi-checkbox
-        field.value = valueProp!;
-      } else if (is === 'select' && multiple) {
-        field.value = (field.value || []) as any;
-        field.multiple = true;
-      } else if (type === 'radio') {
         field.checked = valueState === valueProp;
+        // todo: we need to force value on radio and multi-checkbox
         field.value = valueProp!;
       } else if (is === 'select' && multiple) {
         // todo: select isn't actually passed a SingleValue -_-
@@ -86,6 +80,8 @@ export const useFieldProps = <Value, Values>(
           if (touchedState === true) {
             field.value = format(field.value, field.name);
           }
+        } else {
+          field.value = format(field.value, field.name);
         }
       }
 
