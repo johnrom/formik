@@ -92,6 +92,7 @@ export const useFormikSubscriptions = <Values>(
    * Make sure to batch updates to subscriptions.
    */
   const batch = React.useCallback((callback: BatchCallback) => {
+    console.log(getBatch);
     getBatch()(callback);
   }, []);
 

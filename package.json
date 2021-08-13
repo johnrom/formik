@@ -15,10 +15,14 @@
     "tsdx": "^0.14.1",
     "typescript": "^4.0.3"
   },
-  "workspaces": [
-    "packages/*",
-    "./app"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "./app",
+      "./app-native"
+    ],
+    "nohoist": ["**/app-native/react-native", "**/app-native/react-native/**", "**/app-native/expo", "**/app-native/expo/**"]
+  },
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
@@ -36,7 +40,12 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev",
+    "start:expo": "yarn --cwd ./app-native run start",
+    "start:android": "yarn --cwd ./app-native run android",
+    "start:ios": "yarn --cwd ./app-native run ios",
+    "start:nativeweb": "yarn --cwd ./app-native run web",
+    "postinstall": "cd ./app-native && expo-yarn-workspaces postinstall"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [
