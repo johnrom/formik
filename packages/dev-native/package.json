@@ -1,5 +1,5 @@
 {
-  "name": "formik-dev-native",
+  "name": "@formik/dev-native",
   "version": "0.1.0",
   "private": true,
   "main": "__generated__/AppEntry.js",
