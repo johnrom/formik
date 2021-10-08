@@ -35,9 +35,9 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run dev",
-    "start:native": "yarn --cwd ./app-native run start",
-    "postinstall": "cd ./app-native && expo-yarn-workspaces postinstall"
+    "start:app": "yarn --cwd ./packages/dev-web run dev",
+    "start:native": "yarn --cwd ./packages/dev-native run start",
+    "postinstall": "cd ./packages/dev-native && expo-yarn-workspaces postinstall"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [
