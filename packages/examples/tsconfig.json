@@ -1,8 +1,9 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
     "jsx": "react",
     "moduleResolution": "node",
     "noImplicitAny": false,
@@ -13,7 +14,11 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "lib": ["es2015", "es2016", "dom"],
-    "baseUrl": ".",
-    "types": ["node"]
-  }
+    "baseUrl": "../../",
+    "paths": {
+      "formik": [
+        "packages/formik/src"
+      ],
+    }
+  },
 }

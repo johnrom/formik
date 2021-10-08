@@ -1,14 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form, useField, useFormikContext } from 'formik';
+import {
+  Formik,
+  Field,
+  Form,
+  useField,
+  FieldAttributes,
+  useFormikState,
+} from 'formik';
 import './styles.css';
 
-const MyField = (props) => {
-  const {
-    values: { textA, textB },
-    touched,
-    setFieldValue,
-  } = useFormikContext();
+// Note that we provide initalValues all 3 fields.
+const initialValues = { textA: '', textB: '', textC: '' };
+
+const MyField = (props: FieldAttributes<any>) => {
+  const [
+    {
+      values: { textA, textB },
+      touched,
+    },
+    { setFieldValue },
+  ] = useFormikState<typeof initialValues>();
+
   const [field, meta] = useField(props);
 
   React.useEffect(() => {
@@ -32,8 +45,6 @@ const MyField = (props) => {
 };
 
 function App() {
-  // Note that we provide initalValues all 3 fields.
-  const initialValues = { textA: '', textB: '', textC: '' };
   return (
     <div className="App">
       <Formik

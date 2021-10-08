@@ -1,9 +1,14 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { Debug } from './Debug';
+import { Formik, Field, Form, ErrorMessage, FormikErrors } from 'formik';
+import { Debug } from '../Debug';
+
+const initialValues = {
+  email: '',
+  password: '',
+}
 
 const validate = values => {
-  const errors = {};
+  const errors: FormikErrors<typeof initialValues> = {};
   if (!values.email) {
     errors.email = 'Required';
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
@@ -16,10 +21,7 @@ const SignIn = () => (
   <div>
     <h1>Sign In</h1>
     <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
+      initialValues={initialValues}
       validate={validate}
       onSubmit={values => {
         setTimeout(() => {

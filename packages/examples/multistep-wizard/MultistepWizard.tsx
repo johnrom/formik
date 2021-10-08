@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Wizard is a single Formik instance whose children are each page of the
 // multi-step form. The form is submitted on each forward transition (can only
@@ -11,12 +8,17 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 // incomplete data. A snapshot of form state is used as initialValues after each
 // transition. Each page has an optional submit handler, and the top-level
 // submit is called when the final page is submitted.
-const Wizard = ({ children, initialValues, onSubmit }) => {
+const Wizard = ({ children: React.ReactNode | React.ReactNode[], initialValues, onSubmit }) => {
   const [stepNumber, setStepNumber] = useState(0);
   const steps = React.Children.toArray(children);
   const [snapshot, setSnapshot] = useState(initialValues);
 
   const step = steps[stepNumber];
+
+  if (typeof step === "string") {
+    return false;
+  }
+
   const totalSteps = steps.length;
   const isLastStep = stepNumber === totalSteps - 1;
 

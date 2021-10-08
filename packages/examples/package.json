@@ -1,0 +1,17 @@
+{
+  "name": "@formik/examples",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to use async/await to submit a Formik form",
+  "main": "index.js",
+  "dependencies": {
+    "formik": "^2.2.6",
+    "react-app-polyfill": "^1.0.5",
+    "react-dom": "latest",
+    "react": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9",
+    "typescript": "^4.0.3"
+  }
+}
