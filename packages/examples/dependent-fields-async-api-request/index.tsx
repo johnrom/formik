@@ -1,18 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form, useField, useFormikContext } from 'formik';
+import { Formik, Field, Form, useField, useFormikState, FieldAttributes } from 'formik';
 import './styles.css';
 
-async function fetchNewTextC(a, b) {
+async function fetchNewTextC(a: string, b: string) {
   await new Promise((r) => setTimeout(r, 500));
   return `textA: ${a}, textB: ${b}`;
 }
 
-const MyField = (props) => {
-  const {
-    values: { textA, textB },
-    setFieldValue,
-  } = useFormikContext();
+const initialValues = { textA: '', textB: '', textC: '' };
+
+const MyField = (props: FieldAttributes<any>) => {
+  const [
+    {
+      values: { textA, textB },
+    },
+    { setFieldValue },
+  ] = useFormikState<typeof initialValues>();
+
   const [field, meta] = useField(props);
 
   React.useEffect(() => {
@@ -39,7 +44,6 @@ const MyField = (props) => {
   );
 };
 function App() {
-  const initialValues = { textA: '', textB: '', textC: '' };
 
   return (
     <div className="App">

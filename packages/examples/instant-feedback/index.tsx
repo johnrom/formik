@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { useFormik, FormikProvider, Form, useField } from 'formik';
+import { useFormik, FormikProvider, Form, useField, FieldHookConfig } from 'formik';
 import './styles.css';
 import * as Yup from 'yup';
+import { sleep } from '../helpers';
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+export interface TextInputLiveFeedbackProps extends FieldHookConfig<any> {
+  label: string,
+  helpText: string,
+  id: string,
+}
 
-const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
+const TextInputLiveFeedback = ({ label, helpText, ...props }: TextInputLiveFeedbackProps) => {
   const [field, meta] = useField(props);
 
   // Show inline feedback if EITHER
@@ -41,7 +46,7 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
         aria-describedby={`${props.id}-feedback ${props.id}-help`}
         onFocus={handleFocus}
       />
-      <div className="text-xs" id={`${props.id}-help`} tabIndex="-1">
+      <div className="text-xs" id={`${props.id}-help`} tabIndex={-1}>
         {helpText}
       </div>
     </div>

@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+import { sleep } from '../helpers';
 
 const Example = () => {
   return (
@@ -22,8 +21,8 @@ const Example = () => {
             <Field
               id="username"
               name="username"
-              parse={(value) => value && value.toUpperCase()}
-              format={(value) => (value ? value.toLowerCase() : '')}
+              parse={(value: unknown) => typeof value === "string" ? value.toUpperCase() : ""}
+              format={(value: string) => (value ? value.toLowerCase() : '')}
             />
 
             <button type="submit">Submit</button>

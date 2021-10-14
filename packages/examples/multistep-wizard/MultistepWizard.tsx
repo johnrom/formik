@@ -1,6 +1,14 @@
 import * as React from 'react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik, FormikBag, FormikConfig, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { Debug } from '../Debug';
+import { sleep } from '../helpers';
+
+export interface WizardProps<Values> { children: React.ReactNode | React.ReactNode[], initialValues: Values, onSubmit: FormikConfig<Values>['onSubmit'] };
+
+const getStepIsFormik = <Values,>() => (step: React.ReactNode): step is React.ReactElement<WizardStepProps<Values>> => {
+  return typeof step === "object" && (step as any).type === WizardStep;
+}
 
 // Wizard is a single Formik instance whose children are each page of the
 // multi-step form. The form is submitted on each forward transition (can only
@@ -8,31 +16,26 @@ import * as Yup from 'yup';
 // incomplete data. A snapshot of form state is used as initialValues after each
 // transition. Each page has an optional submit handler, and the top-level
 // submit is called when the final page is submitted.
-const Wizard = ({ children: React.ReactNode | React.ReactNode[], initialValues, onSubmit }) => {
-  const [stepNumber, setStepNumber] = useState(0);
-  const steps = React.Children.toArray(children);
-  const [snapshot, setSnapshot] = useState(initialValues);
+const Wizard = <Values,>({ children, initialValues, onSubmit }: WizardProps<Values>) => {
+  const [stepNumber, setStepNumber] = React.useState(0);
+  const steps = React.Children.toArray(children).filter(getStepIsFormik<Values>());
+  const [snapshot, setSnapshot] = React.useState(initialValues);
 
   const step = steps[stepNumber];
-
-  if (typeof step === "string") {
-    return false;
-  }
-
   const totalSteps = steps.length;
   const isLastStep = stepNumber === totalSteps - 1;
 
-  const next = values => {
+  const next = (values: Values) => {
     setSnapshot(values);
     setStepNumber(Math.min(stepNumber + 1, totalSteps - 1));
   };
 
-  const previous = values => {
+  const previous = (values: Values) => {
     setSnapshot(values);
     setStepNumber(Math.max(stepNumber - 1, 0));
   };
 
-  const handleSubmit = async (values, bag) => {
+  const handleSubmit = async (values: Values, bag: FormikHelpers<Values>) => {
     if (step.props.onSubmit) {
       await step.props.onSubmit(values, bag);
     }
@@ -75,7 +78,9 @@ const Wizard = ({ children: React.ReactNode | React.ReactNode[], initialValues, 
   );
 };
 
-const WizardStep = ({ children }) => children;
+export type WizardStepProps<Values> = Pick<FormikConfig<Values>, 'onSubmit' | 'validationSchema' | 'children'>;
+
+const WizardStep = <Values,>({ children }: WizardStepProps<Values>) => <>{children}</>;
 
 const App = () => (
   <div>

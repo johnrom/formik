@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik';
 
-const isRequired = (message) => (value) => (!!value ? undefined : message);
+const isRequired = (message: string) => <Value,>(value: Value) => (!!value ? undefined : message);
 
 const Example = () => (
   <div>
@@ -45,8 +45,6 @@ const Example = () => (
 
 const Playground = () => {
   const {
-    errors,
-    touched,
     setFieldValue,
     setFieldTouched,
     validateField,

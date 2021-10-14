@@ -5,9 +5,9 @@ import { Debug } from '../Debug';
 const initialValues = {
   email: '',
   password: '',
-}
+};
 
-const validate = values => {
+const validate = (values: typeof initialValues) => {
   const errors: FormikErrors<typeof initialValues> = {};
   if (!values.email) {
     errors.email = 'Required';
@@ -28,20 +28,19 @@ const SignIn = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500);
       }}
-      render={({ errors, touched }) => (
-        <Form>
-          <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="john@acme.com" type="email" />
-          <div className="field-error">
-            <ErrorMessage name="email" />
-          </div>
-          <label htmlFor="password">Password</label>
-          <Field name="password" type="password" />
-          <button type="submit">Sign In</button>
-          <Debug />
-        </Form>
-      )}
-    />
+    >
+      <Form>
+        <label htmlFor="email">Email</label>
+        <Field name="email" placeholder="john@acme.com" type="email" />
+        <div className="field-error">
+          <ErrorMessage name="email" />
+        </div>
+        <label htmlFor="password">Password</label>
+        <Field name="password" type="password" />
+        <button type="submit">Sign In</button>
+        <Debug />
+      </Form>
+    </Formik>
   </div>
 );
 

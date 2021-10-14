@@ -4,10 +4,12 @@
   "description": "This example demonstrates how to use async/await to submit a Formik form",
   "main": "index.js",
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "format-string-by-pattern": "^1.2.2",
     "formik": "^2.2.6",
+    "react": "latest",
     "react-app-polyfill": "^1.0.5",
-    "react-dom": "latest",
-    "react": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@types/react": "^16.9.55",

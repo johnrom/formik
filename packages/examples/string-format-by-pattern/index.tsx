@@ -2,23 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 import formatString from 'format-string-by-pattern';
+import { sleep } from '../helpers';
 
 const masks = [
   { name: 'phone-1', parse: '999-999-9999' },
   { name: 'phone-2', parse: '(999) 999-9999' },
   { name: 'phone-3', parse: '+49 (AAAA) BBBBBB' },
-];
+] as const;
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+type UnArray<T> = T extends readonly (infer V)[] ? V : T;
+type MaskedValues = Record<UnArray<typeof masks>['name'], string>;
 
 const Example = () => {
   return (
     <div>
       <Formik
-        initialValues={masks.reduce((prev, curr) => {
+        initialValues={masks.reduce<MaskedValues>((prev, curr) => {
           prev[curr.name] = '';
           return prev;
-        }, {})}
+        }, {} as any)}
         onSubmit={async (values) => {
           await sleep(500);
           alert(JSON.stringify(values, null, 2));
