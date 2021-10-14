@@ -1,11 +1,15 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldAttributes } from 'formik';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../Debug';
 
 // By combining a vanilla <label> plus Formik's <Field> and <ErrorMessage>,
 // we can abstract a generic "Fieldset" component for most of our inputs.
-const Fieldset = ({ name, label, ...rest }) => (
+interface FieldsetProps extends FieldAttributes<any> {
+  label: string,
+}
+
+const Fieldset = ({ name, label, ...rest }: FieldsetProps) => (
   <React.Fragment>
     <label htmlFor={name}>{label}</label>
     <Field id={name} name={name} {...rest} />
@@ -13,7 +17,7 @@ const Fieldset = ({ name, label, ...rest }) => (
   </React.Fragment>
 );
 
-const SignUp = () => (
+const CustomInputsExample = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -80,4 +84,4 @@ const SignUp = () => (
   </div>
 );
 
-export default SignUp;
+export default CustomInputsExample;

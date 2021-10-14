@@ -1,6 +1,10 @@
 import React from 'react';
 import { Formik, FastField, Form } from 'formik';
-import { Debug } from './Debug';
+import { Debug } from '../Debug';
+
+/**
+ * Note, in v3 Field does the same exact thing as FastField.
+ */
 
 class Input extends React.Component {
   renders = 0;
@@ -14,7 +18,7 @@ class Input extends React.Component {
   }
 }
 
-const Basic = () => (
+const FastFieldExample = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -65,4 +69,4 @@ const Basic = () => (
   </div>
 );
 
-export default Basic;
+export default FastFieldExample;

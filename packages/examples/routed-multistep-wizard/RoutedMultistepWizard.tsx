@@ -1,7 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
-import { Formik, Field, ErrorMessage } from 'formik';
-import { Debug } from './Debug';
+import React, { PropsWithChildren } from 'react';
+import { BrowserRouter as Router, Route, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Formik, Field, ErrorMessage, FormikConfig, FormikHelpers, FormikState, FormikErrors } from 'formik';
+import { Debug } from '../Debug';
+import { sleep } from '../helpers';
 
 // the root path. locations should extend from this
 const formRootPath = '/step';
@@ -9,21 +10,22 @@ const formRootPath = '/step';
 // the specific path for each page
 const locations = ['/step/1', '/step/2'];
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const required = <Value,>(value: Value) => value ? undefined : 'Required';
 
-const required = value => (value ? undefined : 'Required');
+type WizardProps<Values> = RouteComponentProps<any> & FormikConfig<Values>;
+type WizardPageProps<Values> = Pick<FormikConfig<Values>, 'validate' | 'children'>;
 
-class WizardBase extends React.Component {
-  static Page = ({ children }) => children;
+class WizardBase<Values> extends React.Component<WizardProps<Values>, Pick<FormikState<Values>, 'values'>> {
+  static Page = <Values,>({ children }: WizardPageProps<Values>) => <>{children}</>;
 
-  constructor(props) {
+  constructor(props: WizardProps<Values>) {
     super(props);
     this.state = {
       values: props.initialValues,
     };
   }
 
-  next = values => {
+  next = (values: Values) => {
     const { location, history } = this.props;
     this.setState(() => ({ values }));
 
@@ -39,15 +41,15 @@ class WizardBase extends React.Component {
     history.push(locations[prevPath]);
   };
 
-  validate = values => {
+  validate = (values: Values) => {
     const { location, children } = this.props;
 
     const page = locations.indexOf(location.pathname);
-    const activePage = React.Children.toArray(children)[page];
+    const activePage = React.Children.toArray(children)[page] as unknown as React.ReactElement<WizardPageProps<Values>>;
     return activePage.props.validate ? activePage.props.validate(values) : {};
   };
 
-  handleSubmit = (values, bag) => {
+  handleSubmit = (values: Values, bag: FormikHelpers<Values>) => {
     const { children, onSubmit, location } = this.props;
     const page = locations.indexOf(location.pathname);
     const isLastPage = page === React.Children.count(children) - 1;
@@ -68,6 +70,7 @@ class WizardBase extends React.Component {
 
     const activePage = React.Children.toArray(children)[page];
     const isLastPage = page === React.Children.count(children) - 1;
+
     return (
       <Formik
         initialValues={values}
@@ -104,9 +107,18 @@ class WizardBase extends React.Component {
   }
 }
 
-const Wizard = withRouter(WizardBase);
+const _RoutedWizard = withRouter(WizardBase);
+const Wizard: typeof _RoutedWizard & { Page: typeof WizardBase.Page } = _RoutedWizard as any;
+Wizard.Page = WizardBase.Page;
 
-const App = () => (
+const initialValues = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  favoriteColor: '',
+};
+
+const RoutedMultistepWizardExample = () => (
   <Router>
     <div className="App">
       <h1>Multistep / Form Wizard </h1>
@@ -115,12 +127,7 @@ const App = () => (
         render={routeProps => (
           <Wizard
             {...routeProps}
-            initialValues={{
-              firstName: '',
-              lastName: '',
-              email: '',
-              favoriteColor: '',
-            }}
+            initialValues={initialValues}
             onSubmit={(values, actions) => {
               sleep(300).then(() => {
                 window.alert(JSON.stringify(values, null, 2));
@@ -162,7 +169,7 @@ const App = () => (
             </Wizard.Page>
             <Wizard.Page
               validate={values => {
-                const errors = {};
+                const errors: FormikErrors<typeof initialValues> = {};
                 if (!values.email) {
                   errors.email = 'Required';
                 }
@@ -208,4 +215,4 @@ const App = () => (
   </Router>
 );
 
-export default App;
+export default RoutedMultistepWizardExample;

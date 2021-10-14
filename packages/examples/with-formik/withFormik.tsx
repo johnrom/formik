@@ -1,9 +1,21 @@
+import { ErrorMessage, Field, Form, FormikProps, withFormik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { withFormik, ErrorMessage } from '../src/formik';
-import { Debug } from './Debug';
+import { Debug } from '../Debug';
 
-const formikEnhancer = withFormik({
+interface FormValues {
+  email: string;
+}
+
+interface User {
+  email: string;
+}
+
+interface FormProps {
+  user: User;
+}
+
+const formikEnhancer = withFormik<FormProps, FormValues>({
   mapPropsToValues: props => ({ email: props.user.email }),
   validationSchema: Yup.object().shape({
     email: Yup.string()
@@ -19,7 +31,7 @@ const formikEnhancer = withFormik({
   displayName: 'MyForm', // helps with React DevTools
 });
 
-const MyForm = props => {
+const MyForm = <Values,>(props: FormikProps<Values>) => {
   const {
     values,
     touched,
@@ -54,4 +66,12 @@ const MyForm = props => {
   );
 };
 
-export default formikEnhancer(MyForm);
+const EnhancedForm = formikEnhancer(MyForm);
+
+const WithFormikExample = () => (
+  <div>
+    <EnhancedForm user={{ email: '' }} />
+  </div>
+);
+
+export default WithFormikExample;

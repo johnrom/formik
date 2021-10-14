@@ -6,13 +6,14 @@ import {
   Switch,
   Link,
   Redirect,
+  RouteComponentProps,
 } from 'react-router-dom';
-import { Field, ErrorMessage, withFormik } from 'formik';
-import { Debug } from './Debug';
+import { Field, ErrorMessage, withFormik, FormikErrors, FormikProps } from 'formik';
+import { Debug } from '../Debug';
 
-const required = value => (value ? undefined : 'Required');
+const required = <Value,>(value: Value) => (value ? undefined : 'Required');
 
-const Page1 = () => (
+const Page1 = (props: RouteComponentProps<any>) => (
   <Fragment>
     <div>
       <label>First Name</label>
@@ -42,7 +43,7 @@ const Page1 = () => (
   </Fragment>
 );
 
-const Page2 = () => (
+const Page2 = (props: RouteComponentProps<any>) => (
   <Fragment>
     <div>
       <label>Email</label>
@@ -70,7 +71,7 @@ const Page2 = () => (
   </Fragment>
 );
 
-const BaseForm = ({ values, handleSubmit }) => (
+const BaseForm = <Values,>({ values, handleSubmit }: FormikProps<Values>) => (
   <Router>
     <div className="App">
       <h1>Multistep / Form Wizard </h1>
@@ -95,16 +96,18 @@ const BaseForm = ({ values, handleSubmit }) => (
 
 export const EnhancedForm = withFormik({
   /* setup initial values */
-  mapPropsToValues: () => ({
-    firstName: '',
-    lastName: '',
-    email: '',
-    favoriteColor: '',
-  }),
+  mapPropsToValues: () => (
+    {
+      firstName: '',
+      lastName: '',
+      email: '',
+      favoriteColor: '',
+    }
+  ),
 
   validate: (values, props) => {
     console.log('props', props);
-    const errors = {};
+    const errors: FormikErrors<{email: string}> = {};
 
     if (!values.email) {
       errors.email = 'Required';
@@ -122,3 +125,7 @@ export const EnhancedForm = withFormik({
 
   displayName: 'BaseForm',
 })(BaseForm);
+
+const RoutedMultistepWizardExample2 = () => <div><EnhancedForm /></div>
+
+export default RoutedMultistepWizardExample2;

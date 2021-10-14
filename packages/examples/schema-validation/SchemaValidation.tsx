@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../Debug';
 
 // While you can use any validation library (or write you own), Formik
 // comes with special support for Yup by @jquense. It has a builder API like
@@ -19,8 +19,7 @@ const SignUpSchema = Yup.object().shape({
     .required('Required'),
 });
 
-// <ErrorMessage /> will ONLY render when a field has an error and has been touched.
-const SignUp = () => (
+const SchemaValidationExample = () => (
   <div>
     <h1>Sign up</h1>
     <Formik
@@ -39,6 +38,7 @@ const SignUp = () => (
         <Form>
           <label htmlFor="firstName">First Name</label>
           <Field name="firstName" placeholder="Jane" type="text" />
+
           <ErrorMessage
             name="firstName"
             component="div"
@@ -47,16 +47,15 @@ const SignUp = () => (
 
           <label htmlFor="lastName">Last Name</label>
           <Field name="lastName" placeholder="Doe" type="text" />
-          <ErrorMessage name="firstName">
-            {(msg /** this is the same as the above */) => (
-              <div className="field-error">{msg}</div>
-            )}
-          </ErrorMessage>
+          <ErrorMessage
+            name="lastName"
+            component="div"
+            className="field-error"
+          />
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-          {/* This will render a string */}
-          <ErrorMessage name="email" className="field-error" />
+          <ErrorMessage name="email" component="div" className="field-error" />
 
           <button type="submit">Submit</button>
           <Debug />
@@ -66,4 +65,4 @@ const SignUp = () => (
   </div>
 );
 
-export default SignUp;
+export default SchemaValidationExample;
