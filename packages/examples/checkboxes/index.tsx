@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 import { sleep } from '../helpers';
 
-const Basic = () => (
+const CheckboxesExample = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -56,4 +56,4 @@ const Basic = () => (
   </div>
 );
 
-ReactDOM.render(<Basic />, document.getElementById('root'));
+export default CheckboxesExample;

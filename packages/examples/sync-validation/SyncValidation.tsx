@@ -17,7 +17,7 @@ const validate = (values: typeof initialValues) => {
   return errors;
 };
 
-const SignIn = () => (
+const SyncValidationExample = () => (
   <div>
     <h1>Sign In</h1>
     <Formik
@@ -44,4 +44,4 @@ const SignIn = () => (
   </div>
 );
 
-export default SignIn;
+export default SyncValidationExample;

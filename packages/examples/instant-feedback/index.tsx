@@ -1,17 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { useFormik, FormikProvider, Form, useField, FieldHookConfig } from 'formik';
+import {
+  useFormik,
+  FormikProvider,
+  Form,
+  useField,
+  FieldHookConfig,
+} from 'formik';
 import './styles.css';
 import * as Yup from 'yup';
 import { sleep } from '../helpers';
 
 export interface TextInputLiveFeedbackProps extends FieldHookConfig<any> {
-  label: string,
-  helpText: string,
-  id: string,
+  label: string;
+  helpText: string;
+  id: string;
 }
 
-const TextInputLiveFeedback = ({ label, helpText, ...props }: TextInputLiveFeedbackProps) => {
+const TextInputLiveFeedback = ({
+  label,
+  helpText,
+  ...props
+}: TextInputLiveFeedbackProps) => {
   const [field, meta] = useField(props);
 
   // Show inline feedback if EITHER
@@ -53,12 +62,12 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }: TextInputLiveFeedb
   );
 };
 
-const Example = () => {
+const InstantFeedbackForm = () => {
   const formik = useFormik({
     initialValues: {
       username: '',
     },
-    onSubmit: async (values) => {
+    onSubmit: async values => {
       await sleep(500);
       alert(JSON.stringify(values, null, 2));
     },
@@ -93,7 +102,7 @@ const Example = () => {
   );
 };
 
-ReactDOM.render(
+const InstantFeedbackExample = () => (
   <div className="app">
     <h1 className="text-4xl">Accessible instant feeback with Formik 2</h1>
     <p className="text-lg">
@@ -105,7 +114,7 @@ ReactDOM.render(
       username). Note: This isn't always optimal, use your judgement.
     </p>
     <div className="example">
-      <Example />
+      <InstantFeedbackForm />
     </div>
     <p className="text-md mt-1">
       <strong>Note:</strong> The displayed feedback message in this example is
@@ -130,6 +139,7 @@ ReactDOM.render(
         </a>
       </i>
     </p>
-  </div>,
-  document.getElementById('root')
+  </div>
 );
+
+export default InstantFeedbackExample;

@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 import { sleep } from '../helpers';
 
-const Example = () => {
+const ParseFormatExample = () => {
   return (
     <div>
       <Formik
@@ -34,4 +33,4 @@ const Example = () => {
   );
 };
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export default ParseFormatExample;

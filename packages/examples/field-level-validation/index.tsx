@@ -4,7 +4,7 @@ import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik';
 
 const isRequired = (message: string) => <Value,>(value: Value) => (!!value ? undefined : message);
 
-const Example = () => (
+const FieldLevelValidationExample = () => (
   <div>
     <h1>Pick a username</h1>
     <Formik
@@ -93,4 +93,4 @@ const Playground = () => {
   );
 };
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export default FieldLevelValidationExample;

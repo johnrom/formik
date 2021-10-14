@@ -13,7 +13,7 @@ const masks = [
 type UnArray<T> = T extends readonly (infer V)[] ? V : T;
 type MaskedValues = Record<UnArray<typeof masks>['name'], string>;
 
-const Example = () => {
+const FormatStringByPatternExample = () => {
   return (
     <div>
       <Formik
@@ -49,4 +49,4 @@ const Example = () => {
   );
 };
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export default FormatStringByPatternExample;

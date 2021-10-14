@@ -82,7 +82,7 @@ export type WizardStepProps<Values> = Pick<FormikConfig<Values>, 'onSubmit' | 'v
 
 const WizardStep = <Values,>({ children }: WizardStepProps<Values>) => <>{children}</>;
 
-const App = () => (
+const MultistepWizardExample = () => (
   <div>
     <h1>Formik Multistep Wizard</h1>
     <Wizard
@@ -152,4 +152,4 @@ const App = () => (
   </div>
 );
 
-export default App;
+export default MultistepWizardExample;

@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 import { sleep } from '../helpers';
 
-const Example = () => (
+const AsyncSubmissionExample = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -37,4 +36,4 @@ const Example = () => (
   </div>
 );
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export default AsyncSubmissionExample;

@@ -43,7 +43,8 @@ const MyField = (props: FieldAttributes<any>) => {
     </>
   );
 };
-function App() {
+
+function DependentFieldsAsyncExample() {
 
   return (
     <div className="App">
@@ -90,5 +91,4 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<App />, rootElement);
+export default DependentFieldsAsyncExample;

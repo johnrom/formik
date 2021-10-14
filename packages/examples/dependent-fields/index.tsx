@@ -44,7 +44,7 @@ const MyField = (props: FieldAttributes<any>) => {
   );
 };
 
-function App() {
+function DependentFieldsExample() {
   return (
     <div className="App">
       <Formik
@@ -108,5 +108,4 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<App />, rootElement);
+export default DependentFieldsExample;

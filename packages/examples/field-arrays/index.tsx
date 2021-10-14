@@ -11,7 +11,7 @@ const initialValues = {
   ],
 };
 
-const InviteFriends = () => (
+const FieldArraysExample = () => (
   <div>
     <h1>Invite friends</h1>
     <Formik
@@ -83,4 +83,4 @@ const InviteFriends = () => (
   </div>
 );
 
-ReactDOM.render(<InviteFriends />, document.getElementById('root'));
+export default FieldArraysExample;

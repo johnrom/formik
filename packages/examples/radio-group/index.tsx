@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 
-const Example = () => (
+const RadioGroupExample = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -36,4 +36,4 @@ const Example = () => (
   </div>
 );
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+export default RadioGroupExample;

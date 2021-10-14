@@ -1,13 +1,15 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { Debug } from './Debug';
+import { Formik, Field, Form, ErrorMessage, FormikErrors } from 'formik';
+import { Debug } from '../Debug';
+import { sleep } from '../helpers';
 
-// Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const initialValues = {
+  username: '',
+};
 
-const validate = values => {
+const validate = (values: typeof initialValues) => {
   return sleep(300).then(() => {
-    const errors = {};
+    const errors: FormikErrors<typeof initialValues> = {};
 
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
@@ -23,7 +25,7 @@ const validate = values => {
   });
 };
 
-const Username = () => (
+const AsyncValidationExample = () => (
   <div>
     <h1>Pick a username</h1>
     <Formik
@@ -36,17 +38,16 @@ const Username = () => (
           alert(JSON.stringify(values, null, 2));
         });
       }}
-      render={({ errors, touched }) => (
-        <Form>
-          <label htmlFor="username">Username</label>
-          <Field name="username" type="text" />
-          <ErrorMessage name="username" />
-          <button type="submit">Submit</button>
-          <Debug />
-        </Form>
-      )}
-    />
+    >
+      <Form>
+        <label htmlFor="username">Username</label>
+        <Field name="username" type="text" />
+        <ErrorMessage name="username" />
+        <button type="submit">Submit</button>
+        <Debug />
+      </Form>
+    </Formik>
   </div>
 );
 
-export default Username;
+export default AsyncValidationExample;

@@ -9,7 +9,7 @@ interface Values {
   email: string;
 }
 
-const App = () => {
+const BasicExample = () => {
   return (
     <div>
       <h1>Signup</h1>
@@ -51,4 +51,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export default BasicExample;

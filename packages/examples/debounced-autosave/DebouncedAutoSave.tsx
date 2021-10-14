@@ -1,27 +1,30 @@
 import React from 'react';
-import { useFormikContext, Formik, Field, Form } from 'formik';
-import { Debug } from './Debug';
+import { useFormikState, Formik, Field, Form } from 'formik';
+import { Debug } from '../Debug';
 import debounce from 'just-debounce-it';
 
-const AutoSave = ({ debounceMs }) => {
-  const formik = useFormikContext();
-  const [lastSaved, setLastSaved] = React.useState(null);
+interface AutoSaveProps {
+  debounceMs: number;
+}
+
+const AutoSave = ({ debounceMs }: AutoSaveProps) => {
+  const [{ isSubmitting, values }, { submitForm }] = useFormikState();
+  const [lastSaved, setLastSaved] = React.useState<string | null>(null);
   const debouncedSubmit = React.useCallback(
     debounce(
-      () =>
-        formik.submitForm().then(() => setLastSaved(new Date().toISOString())),
+      () => submitForm().then(() => setLastSaved(new Date().toISOString())),
       debounceMs
     ),
-    [debounceMs, formik.submitForm]
+    [debounceMs, submitForm]
   );
 
   React.useEffect(() => {
     debouncedSubmit();
-  }, [debouncedSubmit, formik.values]);
+  }, [debouncedSubmit, values]);
 
   return (
     <>
-      {!!formik.isSubmitting
+      {!!isSubmitting
         ? 'saving...'
         : lastSaved !== null
         ? `Last Saved: ${lastSaved}`
@@ -30,7 +33,7 @@ const AutoSave = ({ debounceMs }) => {
   );
 };
 
-const AutoSavingForm = () => (
+const DebouncedAutoSaveExample = () => (
   <div>
     <Formik
       initialValues={{
@@ -47,30 +50,29 @@ const AutoSavingForm = () => (
           }, 1000)
         );
       }}
-      render={() => (
-        <Form>
-          <h1>
-            AutoSavingForm{' '}
-            <small style={{ color: 'gray', fontSize: 11 }}>
-              <AutoSave debounceMs={300} />
-            </small>
-          </h1>
+    >
+      <Form>
+        <h1>
+          AutoSavingForm{' '}
+          <small style={{ color: 'gray', fontSize: 11 }}>
+            <AutoSave debounceMs={300} />
+          </small>
+        </h1>
 
-          <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" placeholder="Jane" />
+        <label htmlFor="firstName">First Name</label>
+        <Field name="firstName" placeholder="Jane" />
 
-          <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" />
+        <label htmlFor="lastName">Last Name</label>
+        <Field name="lastName" placeholder="Doe" />
 
-          <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="jane@acme.com" type="email" />
-          <button type="submit">Submit</button>
+        <label htmlFor="email">Email</label>
+        <Field name="email" placeholder="jane@acme.com" type="email" />
+        <button type="submit">Submit</button>
 
-          <Debug />
-        </Form>
-      )}
-    />
+        <Debug />
+      </Form>
+    </Formik>
   </div>
 );
 
-export default AutoSavingForm;
+export default DebouncedAutoSaveExample;
