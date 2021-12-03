@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Formik, Form, useField, useFormikState, FormikState, useFormikConfig, FieldConfig } from 'formik';
-import { DebugProps } from 'app/components/debugging/DebugProps';
+import { Formik, Form, useField, useFormikState, FormikState, useFormikConfig, FieldAttributes } from 'formik';
+import { DebugProps } from '../../components/debugging/DebugProps';
 
-const Input = React.memo((p: FieldConfig<string>) => {
+const Input = React.memo((p: FieldAttributes<any>) => {
   const [field, meta] = useField(p);
 
   const renders = React.useRef(0);
@@ -30,14 +30,10 @@ const initialValues = {
 }
 
 const onSubmit = () => {};
+const selectIsValidating = (state: FormikState<any>) => state.isValidating;
 
 const ValidationStatus = () => {
-  const [isValidating] = useFormikState(
-    React.useMemo(
-      () => (state: FormikState<any>) => state.isValidating,
-      []
-    )
-  );
+  const [isValidating] = useFormikState(selectIsValidating);
   const validateOnChange = useFormikConfig().validateOnChange;
 
   return <DebugProps isValidating={isValidating} validateOnChange={validateOnChange} />

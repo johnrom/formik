@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  FieldConfig,
+  FieldAttributes,
   Form,
   FormikProvider,
   useField,
@@ -16,7 +16,7 @@ import {
 
 const selectFullState = <T,>(state: T) => state
 
-const Input = (p: FieldConfig<string>) => {
+const Input = (p: FieldAttributes<any>) => {
   useField(p);
   const api = useFormikContext();
   const childState = api.useState(selectFullState);

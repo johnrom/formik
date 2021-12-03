@@ -310,6 +310,16 @@ export type ValidateFn<Values extends FormikValues> = (
   values?: Values | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
+export type FormikResetHandler<Values> = (
+  values: Values,
+  formikHelpers: FormikHelpers<Values>
+) => void | Promise<any>;
+
+export type FormikSubmitHandler<Values> = (
+  values: Values,
+  formikHelpers: FormikHelpers<Values>
+) => void | Promise<any>;
+
 /**
  * <Formik /> props
  */
@@ -351,18 +361,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (
-    values: Values,
-    formikHelpers: FormikHelpers<Values>
-  ) => void | Promise<any>;
+  onReset?: FormikResetHandler<Values>;
 
   /**
    * Submission handler
    */
-  onSubmit: (
-    values: Values,
-    formikHelpers: FormikHelpers<Values>
-  ) => void | Promise<any>;
+  onSubmit: FormikSubmitHandler<Values>;
 
   /** Inner ref */
   innerRef?: React.Ref<FormikProps<Values>>;
@@ -456,9 +460,11 @@ export interface FieldInputProps<Value> {
   onBlur: FieldOnBlurProp;
 }
 
+export type FieldValidationResult = string | undefined | void;
+
 export type FieldValidator = (
   value: any
-) => string | void | Promise<string | void>;
+) => FieldValidationResult | Promise<FieldValidationResult>;
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
 export type FormatFn<Value> = (value: Value, name: string) => any;

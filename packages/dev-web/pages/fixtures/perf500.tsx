@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Formik, Form, useField, FieldConfig } from 'formik';
+import { Formik, Form, useField, FieldAttributes } from 'formik';
 import { selectRange } from '../../helpers/array-helpers';
 
-const Input = (p: FieldConfig<string>) => {
+const Input = (p: FieldAttributes<any>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   const committedRenders = React.useRef(0);
