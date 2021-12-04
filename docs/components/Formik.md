@@ -3,46 +3,58 @@ id: formik
 title: <Formik />
 ---
 
-`<Formik>` is a component that helps you with building forms. It uses a render
-props pattern made popular by libraries like React Motion and React Router.
+`<Formik>` is a component that helps you with building forms. Can be used as a standalone components, or use the child function pattern made popular by libraries like React Motion and React Router.
 
-## Example
+The most optimized way to use the Formik component is to pass components as children and use React Context to access Formik's API and State. This is how the components provided with Formik work. It is also possible to pass a custom component to render or a function as children, but these are expensive because Formik will subscribe to its full state and pass those to these components.
 
-```jsx
-import React from 'react';
-import { Formik } from 'formik';
+You can read more about this in the [deep dive](../deep-dive).
 
-const BasicExample = () => (
-  <div>
-    <h1>My Form</h1>
-    <Formik
-      initialValues={{ name: 'jared' }}
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-    >
-      {props => (
-        <form onSubmit={props.handleSubmit}>
-          <input
-            type="text"
-            onChange={props.handleChange}
-            onBlur={props.handleBlur}
-            value={props.values.name}
-            name="name"
-          />
-          {props.errors.name && <div id="feedback">{props.errors.name}</div>}
-          <button type="submit">Submit</button>
-        </form>
-      )}
-    </Formik>
-  </div>
-);
+## Rendering with `<Formik />`
+
+There are 2 recommended ways to render things with `<Formik />`
+
+- `<Formik></Children /></Formik>`, with components as children.
+- `<Formik>{props => <Children />}</Formik>`, with a function as children.
+- ~~`<Formik component>`~~ Deprecated in 3.x. It is recommended to use `useFormik` and `FormikProvider` instead.
+- ~~`<Formik render>`~~ Deprecated in 2.x
+
+For these examples, we'll use some common Example Helpers.
+
+```tsx file=packages/examples/basic/basic-example-helpers.tsx
 ```
 
-#### Props
+### Optimized: Passing Components as Children
+
+This is the most optimized way to use the `<Formik />` component. Child components access Formik's API and State using [hooks](../hooks).
+
+```tsx file=packages/examples/basic/basic-example.tsx
+```
+
+### Expensive: Passing a Function as Children
+
+This is an expensive method of using Formik's state best used for rapid prototyping. It is not recommended in the long term, not only because it is expensive, but also because the function passed here is _not_ a component, and does not have access to hooks!
+
+```tsx file=packages/examples/basic/basic-function.tsx
+```
+
+### Legacy: `render` prop
+
+This is the same as [passing a function as children](#expensive-passing-a-function-as-children) except it looks like: `<Formik render={props => <Component />}>`.
+
+### Legacy: Passing a Custom Component
+
+This is an expensive method of using Formik's state. It is not recommended in the long term. To customize Formik, it is better to create a custom component and use [`useFormik()`](../hooks#useFormik) with [`FormikProvider`](./FormikProvider).
+
+```tsx file=packages/examples/basic/basic-custom-component.tsx
+```
+
+## `FormikProps`
+
+When using a function as children or a custom component, the props passed will be `FormikProps<Values>`. These props combine the Formik API, FormikState, and FormikConfig into a single object. Read more about those types here.
+
+- [FormikApi](./api)
+- [FormikState](./state)
+- [FormikConfig](./config)
 
 ---
 
@@ -52,62 +64,7 @@ const BasicExample = () => (
 
 ### Formik render methods and props
 
-There are 2 ways to render things with `<Formik />`
-
-- `<Formik component>`
-- `<Formik children>`
-- ~~`<Formik render>`~~ Deprecated in 2.x
-
 Each render methods will be passed the same props:
-
-#### `dirty: boolean`
-
-Returns `true` if values are not deeply equal from initial values, `false` otherwise.
-`dirty` is a readonly computed property and should not be mutated directly.
-
-#### `errors: { [field: string]: string }`
-
-Form validation errors. Should match the shape of your form's `values` defined
-in `initialValues`. If you are using `validationSchema` (which you should be),
-keys and shape will match your schema exactly. Internally, Formik transforms raw
-[Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string)
-on your behalf. If you are using `validate`, then that function will determine
-the `errors` objects shape.
-
-#### `handleBlur: (e: any) => void`
-
-`onBlur` event handler. Useful for when you need to track whether an input has
-been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
-
-#### `handleChange: (e: React.ChangeEvent<any>) => void`
-
-General input change event handler. This will update the `values[key]` where
-`key` is the event-emitting input's `name` attribute. If the `name` attribute is
-not present, `handleChange` will look for an input's `id` attribute. Note:
-"input" here means all HTML inputs.
-
-#### `handleReset: () => void`
-
-Reset handler. Will reset the form to its initial state. This should be passed
-to `<button onClick={handleReset}>...</button>`
-
-#### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
-
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
-
-#### `isSubmitting: boolean`
-
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
-
-#### `isValid: boolean`
-
-Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and `false` otherwise.
-
-> Note: `isInitialValid` was deprecated in 2.x. However, for backwards compatibility, if the `isInitialValid` prop is specified, `isValid` will return `true` if the there are no `errors`, or the result of `isInitialValid` of the form if it is in "pristine" condition (i.e. not `dirty`).
-
-#### `isValidating: boolean`
-
-Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `resetForm: (nextState?: Partial<FormikState<Values>>) => void`
 

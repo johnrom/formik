@@ -120,6 +120,10 @@ Of course, forms are often more complicated than a few text boxes. In these case
 
 To get started customizing Formik and creating your own custom components, check out the [tutorial](./tutorial).
 
+## Customizing Formik
+
+
+
 ## Complementary Packages
 
 As you can see above, validation is left up to you. Feel free to write your own

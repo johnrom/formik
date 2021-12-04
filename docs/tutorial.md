@@ -1,26 +1,22 @@
 ---
-id: tutorial
-title: Tutorial
+id: deep-dive
+title: A Deep Dive into Formik
 description: Learn how to build forms in React with Formik.
 ---
 
 ## Before we start
 
-Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
+Welcome to the Formik tutorial. This will teach you everything you need to know to build simple forms in React.
 
-If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#getting-started).
+If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#getting-started). If you're looking for a deeper knowledge of Formik, check out the [deep dive](./deep-dive).
 
 ### What are we building?
 
-In this tutorial, we’ll build a complex newsletter signup form with React and Formik.
+In this tutorial, we’ll build a newsletter signup form with React and Formik. We'll rely mostly on the starter components provided by Formik, creating our own custom Field components where necessary.
 
 You can see what we’ll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn’t make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
 
-### Prerequisites
-
-You’ll need to have familiarity with HTML, CSS, [modern JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript), and [React](https://reactjs.org) (and [React Hooks](https://reactjs.org/docs/hooks-intro.html)) to fully understand Formik and how it works. In this tutorial, we’re using [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), [const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment), [computed property names](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names), and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) . You can use the [Babel REPL](https://babeljs.io/repl/#?presets=react&code_lz=MYewdgzgLgBApgGzgWzmWBeGAeAFgRgD4AJRBEAGhgHcQAnBAEwEJsB6AwgbgChRJY_KAEMAlmDh0YWRiGABXVOgB0AczhQAokiVQAQgE8AkowAUAcjogQUcwEpeAJTjDgUACIB5ALLK6aRklTRBQ0KCohMQk6Bx4gA) to check what ES6 code compiles to.
-
-## Setup for the Tutorial
+## Setting Up
 
 There are two ways to complete this tutorial: you can either write the code in your browser, or you can set up a local development environment on your computer.
 
@@ -34,13 +30,13 @@ Continue to [What is Formik?](#overview-what-is-formik)
 
 ### Using a local development environment.
 
-To set up your own development environment, including setting up Create React App and starting your own webserver, check out [Development Setup](development-setup).
+To set up your own development environment, including setting up Create React App and running a local server, check out [Development Setup](development-setup).
 
-This is completely optional and not required for this tutorial! To get started quickly, try [Using a Playground](#using-a-playground)
+This is completely optional and not required for this tutorial! To get started quickly, try [Using a Playground](#using-a-playground).
 
 ## What is Formik?
 
-Formik is a small group of React components and hooks for building forms in React and React Native. It helps with the three most annoying parts:
+Formik is a small group of React components, hooks and helpers for building forms in React and React Native. It helps with the three most annoying parts:
 
 1.  Getting values in and out of form state
 2.  Validation and error messages
@@ -49,13 +45,13 @@ Formik is a small group of React components and hooks for building forms in Reac
 By colocating all of the above in one place, Formik keeps things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
 
-## The Basics
+At its core, Formik is composed of two major parts: state, and an API to access and manipulate that state. The starter components that come with Formik help to tuck the implementation details out of sight until you need them.
 
-At its core, Formik is composed of two major parts: state, and an API to access and manipulate that state. The helper components that come with Formik are just icing on the cake.
+## Anatomy of a basic Formik App
 
 We're going to start with our simple app from the [Overview](./overview#formik-in-action) and explore how Formik's helper components use the API to manage Formik's state, building our own Reusable Components in the process.
 
-Imagine we want to add a newsletter signup form for a blog. To start, our form will have just one field named `email`. With Formik, this is just a few lines of code.
+Imagine we want to add a newsletter signup form for a blog. To start, our form will have just one field named `email`. To get started with Formik, this is just a few lines of code.
 
 ```tsx file=packages/examples/basic/basic-example.tsx
 ```
@@ -78,17 +74,19 @@ Formik's API works with a hook, `useFormik()`, which returns an API, and a React
 
 Above, you can see we used the API method `handleSubmit` in order to handle html form submission. Other API methods include `setValues`, `setFieldValue`, `getState()`, and more. [Click here to read more about the Formik API](./api).
 
+In order to actually submit the form, however, the handleSubmit function must know the latest state of the values within Formik, and access Formik State.
+
 ## Formik State
 
-Formik State is a reference to an immutable object that is replaced entirely when it is updated. It is similar to using Redux, but instead of applying to the whole app, it is scoped to the component which calls `useFormik()`.
+Formik State is an immutable object that is replaced entirely when it is updated, similar to how Redux and other Reducers work. It works similar to using `react-redux`, but instead of applying to the whole app, it is scoped to the component which calls `useFormik()`.
 
-Every time the state is updated, it notifies React of that update via `useState` and triggers a render.
+Every time the state is updated, it notifies React of that update via `setState` to trigger a new render when necessary.
 
 [Click here to find out more about Formik's state](./guides/accessing-state).
 
 ### Using Formik State
 
-We've seen how the API works and is passed down via React Context in order to allow child components to access the API, but how does `handleSubmit` access state? There are three ways to access state in Formik.
+We've seen how the API works and is passed down via React Context in order to allow child components to access the API, and now we know that we know the API accesses and manipulates state. How state is accessed is going to be different depending on the situation, so let's look at the three ways to access state in Formik.
 
 #### Accessing state outside of a render
 
@@ -99,20 +97,33 @@ We can replicate what the `handleSubmit` function is doing from our last example
 ```tsx file=packages/examples/basic/basic-example-get-state.tsx snippet=getState
 ```
 
+`getState()` is useful for:
+
+- Event callbacks like `onClick`.
+- Effects which need to check the result of their calls to the API.
+- Debugging the latest state with `console.log` or breakpoints.
+
 #### Accessing state within a render
 
 State can be accessed from React Context using the `useFormikState` hook or the `formik.useState` API method. This value can be used in hook dependencies and rendered to html. Let's imagine we want to add a `console.log` anytime `formikState` changes. We can achieve this two ways -- either from our `<MyForm />` component or via the root component with `useFormik`.
 
-##### via React Context with `useFormikState()`.
+`useFormikState()` and `formik.useState()` are essentially the same, but used in different places. Most of the time, you'll use `useFormikState()` in child components below Formik's context. However, if you are at the root level, you cannot use React Context -- this is where `formik.useState()` comes in.
 
-Accessing Formik's state within a render is possible in components under Formik's React Context by using the `useFormikState` function. This method returns a tuple, and the second value returned is the Formik API. This is a nice little shortcut for using both state and API methods.
+`useFormikState()` / `formik.useState()` are useful for:
+
+- Rendering Values to HTML.
+- Triggering dependency updates for `useEffect()` and other hooks.
+
+##### Accessing state via React Context with `useFormikState()`.
+
+Accessing Formik's state within a render is possible in components under Formik's React Context by using the `useFormikState` function. This method returns a tuple, and the second value returned is the Formik API. This is a little shortcut for using both state and API methods.
 
 ```tsx packages/examples/basic/basic-example-use-formik-state.tsx snippet=useFormikState
 ```
 
-##### directly from the API using `formik.useState()`.
+##### Accessing state directly from the API using `formik.useState()`.
 
-Accessing Formik's within the component calling `useFormik` is done slightly differently than for child components. This is because the React Context doesn't exist yet!
+Accessing Formik's state within the component calling `useFormik` is done slightly differently than for child components. This is because the React Context doesn't exist yet!
 
 ```tsx packages/examples/basic/basic-example-use-formik-state.tsx snippet=useApiState
 ```

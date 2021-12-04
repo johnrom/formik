@@ -1,43 +1,29 @@
 import * as React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-
-interface FormValues {
-  email: string;
-}
-
-const initialValues: FormValues = {
-  email: '',
-};
-
-const alertOnSubmit = async <Values,>(values: Values) => {
-  alert(JSON.stringify(values, null, 2));
-};
+import { Formik, Field, Form } from 'formik';
+import { exampleAlertOnSubmit, exampleInitialValues } from './basic-example-helpers';
 
 const BasicExample = () => {
   return (
     <div>
       <h1>Signup</h1>
       <Formik
-        initialValues={initialValues}
-        onSubmit={alertOnSubmit}
+        initialValues={exampleInitialValues}
+        onSubmit={exampleAlertOnSubmit}
       >
         <Form>
-          <div>
-            <label htmlFor="email">Email</label>
-            <Field
-              id="email"
-              name="email"
-              placeholder="john@acme.com"
-              type="email"
-              validate={(emailLike: string) => {
-                if (!emailLike) {
-                  return 'Required';
-                }
-                return '';
-              }}
-            />
-            <ErrorMessage name="email" component="div" />
-          </div>
+          <label htmlFor="firstName">First Name</label>
+          <Field id="firstName" name="firstName" placeholder="John" />
+
+          <label htmlFor="lastName">Last Name</label>
+          <Field id="lastName" name="lastName" placeholder="Doe" />
+
+          <label htmlFor="email">Email</label>
+          <Field
+            id="email"
+            name="email"
+            placeholder="john@acme.com"
+            type="email"
+          />
 
           <button type="submit">Submit</button>
         </Form>
