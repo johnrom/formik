@@ -47,7 +47,7 @@ to you.**
 My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
 
 <div className="embed-responsive aspect-ratio-16-9">
-  <iframe className="embed-responsive-item" width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+  <iframe className="embed-responsive-item" width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen title="Taming Forms in React - Jared Palmer"></iframe>
 </div>
 
 ### Influences
@@ -113,16 +113,14 @@ You can play with Formik in your web browser with these live online playgrounds.
 
 Formik provides reusable components that do a lot of heavy lifting. Using these components, Formik can often look as simple as:
 
-```tsx file=packages/examples/basic/index.tsx
+```tsx file=packages/examples/basic/basic.tsx
 ```
 
 Of course, forms are often more complicated than a few text boxes. In these cases, the same functionality that is used to build Formik's core components is also available to developers to create their own reusable, Formik-connected components.
 
-To get started customizing Formik and creating your own custom components, check out the [tutorial](./tutorial).
-
 ## Customizing Formik
 
-
+To get started customizing Formik and creating your own custom components, check out the [tutorial](./tutorial.md).
 
 ## Complementary Packages
 

@@ -13,31 +13,40 @@
     "prettier": "^2.1.2",
     "release": "6.0.1",
     "@johnrom/tsdx": "0.14.2-noclean3",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "yarn": "1.22.18"
+  },
+  "engines": {
+    "node": "12.22.11"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "lerna": "lerna",
-    "dev": "lerna run start --stream --parallel",
+    "build": "lerna run build",
+    "changeset": "changeset",
+    "cypress": "cypress run",
+    "cypress:open": "cypress open",
+    "lint:fix": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
+    "git:reset": "git reset --hard HEAD",
+    "git:clean": "git clean -d -x -e node_modules -e packages -f",
+    "postinstall": "npm run setup:expo",
+    "precommit": "lint-staged",
+    "prepublishOnly": "lerna run prepublish",
+    "release": "changeset publish",
+    "setup": "npm run setup:npm && npm run setup:yarn && npm run setup:install",
+    "setup:crossenv": "npm install -g cross-env",
+    "setup:expo": "cd ./packages/dev-native && expo-yarn-workspaces postinstall",
+    "setup:install": "yarn",
+    "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_node && nvm use $npm_package_engines_node\"",
+    "setup:yarn": "npm i -g yarn",
+    "start:web": "yarn --cwd ./packages/dev-web run dev",
+    "start:native": "yarn --cwd ./packages/dev-native run start",
+    "start:website": "yarn --cwd ./packages/website run start",
     "test": "lerna run test -- --silent",
     "test:watch": "lerna run test --stream --no-sort -- --watch",
     "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
-    "test:vscode": "lerna run test --stream --no-sort --",
-    "build": "lerna run build",
-    "prepublish": "lerna run prepublish",
-    "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
-    "changeset": "changeset",
-    "release": "changeset publish",
-    "git-reset": "git reset --hard HEAD",
-    "git-clean": "git clean -d -x -e node_modules -e packages -f",
-    "cypress": "cypress run",
-    "precommit": "lint-staged",
-    "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./packages/dev-web run dev",
-    "start:native": "yarn --cwd ./packages/dev-native run start",
-    "postinstall": "cd ./packages/dev-native && expo-yarn-workspaces postinstall"
+    "test:vscode": "lerna run test --stream --no-sort --"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

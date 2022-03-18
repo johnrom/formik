@@ -8,13 +8,13 @@ description: Learn how to build forms in React with Formik.
 
 Welcome to the Formik deep dive. Here, we will learn everything we need to know about the inner workings of Formik and get prepared to extend and customize Formik.
 
-If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#getting-started). If you just want a quick tutorial on using Formik out of the box, check out the [tutorial](./tutorial).
+If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview.md#getting-started). If you just want a quick tutorial on using Formik out of the box, check out the [tutorial](./tutorial.md`).
 
 ### What are we building?
 
 In this tutorial, we’ll build a complex newsletter signup form with React and Formik. We'll be following the tutorial -- first, using the starter components provided by Formik and gradually customizing Formik with our own custom components, effects, and API methods.
 
-You can see what we’ll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn’t make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
+You can see what we’ll be building here: [Final Result](#final-result). If the code doesn’t make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
 
 ### Prerequisites
 
@@ -22,20 +22,20 @@ You’ll need to have familiarity with HTML, CSS, [modern JavaScript](https://de
 
 ## Setting Up
 
-You can follow along with the deep dive similar to the [tutorial](./tutorial#setting-up):
+You can follow along with the deep dive similar to the [tutorial](./tutorial.md#setting-up):
 
 - [Use a Playground](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab.
-- [Use a local development environment](./development-setup).
+- [Use a local development environment](./development-setup.md).
 
-If it is your first time building a React site, using a local environment may be a little advanced. However, if you've followed the tutorial and made it this far, you may want to explore setting up a development environment before digging deep into Formik.
+If it is your first time building a React site, it may be faster to jump directly into a Playground. However, if you've followed the tutorial and made it this far, you may want to explore setting up a development environment before digging deep into Formik.
 
-## Anatomy of a basic Formik App
+## Anatomy of a Formik App
 
-We're going to follow the [Tutorial](./tutorial) and explore how Formik's helper components use the API to manage Formik's state -- building our own Reusable Components in the process.
+We're going to pick up where we left up with the [Tutorial](./tutorial.md#final-result) and explore how Formik's helper components use the API to manage Formik's state -- building our own Reusable Components in the process.
 
 Imagine we want to add a newsletter signup form for a blog. To start, our form will have just one field named `email`. To get started with Formik, this is just a few lines of code.
 
-```tsx file=packages/examples/tutorial/tutorial-start.tsx
+```tsx file=packages/examples/deep-dive/deep-dive-start.tsx
 ```
 
 As you can see, we're starting with 4 main components from Formik, which are automagically connected and ready for user interaction:
@@ -51,7 +51,7 @@ Let's see how these components come together to create a usable form.
 
 Formik's API works with a hook, `useFormik()`, which returns an API, and a React Context which passes that API down through React's component hierarchy. Child components access this context by using `useFormikContext()`. Let's try it by replacing the `<Formik />` and `<Form />` components with reusable components that do (just about) the same thing:
 
-```tsx file=packages/examples/tutorial/tutorial-useFormik.tsx snippet=use-formik-hooks
+```tsx file=packages/examples/deep-dive/deep-dive-useFormik.tsx snippet=use-formik-hooks
 ```
 
 Above, you can see we used the API method `handleSubmit` in order to handle html form submission. Other API methods include `setValues`, `setFieldValue`, `getState()`, and more. [Click here to read more about the Formik API](./api).
@@ -76,7 +76,7 @@ State can be accessed on the fly, outside of a render, similar to how Redux expo
 
 We can replicate what the `handleSubmit` function is doing from our last example using `getState()`:
 
-```tsx file=packages/examples/tutorial/tutorial-getState.tsx snippet=getState
+```tsx file=packages/examples/deep-dive/deep-dive-getState.tsx snippet=getState
 ```
 
 `getState()` is useful for:
@@ -100,14 +100,14 @@ State can be accessed from React Context using the `useFormikState` hook or the 
 
 Accessing Formik's state within a render is possible in components under Formik's React Context by using the `useFormikState` function. This method returns a tuple, and the second value returned is the Formik API. This is a little shortcut for using both state and API methods.
 
-```tsx packages/examples/tutorial/tutorial-useFormikState.tsx snippet=useFormikState
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=useFormikState
 ```
 
 ##### Accessing state directly from the API using `formik.useState()`.
 
 Accessing Formik's state within the component calling `useFormik` is done slightly differently than for child components. This is because the React Context doesn't exist yet!
 
-```tsx packages/examples/tutorial/tutorial-useFormikState.tsx snippet=useApiState
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=formik-useState
 ```
 
 #### Optimizing `state`
@@ -120,34 +120,34 @@ We can either:
 
 - create a constant function outside of our component:
 
-    ```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=selector
+    ```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=selector
     ```
 
 - or memoize a function within our component:
 
-    ```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=selector-memoized
+    ```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=selector-memoized
     ```
 
 At the root level, we can pass the callback to `formik.useState()`. In this example, we will always subscribe to updates since we are always passing a function:
 
-```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=optimizing-formik-useState
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=formik-useState
 ```
 
 As a child component, we can also pass the selector to `useFormikState()`. Let's pass the `onChange` function created in the last example to our custom Form component.
 
-```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=using-form-onChange
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=using-form-onChange
 ```
 
 This callback might not always be provided, so we'll also check for the existence of the prop when deciding whether to subscribe:
 
-```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=optimizing-useFormikState
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=optimizing-useFormikState
 ```
 
 ##### Using a custom comparison function
 
 The above function will trigger every time `values` is updated, but it is possible for `values` to update even though the values inside it haven't changed. Instead, we can use deep equality via `lodash` to check for an actual change:
 
-```tsx packages/examples/tutorial/tutorial-optimizing-state.tsx snippet=deep-comparison
+```tsx packages/examples/deep-dive/deep-dive-optimizing-state.tsx snippet=deep-comparison
 ```
 
 We use this method in `useFieldMeta` to optimize it for when the resulting is updated, but the actual field's `value`, `touched`, and `error` don't change.

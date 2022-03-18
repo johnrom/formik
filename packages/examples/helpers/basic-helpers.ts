@@ -10,6 +10,6 @@ export const exampleInitialValues: ExampleFormValues = {
   email: '',
 };
 
-export const exampleAlertOnSubmit = async (values: ExampleFormValues) => {
+export const exampleOnSubmit = async (values: ExampleFormValues) => {
   alert(JSON.stringify(values, null, 2));
 };

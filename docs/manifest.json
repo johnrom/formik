@@ -13,6 +13,10 @@
           "path": "/docs/tutorial.md"
         },
         {
+          "title": "Deep Dive",
+          "path": "/docs/deep-dive.md"
+        },
+        {
           "title": "Resources",
           "path": "/docs/resources.md"
         },

@@ -23,7 +23,7 @@ const alertOnSubmit = async <Values,>(values: Values) => {
   alert(JSON.stringify(values, null, 2));
 };
 
-// @snippet:start optimizing-useFormikState
+// @snippet:start useFormikState
 type FormikChangeHandler<Values> = (values: Values) => void;
 interface WithFormikChangeHandlerProp<Values> {
   onChange?: FormikChangeHandler<Values>;
@@ -45,7 +45,7 @@ const FormWithOnChange = <Values,>({ onChange, ...formProps }: FormWithOnChangeP
       onChange(values);
     }
   }, [onChange, values]);
-  // @snippet:end optimizing-useFormikState
+  // @snippet:end useFormikState
 
   return <form {...formProps} onSubmit={handleSubmit} />;
 };
@@ -66,7 +66,7 @@ const FormWithOnChangeDeepComparison = <Values,>({ onChange, ...formProps }: For
   return <form {...formProps} onSubmit={handleSubmit} />;
 };
 
-// @snippet:start optimizing-formik-useState
+// @snippet:start formik-useState
 const TutorialOptimizingStateExample = () => {
   const formik = useFormik({
     initialValues: initialValues,
@@ -76,7 +76,7 @@ const TutorialOptimizingStateExample = () => {
   const selectValuesOptimized = React.useCallback((state: FormikState<FormValues>) => {
     return state.values;
   }, []);
-  // @snippet:end
+  // @snippet:end selector-memoized
   const values = formik.useState(selectValuesOptimized);
 
   const onChange = React.useCallback((values: FormValues) => {
@@ -86,7 +86,7 @@ const TutorialOptimizingStateExample = () => {
   useEffect(() => {
     onChange(values);
   }, [values]);
-  // @snippet:end optimizing-formik-useState
+  // @snippet:end formik-useState
 
   return (
     <div>

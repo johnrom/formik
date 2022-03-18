@@ -1,25 +1,14 @@
 import * as React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-
-interface FormValues {
-  email: string;
-}
-
-const initialValues: FormValues = {
-  email: '',
-};
-
-const alertOnSubmit = async <Values,>(values: Values) => {
-  alert(JSON.stringify(values, null, 2));
-};
+import { exampleInitialValues, exampleOnSubmit } from '../helpers/basic-helpers';
 
 const BasicExample = () => {
   return (
     <div>
       <h1>Signup</h1>
       <Formik
-        initialValues={initialValues}
-        onSubmit={alertOnSubmit}
+        initialValues={exampleInitialValues}
+        onSubmit={exampleOnSubmit}
       >
         <Form>
           <div>

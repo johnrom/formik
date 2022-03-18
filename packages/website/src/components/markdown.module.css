@@ -125,11 +125,12 @@
 
 .markdown > :not(pre):not(h3) > code,
 .markdown > ul > li > code,
-.markdown > blockquote > code,
-.markdown > blockquote > p > code,
 .markdown > ul > li > ul > li > code,
+.markdown > ul > li > ul > li > ul > li > code,
 .markdown > ol > li > code,
 .markdown > ol > li > ol > li > code,
+.markdown > blockquote > code,
+.markdown > blockquote > p > code,
 .markdown > p a > code,
 .markdown > table > tbody > tr > td:not(:first-child) > code {
   @apply bg-gray-100 shadow-xs rounded px-1;

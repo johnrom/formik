@@ -13,28 +13,28 @@ You can read more about this in the [deep dive](../deep-dive).
 
 There are 2 recommended ways to render things with `<Formik />`
 
-- `<Formik></Children /></Formik>`, with components as children.
+- `<Formik><Children /></Formik>`, with components as children.
 - `<Formik>{props => <Children />}</Formik>`, with a function as children.
 - ~~`<Formik component>`~~ Deprecated in 3.x. It is recommended to use `useFormik` and `FormikProvider` instead.
 - ~~`<Formik render>`~~ Deprecated in 2.x
 
 For these examples, we'll use some common Example Helpers.
 
-```tsx file=packages/examples/basic/basic-example-helpers.tsx
+```tsx file=packages/examples/basic/basic-helpers.tsx
 ```
 
 ### Optimized: Passing Components as Children
 
 This is the most optimized way to use the `<Formik />` component. Child components access Formik's API and State using [hooks](../hooks).
 
-```tsx file=packages/examples/basic/basic-example.tsx
+```tsx file=packages/examples/basic/basic.tsx
 ```
 
 ### Expensive: Passing a Function as Children
 
 This is an expensive method of using Formik's state best used for rapid prototyping. It is not recommended in the long term, not only because it is expensive, but also because the function passed here is _not_ a component, and does not have access to hooks!
 
-```tsx file=packages/examples/basic/basic-function.tsx
+```tsx file=packages/examples/basic/basic-function-as-children.tsx
 ```
 
 ### Legacy: `render` prop
@@ -56,7 +56,9 @@ When using a function as children or a custom component, the props passed will b
 - [FormikState](./state)
 - [FormikConfig](./config)
 
----
+
+
+--- TODO everything below this line ---
 
 # Reference
 

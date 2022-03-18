@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, Field, Form } from 'formik';
-import { exampleAlertOnSubmit, exampleInitialValues } from './basic-example-helpers';
+import { exampleAlertOnSubmit, exampleInitialValues } from './basic-helpers';
 
 const BasicExample = () => {
   return (

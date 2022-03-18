@@ -1,11 +1,11 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { exampleAlertOnSubmit, exampleInitialValues } from './basic-example-helpers';
+import { exampleOnSubmit, exampleInitialValues } from '../helpers/basic-helpers';
 
 const BasicExampleWithFunctionAsChildren = () => (
   <div>
     <h1>My Form</h1>
-    <Formik initialValues={exampleInitialValues} onSubmit={exampleAlertOnSubmit}>
+    <Formik initialValues={exampleInitialValues} onSubmit={exampleOnSubmit}>
       {props => (
         <form onSubmit={props.handleSubmit}>
           <div>
@@ -57,3 +57,5 @@ const BasicExampleWithFunctionAsChildren = () => (
     </Formik>
   </div>
 );
+
+export default BasicExampleWithFunctionAsChildren;

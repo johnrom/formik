@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
-import { exampleAlertOnSubmit, ExampleFormValues, exampleInitialValues } from './basic-example-helpers';
+import { exampleOnSubmit, ExampleFormValues, exampleInitialValues } from '../helpers/basic-helpers';
 
 const CustomFormikComponent = (props: FormikProps<ExampleFormValues>) => {
   return (
@@ -59,7 +59,7 @@ const BasicExampleWithCustomComponent = () => {
       <h1>Signup</h1>
       <Formik
         initialValues={exampleInitialValues}
-        onSubmit={exampleAlertOnSubmit}
+        onSubmit={exampleOnSubmit}
         component={CustomFormikComponent}
       />
     </div>

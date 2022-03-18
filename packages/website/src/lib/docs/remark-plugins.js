@@ -1,4 +1,5 @@
 const path = require('path');
+const { CodeSnippetsRemarkPlugin } = require('@nmbl/code-snippets-remark-plugin');
 
 module.exports = [
   require('remark-slug'),
@@ -31,5 +32,5 @@ module.exports = [
       basePath: path.resolve(process.cwd(), '../../' )
     }
   ],
-  require('@nmbl/remark-code-snippets'),
+  CodeSnippetsRemarkPlugin,
 ];

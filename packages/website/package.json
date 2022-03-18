@@ -5,9 +5,9 @@
   "author": "Jared Palmer <jared@palmer.net>",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
     "build": "next build && npm run sitemap",
-    "start": "next start",
+    "start": "next dev",
+    "serve": "next start",
     "rss": "node ./.next/server/scripts/build-rss.js",
     "sitemap": "node ./scripts/build-sitemap.js"
   },
@@ -15,6 +15,8 @@
     "@babel/preset-typescript": "^7.10.1",
     "@docsearch/css": "1.0.0-alpha.27",
     "@docsearch/react": "1.0.0-alpha.27",
+    "@johnrom/remark-code-import": "0.4.1-beta1",
+    "@nmbl/code-snippets-remark-plugin": "1.0.0-beta.0",
     "@mdx-js/loader": "^1.5.1",
     "@mdx-js/mdx": "^1.5.1",
     "@mdx-js/react": "^1.5.1",

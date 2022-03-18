@@ -15,7 +15,7 @@ export async function getCurrentTag(tag?: string) {
   return getLatestTag();
 }
 
-const postsDirectory = join(process.cwd(), '../.');
+const postsDirectory = join(process.cwd(), '../../');
 
 export async function getRawFileFromLocal(path: string) {
   const fullPath = join(postsDirectory, path);
