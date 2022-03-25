@@ -89,7 +89,8 @@
 }
 
 .markdown > ul,
-.markdown > ul > li > ul {
+.markdown > ul > li > ul,
+.markdown > ul > li > ul > li > ul {
   @apply ml-8 list-disc;
 }
 
