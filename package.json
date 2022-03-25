@@ -1,31 +1,14 @@
 {
-  "name": "formik-project",
+  "name": "@mochi-forms/workspace",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.19.0",
-    "release": "6.0.1",
-    "got": "10.0.4"
+  },
+  "engines": {
+    "node": ">=14"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "lerna": "lerna",
-    "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test --",
-    "build": "lerna run build",
-    "prepublish": "lerna run prepublish",
-    "publish-canary": "lerna version prerelease --preid canary --force-publish && release --pre",
-    "publish-stable": "lerna version --force-publish && release && node ./scripts/release-notes.js",
-    "git-reset": "git reset --hard HEAD",
-    "git-clean": "git clean -d -x -e node_modules -e packages -f",
-    "now-build": "npm run build-website",
-    "start-website": "cd website && yarn start",
-    "build-website": "cd website && yarn install && yarn build"
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "semi": true
   }
 }
