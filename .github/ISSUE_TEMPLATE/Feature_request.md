@@ -1,6 +1,6 @@
 ---
-name: "\U0001F680Feature request"
-about: Suggest an idea for Formik
+name: "\U0001F680 Feature request"
+about: Suggest an idea for Mochi Forms
 ---
 
 ## 🚀 Feature request

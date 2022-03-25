@@ -1,10 +1,11 @@
 # Contributing to Formik
 
 1. Fork this repository to your own GitHub account and then clone it to your local device.
-2. Install the dependencies: `yarn install`
-3. Run `yarn link` to link the local repo to NPM
-4. Run `cd packages/formik && yarn start` to build and watch for code changes
-5. Run `yarn test` to start Jest
-7. Then npm link this repo inside any other project on your local dev with `yarn link formik`
-8. Then you can use your local version of Formik within your project
-
+1. This repo has a shortcut if you use `nvm` or `nvm for Windows`. If so:
+    - Run the setup script: `yarn setup`
+      > This will run the setup process, which will install a specific compatible version of node as well as any global node dependencies. In order to install node, you'll need to have installed node.
+1. Run the following projects when contributing to:
+    - `@mochi-forms/docs`: `yarn start:docs`
+    - `@mochi-forms/react`: `yarn start:web`
+    - `@mochi-forms/react-native`: `yarn start:native`
+1. Run `yarn test` to run Unit Tests.

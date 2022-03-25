@@ -1,0 +1,9 @@
+{
+  "scripts": {
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">=12"
+  }
+}

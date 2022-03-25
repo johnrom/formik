@@ -1,0 +1,9 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "formik": "2.1.4",
+    "formik-native": "2.1.4"
+  },
+  "changesets": []
+}

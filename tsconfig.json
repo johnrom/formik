@@ -6,6 +6,7 @@
       "@mochi-forms/core": ["./packages/core/src"],
       "@mochi-forms/react": ["./packages/react/src"],
       "@mochi-forms/react-native": ["./packages/react-native/src"]
-    }
+    },
+    "noEmit": true
   }
 }

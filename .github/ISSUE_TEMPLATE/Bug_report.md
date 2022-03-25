@@ -1,6 +1,6 @@
 ---
 name: "\U0001F41B Bug report"
-about: Create a report to help make Formik better
+about: Create a report to help make Mochi Forms better
 ---
 
 ## 🐛 Bug report
@@ -35,7 +35,7 @@ about: Create a report to help make Formik better
 
 | Software         | Version(s) |
 | ---------------- | ---------- |
-| Formik           |
+| @mochi-forms/*   |
 | React            |
 | TypeScript       |
 | Browser          |

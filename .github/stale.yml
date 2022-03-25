@@ -1,15 +1,9 @@
 # Number of days of inactivity before an issue becomes stale
 daysUntilStale: 60
 # Number of days of inactivity before a stale issue is closed
-daysUntilClose: 3600
-# Issues with these labels will never be considered stale
-exemptLabels:
-  - enhancement
-  - pinned
-  - RFC
-  - bug
-  - in progress
-  - 2.0
+daysUntilClose: 120
+# Only issues with these labels will be considered stale
+any-of-labels: "Resolution: Duplicate,Resolution: Invalid,Resolution: Support Redirect,Resolution: Unsolved,Resolution: User Land,Resolution: Wontfix,Resolution: Workaround,Status: Author Feedback,Status: Needs More Information"
 # Label to use when marking an issue as stale
 staleLabel: stale
 # Comment to post when marking an issue as stale. Set to `false` to disable

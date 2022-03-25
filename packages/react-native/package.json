@@ -1,62 +1,34 @@
 {
-  "name": "formik-native",
-  "version": "2.1.4",
+  "name": "@mochi-forms/react-native",
+  "description": "Lil' Forms of goodness.",
+  "version": "0.0.1",
   "license": "MIT",
-  "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "jaredpalmer/formik",
+  "author": "John Rom <web@johnrom.com>",
+  "repository": "johnrom/mochi-forms",
   "keywords": [
     "formik",
     "react",
     "react-native",
-    "form",
-    "validation",
     "forms",
+    "validation",
+    "hooks",
     "higher order component",
-    "hoc",
-    "hooks"
+    "hoc"
   ],
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "react-native": "src/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "start": "tsdx watch --verbose",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "react": ">=16.3.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "react": ">=16.8.0"
   },
   "dependencies": {
-    "formik": "2.1.4"
   },
   "devDependencies": {
-    "@react-native-community/eslint-config": "^0.0.5",
-    "@semantic-release/changelog": "^3.0.5",
-    "@types/jest": "^24.0.23",
-    "@types/react": "^16.8.23",
-    "@types/react-native": "^0.57.65",
-    "husky": "^3.1.0",
-    "react": "^16.8.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
-    "tsdx": "^0.11.0",
-    "tslib": "^1.10.0",
-    "typescript": "^3.7.3"
+    "@tsconfig/node16-strictest": "^1.0.0"
   }
 }

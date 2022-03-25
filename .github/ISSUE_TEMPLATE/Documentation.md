@@ -1,6 +1,6 @@
 ---
 name: "\U0001F41B Documentation"
-about: Imrovements or suggestions of Formik documentation
+about: Improvements or suggestions of Mochi Forms documentation
 ---
 
 ## 📖 Documentation
