@@ -4,7 +4,7 @@
   "devDependencies": {
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=12"
   },
   "workspaces": [
     "packages/*"
