@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { SFC } from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { FieldArray, Formik, isFunction } from '../src';
@@ -6,7 +6,7 @@ import { FieldArray, Formik, isFunction } from '../src';
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
-const TestForm: React.SFC<any> = p => (
+const TestForm: SFC<any> = p => (
   <Formik
     onSubmit={noop}
     initialValues={{ friends: ['jared', 'andrea', 'brent'] }}

@@ -1,15 +1,15 @@
-import * as React from 'react';
+import { Component, type ReactNode, createElement, type ComponentClass } from 'react';
+import invariant from 'invariant';
 
-import {
+import type {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContextType,
   FieldMetaProps,
   FieldInputProps,
 } from './types';
-import invariant from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
-import { FieldConfig } from './Field';
+import type { FieldConfig } from './Field';
 import { connect } from './connect';
 
 type $FixMe = any;
@@ -40,7 +40,7 @@ type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FastFieldInner<Values = {}, Props = {}> extends React.Component<
+class FastFieldInner<Values = {}, Props = {}> extends Component<
   FastFieldInnerProps<Values, Props>,
   {}
 > {
@@ -162,22 +162,22 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     }
 
     if (isFunction(children)) {
-      return (children as (props: FastFieldProps<any>) => React.ReactNode)(bag);
+      return (children as (props: FastFieldProps<any>) => ReactNode)(bag);
     }
 
     if (component) {
       // This behavior is backwards compat with earlier Formik 0.9 to 1.x
       if (typeof component === 'string') {
         const { innerRef, ...rest } = props;
-        return React.createElement(
+        return createElement(
           component,
           { ref: innerRef, ...field, ...(rest as $FixMe) },
           children
         );
       }
       // We don't pass `meta` for backwards compat
-      return React.createElement(
-        component as React.ComponentClass<$FixMe>,
+      return createElement(
+        component as ComponentClass<$FixMe>,
         { field, form: formik, ...props },
         children
       );
@@ -188,15 +188,15 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
 
     if (typeof asElement === 'string') {
       const { innerRef, ...rest } = props;
-      return React.createElement(
+      return createElement(
         asElement,
         { ref: innerRef, ...field, ...(rest as $FixMe) },
         children
       );
     }
 
-    return React.createElement(
-      asElement as React.ComponentClass,
+    return createElement(
+      asElement as ComponentClass,
       { ...field, ...props },
       children
     );

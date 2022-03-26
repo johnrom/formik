@@ -1,4 +1,4 @@
-import { FormikTouched, FormikErrors } from '../src';
+import type { FormikTouched, FormikErrors } from '@mochi-forms/react';
 
 describe('Formik Types', () => {
   describe('FormikTouched', () => {

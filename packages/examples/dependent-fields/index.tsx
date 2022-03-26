@@ -1,6 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form, useField, useFormikContext } from 'formik';
+import { Formik, Field, Form, useField, useFormikContext } from '@mochi-forms/react';
 import './styles.css';
 
 const MyField = props => {
@@ -11,7 +10,7 @@ const MyField = props => {
   } = useFormikContext();
   const [field, meta] = useField(props);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // set the value of textC, based on textA and textB
     if (
       textA.trim() !== '' &&
@@ -83,7 +82,7 @@ function App() {
             textC is <i>still</i> editable after being set programmatically.
             However, the value will be overwritten if/whenever there are (new)
             changes to textA and textB. This is because of the dependency array
-            in our custom field's React.useEffect; it only runs when textA or
+            in our custom field's useEffect; it only runs when textA or
             textB change or have been touched. Since Formik's `setFieldValue` is
             equivalent between renders and so is the field's name prop, this
             works as expected. You could alter this overrwriting behavior by

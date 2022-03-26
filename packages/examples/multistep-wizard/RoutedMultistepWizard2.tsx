@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -7,8 +7,8 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import { Field, ErrorMessage, withFormik } from "formik";
-import { Debug } from "./Debug";
+import { Field, ErrorMessage, withFormik } from '@mochi-forms/react';
+import { Debug } from "../helpers/Debug";
 
 
 const required = value => (value ? undefined : "Required");

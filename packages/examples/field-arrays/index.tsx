@@ -1,6 +1,5 @@
-import React from "react";
 import ReactDOM from "react-dom";
-import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
+import { Formik, Field, Form, ErrorMessage, FieldArray } from '@mochi-forms/react';
 
 const initialValues = {
   friends: [

@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { cleanup, render, wait, fireEvent } from 'react-testing-library';
+import { cleanup, render, waitFor, fireEvent } from '@testing-library/react';
 import * as Yup from 'yup';
 import {
   Formik,
@@ -9,9 +8,10 @@ import {
   FieldConfig,
   FormikProps,
   FormikConfig,
-} from '../src';
+} from '@mochi-forms/react';
 
 import { noop } from './testHelpers';
+import type { ReactNode, ComponentType } from 'react';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
@@ -20,7 +20,7 @@ type FastFieldConfig = FieldConfig;
 type $FixMe = any;
 
 function renderForm(
-  ui?: React.ReactNode,
+  ui?: ReactNode,
   props?: Partial<FormikConfig<Values>>
 ) {
   let injected: FormikProps<Values>;
@@ -49,7 +49,7 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentType<FieldConfig>
+  FieldComponent: ComponentType<FieldConfig>
 ) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
@@ -293,7 +293,7 @@ describe('Field / FastField', () => {
       });
 
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -311,7 +311,7 @@ describe('Field / FastField', () => {
           target: { name: 'name', value: 'hello' },
         });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       }
@@ -328,7 +328,7 @@ describe('Field / FastField', () => {
         target: { name: 'name' },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -348,7 +348,7 @@ describe('Field / FastField', () => {
         });
         rerender();
 
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       }
     );
 
@@ -363,7 +363,7 @@ describe('Field / FastField', () => {
         rerender();
         getFormProps().validateField('name');
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalled();
           expect(getFormProps().errors.name).toBe('Error!');
         });
@@ -383,7 +383,7 @@ describe('Field / FastField', () => {
         getFormProps().validateField('name');
 
         expect(validate).toHaveBeenCalled();
-        await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
+        await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
       }
     );
 
@@ -404,7 +404,7 @@ describe('Field / FastField', () => {
 
         getFormProps().validateField('name');
 
-        await wait(() =>
+        await waitFor(() =>
           expect(getFormProps().errors).toEqual({
             name: errorMessage,
           })

@@ -1,6 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form } from '@mochi-forms/react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 

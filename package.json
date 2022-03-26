@@ -1,17 +1,22 @@
 {
   "name": "@mochi-forms/workspace",
   "private": true,
+  "version": "0.0.1",
   "engines": {
     "node": ">=12"
   },
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {},
-  "devDependencies": {},
+  "scripts": {
+    "lint:scripts": "eslint ."
+  },
+  "devDependencies": {
+  },
   "dependencies": {
     "@changesets/cli": "^2.21.1",
     "@tsconfig/node16-strictest-esm": "^1.0.0",
+    "@types/jest": "^27.4.1",
     "eslint": "^8.11.0",
     "eslint-plugin-react": "^7.29.4",
     "lerna": "^4.0.0",

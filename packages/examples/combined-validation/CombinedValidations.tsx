@@ -1,7 +1,6 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../helpers/Debug';
 
 const Schema = Yup.object().shape({
   email: Yup.string().required('This field is required'),

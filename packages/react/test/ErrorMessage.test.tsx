@@ -1,14 +1,14 @@
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Formik, FormikProps, ErrorMessage } from '../src';
+import { Formik, FormikProps, ErrorMessage } from '@mochi-forms/react';
 import { noop } from './testHelpers';
+import type { SFC } from 'react';
 
 interface TestFormValues {
   name: string;
   email: string;
 }
 
-const TestForm: React.SFC<any> = p => (
+const TestForm: SFC<any> = p => (
   <Formik
     onSubmit={noop}
     initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}

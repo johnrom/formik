@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { render, wait } from 'react-testing-library';
+import { render, waitFor } from '@testing-library/react';
+import type { SFC } from 'react';
 import * as Yup from 'yup';
 
 import { withFormik, FormikProps } from '../src';
@@ -9,7 +9,7 @@ interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormikProps<Values>> = ({
+const Form: SFC<FormikProps<Values>> = ({
   values,
   handleSubmit,
   handleChange,
@@ -126,7 +126,7 @@ describe('withFormik()', () => {
     const { getProps } = renderWithFormik({ validate }, myProps);
 
     getProps().submitForm();
-    await wait(() =>
+    await waitFor(() =>
       expect(validate).toHaveBeenCalledWith({ name: 'jared' }, myProps)
     );
   });
@@ -138,7 +138,7 @@ describe('withFormik()', () => {
     });
 
     getProps().submitForm();
-    await wait(() => expect(validate).toHaveBeenCalled());
+    await waitFor(() => expect(validate).toHaveBeenCalled());
   });
 
   it('calls validationSchema function with props', async () => {
@@ -152,7 +152,7 @@ describe('withFormik()', () => {
     );
 
     getProps().submitForm();
-    await wait(() => expect(validationSchema).toHaveBeenCalledWith(myProps));
+    await waitFor(() => expect(validationSchema).toHaveBeenCalledWith(myProps));
   });
 
   it('calls handleSubmit with values, actions and custom props', async () => {
@@ -167,7 +167,7 @@ describe('withFormik()', () => {
 
     getProps().submitForm();
 
-    await wait(() =>
+    await waitFor(() =>
       expect(handleSubmit).toHaveBeenCalledWith(
         { name: 'jared' },
         {

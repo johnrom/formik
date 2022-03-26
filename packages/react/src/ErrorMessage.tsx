@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { FormikContextType } from './types';
+import { type ComponentType, type ReactNode, Component, createElement } from 'react';
+import type { FormikContextType } from './types';
 import { getIn, isFunction } from './utils';
 import { connect } from './connect';
 
 export interface ErrorMessageProps {
   name: string;
   className?: string;
-  component?: string | React.ComponentType;
-  children?: (errorMessage: string) => React.ReactNode;
-  render?: (errorMessage: string) => React.ReactNode;
+  component?: string | ComponentType;
+  children?: (errorMessage: string) => ReactNode;
+  render?: (errorMessage: string) => ReactNode;
 }
 
-class ErrorMessageImpl extends React.Component<
+class ErrorMessageImpl extends Component<
   ErrorMessageProps & { formik: FormikContextType<any> }
 > {
   shouldComponentUpdate(
@@ -46,7 +46,7 @@ class ErrorMessageImpl extends React.Component<
           ? children(error)
           : null
         : component
-        ? React.createElement(component, rest as any, error)
+        ? createElement(component, rest as any, error)
         : error
       : null;
   }

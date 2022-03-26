@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent, SyntheticEvent, ChangeEvent, FocusEvent, ComponentType, ReactNode, Ref } from "react";
+
 /**
  * Values of fields in the form
  */
@@ -117,23 +118,23 @@ export interface FormikHelpers<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e?: FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
-  handleReset: (e?: React.SyntheticEvent<any>) => void;
+  handleReset: (e?: SyntheticEvent<any>) => void;
   /** Classic React blur handler, keyed by input name */
-  handleBlur(e: React.FocusEvent<any>): void;
+  handleBlur(e: FocusEvent<any>): void;
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
     fieldOrEvent: T
   ): T extends string ? (e: any) => void : void;
   /** Classic React change handler, keyed by input name */
-  handleChange(e: React.ChangeEvent<any>): void;
+  handleChange(e: ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange<T = string | React.ChangeEvent<any>>(
+  handleChange<T = string | ChangeEvent<any>>(
     field: T
-  ): T extends React.ChangeEvent<any>
+  ): T extends ChangeEvent<any>
     ? void
-    : (e: string | React.ChangeEvent<any>) => void;
+    : (e: string | ChangeEvent<any>) => void;
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
   getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
@@ -163,20 +164,20 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?: ComponentType<FormikProps<Values>> | ReactNode;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FormikProps<Values>) => React.ReactNode;
+  render?: (props: FormikProps<Values>) => ReactNode;
 
   /**
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
-    | React.ReactNode;
+    | ((props: FormikProps<Values>) => ReactNode)
+    | ReactNode;
 
   /**
    * Initial values of the form
@@ -218,7 +219,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
 
   /** Inner ref */
-  innerRef?: React.Ref<FormikProps<Values>>;
+  innerRef?: Ref<FormikProps<Values>>;
 }
 
 /**
@@ -248,17 +249,17 @@ export interface SharedRenderProps<T> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: string | React.ComponentType<T | void>;
+  component?: string | ComponentType<T | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: (props: T) => React.ReactNode;
+  render?: (props: T) => ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: (props: T) => React.ReactNode;
+  children?: (props: T) => ReactNode;
 }
 
 export type GenericFieldHTMLAttributes =

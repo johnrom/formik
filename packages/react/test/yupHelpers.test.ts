@@ -1,4 +1,4 @@
-import { validateYupSchema, yupToFormErrors } from '../src';
+import { validateYupSchema, yupToFormErrors } from '@mochi-forms/react';
 
 const Yup = require('yup');
 const schema = Yup.object().shape({

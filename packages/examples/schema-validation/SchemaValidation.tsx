@@ -1,7 +1,6 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../helpers/Debug';
 
 // While you can use any validation library (or write you own), Formik
 // comes with special support for Yup by @jquense. It has a builder API like

@@ -1,7 +1,9 @@
-import * as React from 'react';
+import { Children, Component, createElement } from 'react';
+import isEqual from 'react-fast-compare';
 import cloneDeep from 'lodash/cloneDeep';
+
 import { connect } from './connect';
-import {
+import type {
   FormikContextType,
   FormikState,
   SharedRenderProps,
@@ -14,7 +16,6 @@ import {
   setIn,
   isEmptyArray,
 } from './utils';
-import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -118,7 +119,7 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
   }
 };
 
-class FieldArrayInner<Values = {}> extends React.Component<
+class FieldArrayInner<Values = {}> extends Component<
   FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
 > {
@@ -358,14 +359,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
     };
 
     return component
-      ? React.createElement(component as any, props)
+      ? createElement(component as any, props)
       : render
       ? (render as any)(props)
       : children // children come last, always called
       ? typeof children === 'function'
         ? (children as any)(props)
         : !isEmptyChildren(children)
-        ? React.Children.only(children)
+        ? Children.only(children)
         : null
       : null;
   }

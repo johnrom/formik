@@ -1,7 +1,6 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
 import { object, string } from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../helpers/Debug';
 
 const validationSchema = object().shape({
   email: string()

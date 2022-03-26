@@ -21,14 +21,16 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-  },
+  "scripts": {},
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-native": "^0.67.4"
   },
   "dependencies": {
+    "react-native": "^0.67.4"
   },
   "devDependencies": {
-    "@tsconfig/node16-strictest": "^1.0.0"
+    "@tsconfig/node16-strictest": "^1.0.0",
+    "@types/react-native": "^0.67.3"
   }
 }

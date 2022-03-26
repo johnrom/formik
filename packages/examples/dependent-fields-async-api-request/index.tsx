@@ -1,6 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form, useField, useFormikContext } from 'formik';
+import { Formik, Field, Form, useField, useFormikContext } from '@mochi-forms/react';
 import './styles.css';
 
 async function fetchNewTextC(a, b) {
@@ -15,7 +14,7 @@ const MyField = props => {
   } = useFormikContext();
   const [field, meta] = useField(props);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isCurrent = true;
     // your business logic around when to fetch goes here.
     if (textA.trim() !== '' && textB.trim() !== '') {

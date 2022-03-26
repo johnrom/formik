@@ -1,4 +1,8 @@
 {
+  "name": "@mochi-forms/docs-website",
+  "private": true,
+  "version": "0.0.1",
+  "description": "The Mochi Forms docs project.",
   "scripts": {
   },
   "devDependencies": {

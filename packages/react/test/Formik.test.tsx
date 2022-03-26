@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { render, fireEvent, wait } from 'react-testing-library';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import { createRef } from 'react';
 import * as Yup from 'yup';
 
 import {
@@ -211,7 +211,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -235,7 +235,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).not.toHaveBeenCalled();
       });
     });
@@ -306,7 +306,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -327,7 +327,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -348,7 +348,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -364,7 +364,7 @@ describe('<Formik>', () => {
         validateOnBlur: false,
       });
       rerender();
-      await wait(() => expect(validate).not.toHaveBeenCalled());
+      await waitFor(() => expect(validate).not.toHaveBeenCalled());
     });
   });
 
@@ -479,7 +479,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -502,7 +502,7 @@ describe('<Formik>', () => {
 
         await expect(getProps().submitForm()).rejects.toThrow('Async Error');
 
-        await wait(() => {
+        await waitFor(() => {
           expect(onSubmit).not.toBeCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
@@ -542,7 +542,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -563,7 +563,7 @@ describe('<Formik>', () => {
 
         await expect(getProps().submitForm()).rejects.toThrow('Async Error');
 
-        await wait(() => {
+        await waitFor(() => {
           expect(onSubmit).not.toBeCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
@@ -621,7 +621,7 @@ describe('<Formik>', () => {
 
         getProps().setValues(newValue);
         // rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalledWith(newValue, undefined);
         });
       });
@@ -634,7 +634,7 @@ describe('<Formik>', () => {
 
         getProps().setValues({ name: 'ian' });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       });
@@ -644,7 +644,7 @@ describe('<Formik>', () => {
 
         getProps().setFieldValue('name', 'ian');
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(getProps().values.name).toEqual('ian');
         });
       });
@@ -655,7 +655,7 @@ describe('<Formik>', () => {
 
         getProps().setFieldValue('name', 'ian');
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalled();
         });
       });
@@ -669,7 +669,7 @@ describe('<Formik>', () => {
 
         getProps().setFieldValue('name', 'ian');
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       });
@@ -687,7 +687,7 @@ describe('<Formik>', () => {
 
         getProps().setTouched({ name: true });
         rerender();
-        await wait(() => expect(validate).toHaveBeenCalled());
+        await waitFor(() => expect(validate).toHaveBeenCalled());
       });
 
       it('setTouched should run validations when validateOnBlur is false', async () => {
@@ -699,7 +699,7 @@ describe('<Formik>', () => {
 
         getProps().setTouched({ name: true });
         rerender();
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setFieldTouched sets touched by key', () => {
@@ -720,7 +720,7 @@ describe('<Formik>', () => {
 
         getProps().setFieldTouched('name', true);
         rerender();
-        await wait(() => expect(validate).toHaveBeenCalled());
+        await waitFor(() => expect(validate).toHaveBeenCalled());
       });
 
       it('setFieldTouched should NOT run validations when validateOnBlur is false', async () => {
@@ -732,7 +732,7 @@ describe('<Formik>', () => {
 
         getProps().setFieldTouched('name', true);
         rerender();
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setErrors sets error object', () => {
@@ -1302,7 +1302,7 @@ describe('<Formik>', () => {
   });
 
   it('exposes formikbag as imperative methods', () => {
-    const innerRef: any = React.createRef();
+    const innerRef: any = createRef();
 
     const { getProps } = renderFormik({ innerRef });
 

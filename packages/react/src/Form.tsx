@@ -1,18 +1,18 @@
-import * as React from 'react';
+import { type FormHTMLAttributes, type ComponentPropsWithoutRef, forwardRef } from 'react';
 import { useFormikContext } from './FormikContext';
 
 export type FormikFormProps = Pick<
-  React.FormHTMLAttributes<HTMLFormElement>,
+  FormHTMLAttributes<HTMLFormElement>,
   Exclude<
-    keyof React.FormHTMLAttributes<HTMLFormElement>,
+    keyof FormHTMLAttributes<HTMLFormElement>,
     'onReset' | 'onSubmit'
   >
 >;
 
-type FormProps = React.ComponentPropsWithoutRef<'form'>;
+type FormProps = ComponentPropsWithoutRef<'form'>;
 
 // @todo tests
-export const Form = React.forwardRef<HTMLFormElement, FormProps>(
+export const Form = forwardRef<HTMLFormElement, FormProps>(
   (props: FormikFormProps, ref) => {
     // iOS needs an "action" attribute for nice input: https://stackoverflow.com/a/39485162/406725
     // We default the action to "#" in case the preventDefault fails (just updates the URL hash)

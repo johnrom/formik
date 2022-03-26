@@ -1,8 +1,7 @@
-import React from 'react';
-import { Formik, FastField, Form } from 'formik';
-import { Debug } from './Debug';
+import { Formik, FastField, Form } from '@mochi-forms/react';
+import { Debug } from '../helpers/Debug';
 
-class Input extends React.Component {
+class Input extends Component {
   renders = 0;
   render() {
     return (

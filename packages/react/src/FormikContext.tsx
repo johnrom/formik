@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { FormikContextType } from './types';
-import invariant from 'tiny-warning';
+import { createContext, useContext } from 'react';
+import invariant from 'invariant';
+import type { FormikContextType } from './types';
 
-export const FormikContext = React.createContext<FormikContextType<any>>(
+export const FormikContext = createContext<FormikContextType<any>>(
   undefined as any
 );
 export const FormikProvider = FormikContext.Provider;
 export const FormikConsumer = FormikContext.Consumer;
 
 export function useFormikContext<Values>() {
-  const formik = React.useContext<FormikContextType<Values>>(FormikContext);
+  const formik = useContext<FormikContextType<Values>>(FormikContext);
 
   invariant(
     !!formik,

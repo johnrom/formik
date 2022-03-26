@@ -1,15 +1,6 @@
 {
-  "extends": "@tsconfig/node16-strictest/tsconfig.json",
-  "include": ["src"],
+  "extends": "../../tsconfig.browser.json",
+  "include": ["src", "test", "types"],
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "jsx": "react",
-    "moduleResolution": "node",
-
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "sourceMap": true,
   }
 }

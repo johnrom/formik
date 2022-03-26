@@ -1,7 +1,6 @@
-import React from 'react';
 import * as Yup from 'yup';
-import { withFormik } from '../src/formik';
-import { Debug } from './Debug';
+import { withFormik } from '@mochi-forms/react';
+import { Debug } from '../helpers/Debug';
 
 const formikEnhancer = withFormik({
   mapPropsToValues: props => ({ email: props.user.email }),

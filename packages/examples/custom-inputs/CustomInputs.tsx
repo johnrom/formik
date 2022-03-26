@@ -1,16 +1,15 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
-import { Debug } from './Debug';
+import { Debug } from '../helpers/Debug';
 
 // By combining a vanilla <label> plus Formik's <Field> and <ErrorMessage>,
 // we can abstract a generic "Fieldset" component for most of our inputs.
 const Fieldset = ({ name, label, ...rest }) => (
-  <React.Fragment>
+  <Fragment>
     <label htmlFor={name}>{label}</label>
     <Field id={name} name={name} {...rest} />
     <ErrorMessage name={name} />
-  </React.Fragment>
+  </Fragment>
 );
 
 const SignUp = () => (

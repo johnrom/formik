@@ -6,7 +6,7 @@ import {
   isPromise,
   getActiveElement,
   isNaN,
-} from '../src/utils';
+} from '@mochi-forms/react';
 
 describe('utils', () => {
   describe('isEmptyArray', () => {

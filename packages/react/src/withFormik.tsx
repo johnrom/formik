@@ -1,7 +1,8 @@
+import type { ComponentClass, StatelessComponent, ComponentType } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import * as React from 'react';
+
 import { Formik } from './Formik';
-import {
+import type {
   FormikHelpers,
   FormikProps,
   FormikSharedConfig,
@@ -80,11 +81,11 @@ export interface WithFormikConfig<
 }
 
 export type CompositeComponent<P> =
-  | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
+  | ComponentClass<P>
+  | StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
+  (component: CompositeComponent<TMergedProps>): ComponentType<TOwnProps>;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -119,7 +120,7 @@ export function withFormik<
 > {
   return function createFormik(
     Component: CompositeComponent<OuterProps & FormikProps<Values>>
-  ): React.ComponentClass<OuterProps> {
+  ): ComponentClass<OuterProps> {
     const componentDisplayName =
       Component.displayName ||
       Component.name ||
@@ -129,7 +130,7 @@ export function withFormik<
      * We need to use closures here for to provide the wrapped component's props to
      * the respective withFormik config methods.
      */
-    class C extends React.Component<OuterProps, {}> {
+    class C extends Component<OuterProps, {}> {
       static displayName = `WithFormik(${componentDisplayName})`;
 
       validate = (values: Values): void | object | Promise<any> => {
@@ -183,7 +184,7 @@ export function withFormik<
 
     return hoistNonReactStatics(
       C,
-      Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
-    ) as React.ComponentClass<OuterProps>;
+      Component as ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
+    ) as ComponentClass<OuterProps>;
   };
 }

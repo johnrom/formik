@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node16-strictest/tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "include": ["src"],
   "compilerOptions": {
     "target": "es5",
@@ -7,9 +7,5 @@
     "lib": ["es2015", "es2016", "esnext"],
     "jsx": "react-native",
     "moduleResolution": "node",
-
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "sourceMap": true,
   }
 }

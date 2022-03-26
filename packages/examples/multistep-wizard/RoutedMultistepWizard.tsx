@@ -1,7 +1,6 @@
-import React from "react";
 import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
-import { Formik, Field, ErrorMessage } from "formik";
-import { Debug } from "./Debug";
+import { Formik, Field, ErrorMessage } from '@mochi-forms/react';
+import { Debug } from "../helpers/Debug";
 
 // the root path. locations should extend from this
 const formRootPath = "/step"
@@ -14,7 +13,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const required = value => (value ? undefined : "Required");
 
 
-class WizardBase extends React.Component {
+class WizardBase extends Component {
   static Page = ({ children }) => children;
 
   constructor(props) {
@@ -44,14 +43,14 @@ class WizardBase extends React.Component {
     const { location, children } = this.props;
 
     const page = locations.indexOf(location.pathname);
-    const activePage = React.Children.toArray(children)[page];
+    const activePage = Children.toArray(children)[page];
     return activePage.props.validate ? activePage.props.validate(values) : {};
   };
 
   handleSubmit = (values, bag) => {
     const { children, onSubmit, location } = this.props;
     const page = locations.indexOf(location.pathname);
-    const isLastPage = page === React.Children.count(children) - 1;
+    const isLastPage = page === Children.count(children) - 1;
     if (isLastPage) {
       return onSubmit(values, bag);
     }
@@ -67,8 +66,8 @@ class WizardBase extends React.Component {
     // current page is determined by matching path in locations
     const page = locations.indexOf(location.pathname);
 
-    const activePage = React.Children.toArray(children)[page];
-    const isLastPage = page === React.Children.count(children) - 1;
+    const activePage = Children.toArray(children)[page];
+    const isLastPage = page === Children.count(children) - 1;
     return (
       <Formik
         initialValues={values}

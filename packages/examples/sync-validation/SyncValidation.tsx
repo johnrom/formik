@@ -1,6 +1,5 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { Debug } from './Debug';
+import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Debug } from '../helpers/Debug';
 
 const validate = values => {
   const errors = {};
