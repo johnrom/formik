@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "noEmit": true,
     "moduleResolution": "node",
     "declaration": true,
@@ -8,9 +9,9 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "paths": {
-      "@mochi-forms/examples": ["./packages/examples/src"],
-      "@mochi-forms/react": ["./packages/react/src"],
-      "@mochi-forms/react-native": ["./packages/react-native/src"]
+      "@mochi-forms/examples": ["./packages/mochi-forms-examples/src"],
+      "@mochi-forms/react": ["./packages/mochi-forms-react/src"],
+      "@mochi-forms/react-native": ["./packages/mochi-forms-react-native/src"]
     },
     "types": ["node"]
   }

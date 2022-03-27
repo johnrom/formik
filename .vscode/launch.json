@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "name": "vscode-jest-tests",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "yarn",
+      "args": [
+        "run",
+        "test",
+        "--runInBand",
+        // when filtering, every package not matching will have no tests
+        "--passWithNoTests",
+        "--testTimeout=9999"
+      ]
+    }
+  ]
+}

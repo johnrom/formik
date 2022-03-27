@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // and https://www.npmjs.com/package/@tsconfig/docusaurus
+  "compilerOptions": {
+    "composite": true,
+    "allowJs": true,
+    "jsx": "react",
+    "types": [
+      "node",
+      "@docusaurus/module-type-aliases",
+      "@docusaurus/theme-classic"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@site/*": ["./*"]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+- sync
+- async
+- validateOnBlur vs validateOnChange
+- field-level
+- form-level
+- third-party integrations (link to 3rd party bindings)

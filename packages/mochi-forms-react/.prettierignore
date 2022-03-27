@@ -1,0 +1,4 @@
+# we're not ready to run a full cleanup just yet
+src/
+test/
+types/

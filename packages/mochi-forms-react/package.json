@@ -1,0 +1,57 @@
+{
+  "name": "@mochi-forms/react",
+  "description": "Lil' Forms of goodness.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "John Rom <web@johnrom.com>",
+  "repository": "johnrom/mochi-forms",
+  "keywords": [
+    "formik",
+    "react",
+    "react-dom",
+    "forms",
+    "validation",
+    "hooks",
+    "higher order component",
+    "hoc"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.3.2",
+    "invariant": "^2.2.4",
+    "lodash": "^4.17.21",
+    "react-fast-compare": "^3.2.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@testing-library/react": "^12.1.4",
+    "@tsconfig/node16-strictest": "^1.0.0",
+    "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/invariant": "^2.2.35",
+    "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.180",
+    "@types/node": "^17.0.23",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "@types/testing-library__react": "^10.2.0",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.6.3"
+  }
+}

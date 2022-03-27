@@ -1,0 +1,40 @@
+{
+  "name": "@mochi-forms/react-native",
+  "description": "Lil' Forms of goodness.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "John Rom <web@johnrom.com>",
+  "repository": "johnrom/mochi-forms",
+  "keywords": [
+    "formik",
+    "react",
+    "react-native",
+    "forms",
+    "validation",
+    "hooks",
+    "higher order component",
+    "hoc"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {},
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-native": "^0.67.4"
+  },
+  "dependencies": {
+    "@types/jest": "^27.4.1",
+    "react-native": "^0.67.4"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.16.7",
+    "@tsconfig/node16-strictest": "^1.0.0",
+    "@types/react-native": "^0.67.3",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1"
+  }
+}
