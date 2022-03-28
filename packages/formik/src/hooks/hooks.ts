@@ -89,7 +89,7 @@ export const useFieldProps = <Value, Values>(
     }
 
     return field;
-};
+  };
 
 /**
  * Get field state from `FormikState`.
@@ -163,3 +163,7 @@ export const useIsValid = () => useFormikContext().useState(selectIsValid);
 const selectIsSubmitting = (state: FormikState<any>) => state.isSubmitting;
 export const useIsSubmitting = () =>
   useFormikContext().useState(selectIsSubmitting);
+
+const selectIsValidating = (state: FormikState<any>) => state.isValidating;
+export const useIsValidating = () =>
+  useFormikContext().useState(selectIsValidating);

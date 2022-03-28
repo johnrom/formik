@@ -4,21 +4,24 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
+    "@johnrom/tsdx": "0.14.2-noclean3",
     "@types/jest": "^26.0.14",
     "@types/react": "^16.9.55",
     "cypress": "^5.2.0",
+    "jest": "25.5.4",
+    "babel-jest": "25.5.1",
     "got": "10.0.4",
     "husky": "^4.3.0",
     "lerna": "^3.19.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "release": "6.0.1",
-    "tsdx": "^0.14.1",
     "typescript": "^4.2.4"
   },
   "workspaces": [
     "packages/*",
-    "./app"
+    "./app",
+    "./app-native"
   ],
   "resolutions": {
     "**/typescript": "^4.2.4"
@@ -40,7 +43,9 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev",
+    "start:native": "yarn --cwd ./app-native run start",
+    "postinstall": "cd ./app-native && expo-yarn-workspaces postinstall"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

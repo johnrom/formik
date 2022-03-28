@@ -79,26 +79,26 @@ export type FormikReducerState<Values> = FormikInitialState<Values> &
   FormikCurrentState<Values>;
 
 export type FormikMessage<Values> =
-| { type: 'SUBMIT_ATTEMPT' }
-| { type: 'SUBMIT_FAILURE' }
-| { type: 'SUBMIT_SUCCESS' }
-| { type: 'SET_ISVALIDATING'; payload: boolean }
-| { type: 'SET_ISSUBMITTING'; payload: boolean }
-| { type: 'SET_VALUES'; payload: Values }
-| { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
-| { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-| { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
-| { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
-| { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
-| { type: 'SET_STATUS'; payload: any }
-| {
-    type: 'SET_FORMIK_STATE';
-    payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
-  }
-| {
-    type: 'RESET_FORM';
-    payload: Partial<FormikReducerState<Values>>;
-  };
+  | { type: 'SUBMIT_ATTEMPT' }
+  | { type: 'SUBMIT_FAILURE' }
+  | { type: 'SUBMIT_SUCCESS' }
+  | { type: 'SET_ISVALIDATING'; payload: boolean }
+  | { type: 'SET_ISSUBMITTING'; payload: boolean }
+  | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
+  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
+  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
+  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
+  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
+  | { type: 'SET_STATUS'; payload: any }
+  | {
+      type: 'SET_FORMIK_STATE';
+      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
+    }
+  | {
+      type: 'RESET_FORM';
+      payload: Partial<FormikReducerState<Values>>;
+    };
 
 /**
  * Formik computed state. These are read-only and
@@ -229,8 +229,8 @@ export interface FormikStateHelpers<Values> {
   /** Get Formik State from outside of Render. */
   getState: GetStateFn<Values>;
   /** Use Formik State from within Render. */
-  useState: <Return>(
-    selector: Selector<FormikState<Values>, Return>,
+  useState: <Return = FormikState<Values>>(
+    selector?: Selector<FormikState<Values>, Return>,
     comparer?: Comparer<Return>,
     shouldSubscribe?: boolean
   ) => Return;
@@ -260,16 +260,16 @@ export type HandleBlurFn = {
 /**
  * Event callback returned by `formik.handleChange`.
  */
-export type HandleChangeEventFn = (event: React.ChangeEvent<any>) => void;
+export type HandleChangeEventFn = (event: React.ChangeEvent<any> | string) => void;
 
 /**
  * Type of `formik.handleChange`.
  * May be an event callback, or accept a field name and return an event callback.
  */
 export type HandleChangeFn = {
-  (eventOrPath: React.ChangeEvent<any>): void;
+  (event: React.ChangeEvent<any>): void;
   // Must remain the same as HandleChangeEventFn
-  (event: string): HandleChangeEventFn;
+  (name: string): HandleChangeEventFn;
 };
 
 /**
@@ -412,6 +412,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
 export type FormikContextType<Values> = FormikApi<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
+export type FormikConnectedType<Values> =
+  FormikContextType<Values> &
+  FormikSharedConfig<Values> &
+  FormikState<Values>;
+
 export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['input']
   | JSX.IntrinsicElements['select']
@@ -479,7 +484,7 @@ export type FieldValidator<Value> = (
 // and their validate functions
 export interface FieldRegistry {
   [field: string]: {
-    validate: FieldValidator<any>;
+    validate?: FieldValidator<any>;
   };
 }
 
@@ -487,14 +492,6 @@ export type ValidationHandler<Values extends FormikValues> = (
   values: Values,
   field?: string
 ) => Promise<FormikErrors<Values>>;
-
-/**
- * The expensive type returned by connect() and deprecated FormikConsumer, includes ContextType, State and Config
- */
-export type FormikConnectedType<Values> =
-  FormikContextType<Values> &
-  FormikSharedConfig<Values> &
-  FormikState<Values>;
 
 /**
  * If an object has optional properties, force passing undefined.

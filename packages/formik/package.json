@@ -27,6 +27,7 @@
     }
   ],
   "main": "dist/index.js",
+  "react-native": "dist/index.native.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "types": "index.d.ts",
@@ -47,13 +48,28 @@
     "dist-untyped"
   ],
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-dom": "^16.8.0",
+    "react-native": "^0.64.2"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "scripts": {
     "test": "tsdx test --env=jsdom",
-    "test:watch": "npm run test -- --watchAll",
+    "test:watch": "yarn test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json && npm run build-untyped",
+    "build": "yarn run build-native && yarn run move-native && yarn run build-alternate && yarn run move-alternate && yarn run build-web && yarn run build-untyped",
+    "build-native": "yarn run tsdx build --tsconfig tsconfig.build.json --entry src/index.native.tsx --name formik-v3.native",
+    "move-native": "mv dist/index.js dist/index.native.js",
+    "build-alternate": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean --entry src/index.alternate.tsx --name formik-v3.alternate",
+    "move-alternate": "mv dist/index.js dist/index.alternate.js",
+    "build-web": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean",
     "build-untyped": "tsc --emitDeclarationOnly --noEmit false --project tsconfig.build.json --outDir dist-untyped && mv -f dist-untyped/helpers/path-helpers.untyped.d.ts dist-untyped/helpers/path-helpers.d.ts",
     "lint": "tsdx lint"
   },
@@ -78,8 +94,9 @@
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "yup": "^0.28.1"
   },
   "jest": {
