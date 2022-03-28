@@ -1,4 +1,5 @@
-import { FieldHookConfig, FormikApi, FormikReducerState, InputElements } from '../types';
+import { FieldHookConfig } from '../Field.types';
+import { FormikApi, FormikReducerState, InputElements } from '../types';
 import { getIn, getValueFromEvent, isInputEvent, isObject } from '../utils';
 
 /**
@@ -41,17 +42,17 @@ export const selectFieldOnChange = <Value, Values>(
     setFieldValue,
     getState,
   }: Pick<FormikApi<Values>, 'setFieldValue' | 'getState'>,
-  nameOrConfig?: string | FieldHookConfig<Value>
+  nameOrConfig?: string | FieldHookConfig<Value, Values>
 ) => {
   return (
     eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | unknown
   ) => {
     const {
-      type = '',
-      name = '',
+      type,
+      name,
       parse: configParse,
       multiple,
-    }: FieldHookConfig<Value> = isObject(nameOrConfig)
+    }: FieldHookConfig<Value, Values> = isObject(nameOrConfig)
       ? nameOrConfig
       : isInputEvent(eventOrValue) && eventOrValue.target
       ? (eventOrValue.target as any)
@@ -67,11 +68,11 @@ export const selectFieldOnChange = <Value, Values>(
       ? getValueFromEvent(eventOrValue)
       : eventOrValue;
 
-    const defaultParse = /number|range/.test(type)
+    const defaultParse = type && /number|range/.test(type)
       ? numberParseFn
       : // radios and checkboxes don't have a default parser
       // the default parser won't work for grouped fields
-      !/radio|checkbox/.test(type)
+      type && !/radio|checkbox/.test(type)
       ? defaultParseFn
       : undefined;
 
@@ -80,7 +81,7 @@ export const selectFieldOnChange = <Value, Values>(
 
     setFieldValue(
       name,
-      /checkbox/.test(type) &&
+      type && /checkbox/.test(type) &&
         isInputEvent(eventOrValue) &&
         eventOrValue.target instanceof HTMLInputElement
         ? getValueForCheckbox(

@@ -13,6 +13,13 @@ import { useRouter } from 'next/router';
 type SignInValues = {
   username: string;
   password: string;
+  name: {
+    first: string,
+    last: string,
+  }
+  birthdate: {
+    year: number | "",
+  }
 };
 
 const selectSignInState = (formikState: FormikState<SignInValues>) => ({
@@ -30,7 +37,17 @@ const SignInPage = () => {
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',
-    initialValues: { username: '', password: '' },
+    initialValues: {
+      username: '',
+      password: '',
+      name: {
+        first: "",
+        last: ""
+      },
+      birthdate: {
+        year: ""
+      }
+    },
     validationSchema: Yup.object().shape({
       username: Yup.string().required('Required'),
       password: Yup.string().required('Required'),
@@ -80,7 +97,10 @@ const SignInPage = () => {
       <FormikProvider value={formik}>
         <Form>
           <div>
-            <Field name="username" placeholder="Username" />
+            <formik.TypedField
+              name="username"
+              validate={value => value.length > 0 ? "" : "Oh no"}
+            />
             <ErrorMessage name="username" component="p" />
           </div>
 

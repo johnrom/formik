@@ -1,26 +1,22 @@
 import * as React from 'react';
 import { FormikValues } from './types';
-import { Field, FieldAttributes, FieldProps } from './Field';
+import { Field } from './Field';
+import { FieldConfig } from './Field.types';
 
-export type FastFieldProps<Value = any, FormValues = any> = FieldProps<
-  Value,
-  FormValues
->;
-
-export type FastFieldConfig<V = any> = FieldAttributes<V> & {
-  /**
-   * Override FastField's default shouldComponentUpdate
-   * @deprecated
-   */
-  shouldUpdate?: (nextProps: any, props: {}) => boolean;
-};
+/**
+ * @deprecated Use Field + FieldConfig
+ */
+export type FastFieldConfig<Value, Values> =
+  FieldConfig<Value, Values> & {
+    shouldUpdate?: (nextProps: any, props: {}) => boolean;
+  };
 
 /**
  * @deprecated Field now only subscribes to its own slice of Formik's state.
  */
-export const FastField = <Values extends FormikValues>({
-  shouldUpdate,
-  ...fieldProps
-}: FastFieldConfig<Values>) => (
-  <Field {...fieldProps} />
+export const FastField = <
+  Value extends any = any,
+  Values extends FormikValues = any
+>({ shouldUpdate, ...props}: FastFieldConfig<Value, Values>) => (
+  <Field {...(props as FieldConfig<Value, Values>)} />
 );
