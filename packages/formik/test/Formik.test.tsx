@@ -1430,7 +1430,7 @@ describe('<Formik>', () => {
       validationSchema,
     });
 
-    let caughtError: string = '';
+    let caughtError: any = '';
 
     await act(async () => {
       try {

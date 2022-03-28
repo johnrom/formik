@@ -14,10 +14,8 @@
     "sourceMap": true,
     "lib": ["es2015", "es2016", "dom"],
     "baseUrl": "../../",
-    "paths": {
-      "formik": [
-        "packages/formik/src"
-      ],
+    "paths": {      
+      "@johnrom/formik-native-v3": ["packages/react-native/src"],
     }
   },
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form } from '@johnrom/formik-v3';
 import formatString from 'format-string-by-pattern';
 import { sleep } from '../helpers';
 

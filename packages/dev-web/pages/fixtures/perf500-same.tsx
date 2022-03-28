@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Form, useField, FieldConfig } from 'formik';
+import { Formik, Form, useField, FieldConfig } from '@johnrom/formik-v3';
 import { Collapse } from '../../components/debugging/Collapse';
 import { selectRange } from '../../helpers/array-helpers';
 

@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, FormikProps, withFormik } from 'formik';
+import { ErrorMessage, Field, Form, FormikProps, withFormik } from '@johnrom/formik-v3';
 import React from 'react';
 import * as Yup from 'yup';
 import { Debug } from '../Debug';

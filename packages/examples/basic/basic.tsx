@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form } from '@johnrom/formik-v3';
 import { exampleAlertOnSubmit, exampleInitialValues } from './basic-helpers';
 
 const BasicExample = () => {

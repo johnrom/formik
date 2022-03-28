@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Form, useField, useFormikState, FormikState, useFormikConfig, FieldAttributes } from 'formik';
+import { Formik, Form, useField, useFormikState, FormikState, useFormikConfig, FieldAttributes } from '@johnrom/formik-v3';
 import { DebugProps } from '../../components/debugging/DebugProps';
 
 const Input = React.memo((p: FieldAttributes<any>) => {

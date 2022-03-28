@@ -1,5 +1,17 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
+import { TypedField } from './Field.types';
+import { TypedFieldArray } from './FieldArray.types';
+import { PathLikeValue, PathMatchingValue, PathOf } from './helpers/path-helpers';
+export { PathMatchingValue, PathOf, ValueMatchingPath } from './helpers/path-helpers';
+
+export type ParseFn<Value> = (value: unknown, name: string) => Value;
+export type FormatFn<Value> = (value: Value, name: string) => any;
+
+export type SingleValue<Value> =
+  Value extends (infer SingleValue)[]
+    ? SingleValue
+    : Value;
 
 export type InputElements = "input" | "textarea" | "select";
 
@@ -9,7 +21,6 @@ export type InputElements = "input" | "textarea" | "select";
 export interface FormikValues {
   [field: string]: any;
 }
-
 /**
  * An object containing error messages whose keys correspond to FormikValues.
  * Should always be an object of strings, but any is allowed to support i18n libraries.
@@ -115,13 +126,19 @@ export type FormikState<Values> = FormikReducerState<Values> &
   FormikComputedState;
 
 export type GetStateFn<Values> = () => FormikState<Values>;
-export type UnregisterFieldFn = (name: string) => void;
-export type RegisterFieldFn = (name: string, { validate }: any) => void;
+
+export type RegisterFieldFn<Values> = <Value,>(
+  name: PathMatchingValue<Value, Values>,
+  args: { validate?: FieldValidator<SingleValue<Value>> },
+) => void;
+
+export type UnregisterFieldFn<Values> = <Path extends PathOf<Values>>(
+  name: Path
+) => void;
 
 /**
  * Formik state helpers
  */
-
 export type SetStatusFn = (status: any) => void;
 
 export type SetErrorsFn<Values extends FormikValues> = (
@@ -140,19 +157,21 @@ export type SetValuesFn<Values extends FormikValues> = (
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldValueFn<Values extends FormikValues> = (
-  field: string,
-  value: any,
+export type SetFieldValueFn<Values extends FormikValues> = <
+  Value
+>(
+  field: PathLikeValue<Value, Values> | PathMatchingValue<Value, Values>,
+  value: Value,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldErrorFn = (
-  field: string,
-  value: string | undefined
+export type SetFieldErrorFn<Values> = <Path extends PathOf<Values>>(
+  field: Path,
+  error: string | undefined
 ) => void;
 
-export type SetFieldTouchedFn<Values extends FormikValues> = (
-  field: string,
+export type SetFieldTouchedFn<Values extends FormikValues> = <Path extends PathOf<Values>>(
+  field: Path,
   touched?: boolean | undefined,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
@@ -161,8 +180,8 @@ export type ValidateFormFn<Values extends FormikValues> = (
   values?: Values
 ) => Promise<FormikErrors<Values>>;
 
-export type ValidateFieldFn = (
-  name: string
+export type ValidateFieldFn<Values> = <Path extends PathOf<Values>>(
+  name: Path
 ) => Promise<void | string | undefined>;
 
 export type ResetFormFn<Values extends FormikValues> = (
@@ -191,13 +210,13 @@ export interface FormikHelpers<Values> {
   /** Set value of form field directly */
   setFieldValue: SetFieldValueFn<Values>;
   /** Set error message of a form field directly */
-  setFieldError: SetFieldErrorFn;
+  setFieldError: SetFieldErrorFn<Values>;
   /** Set whether field has been touched directly */
   setFieldTouched: SetFieldTouchedFn<Values>;
   /** Validate form values */
   validateForm: ValidateFormFn<Values>;
   /** Validate field value */
-  validateField: ValidateFieldFn;
+  validateField: ValidateFieldFn<Values>;
   /** Reset form */
   resetForm: ResetFormFn<Values>;
   /** Submit the form imperatively */
@@ -216,11 +235,6 @@ export interface FormikStateHelpers<Values> {
     shouldSubscribe?: boolean
   ) => Return;
 }
-
-export type GetValueFromEventFn = (
-  event: React.SyntheticEvent<any>,
-  fieldName: string
-) => unknown;
 
 export type HandleSubmitFn = (
   e?: React.FormEvent<HTMLFormElement> | undefined
@@ -268,6 +282,27 @@ export interface FormikHandlers {
   handleChange: HandleChangeFn;
 }
 
+export type ValidateFn<Values extends FormikValues> = (
+  values?: Values | undefined
+) => Promise<void | FormikErrors<Values>>;
+
+/** Internal Formik registration methods that get passed down as props */
+export interface FormikRegistration<Values> {
+  unregisterField: UnregisterFieldFn<Values>;
+  registerField: RegisterFieldFn<Values>;
+}
+
+export interface FormikFieldHelpers<Values> {
+  TypedField: TypedField<Values>;
+  TypedFieldArray: TypedFieldArray<Values>;
+}
+
+export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
+  FormikStateHelpers<Values> &
+  FormikHandlers &
+  FormikRegistration<Values> &
+  FormikFieldHelpers<Values>;
+
 export interface FormikValidationConfig<Values> {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
@@ -286,13 +321,6 @@ export interface FormikValidationConfig<Values> {
   validate?: (values: Values) => void | object | ValidateFn<Values>;
 }
 
-export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
-  FormikStateHelpers<Values> &
-  FormikHandlers & {
-    unregisterField: UnregisterFieldFn;
-    registerField: RegisterFieldFn;
-  };
-
 /**
  * Base formik configuration/props shared between the HoC and Component.
  */
@@ -306,9 +334,18 @@ export type FormikSharedConfig<
   enableReinitialize?: boolean;
 };
 
-export type ValidateFn<Values extends FormikValues> = (
-  values?: Values | undefined
-) => Promise<void | FormikErrors<Values>>;
+/**
+ * State, handlers, and helpers made available to form component or render prop
+ * of <Formik/>.
+ */
+export type FormikProps<Values> = FormikSharedConfig<Values> &
+  FormikReducerState<Values> &
+  FormikInitialState<Values> &
+  FormikHelpers<Values> &
+  FormikFieldHelpers<Values> &
+  FormikHandlers &
+  FormikComputedState &
+  FormikRegistration<Values>;
 
 export type FormikResetHandler<Values> = (
   values: Values,
@@ -372,23 +409,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   innerRef?: React.Ref<FormikProps<Values>>;
 }
 
-/**
- * State, handlers, and helpers made available to form component or render prop
- * of <Formik/>.
- */
-export type FormikProps<Values> = FormikSharedConfig<Values> &
-  FormikReducerState<Values> &
-  FormikInitialState<Values> &
-  FormikHelpers<Values> &
-  FormikHandlers &
-  FormikComputedState &
-  FormikRegistration;
-
-/** Internal Formik registration methods that get passed down as props */
-export interface FormikRegistration {
-  registerField: (name: string, fns: { validate?: FieldValidator }) => void;
-  unregisterField: (name: string) => void;
-}
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
@@ -437,95 +457,40 @@ export interface FieldHelperProps<Value> {
   setError: (value: string | undefined) => void;
 }
 
-export type FieldOnChangeProp = (
-  eventOrValue: React.ChangeEvent<any> | any
+export type FieldOnChangeProp<Value> = (
+  eventOrValue: React.ChangeEvent<any> | Value
 ) => void;
 export type FieldOnBlurProp = (
   eventOrValue: React.ChangeEvent<any> | any
 ) => void;
 
 /** Field input value, name, and event handlers */
-export interface FieldInputProps<Value> {
+export type FieldInputProps<Value, Values> = {
   /** Value of the field */
-  value: Value;
+  value: SingleValue<Value>;
   /** Name of the field */
-  name: string;
+  name: PathMatchingValue<Value, Values>;
   /** Multiple select? */
   multiple?: boolean;
   /** Is the field checked? */
   checked?: boolean;
   /** Change event handler */
-  onChange: FieldOnChangeProp;
+  onChange: FieldOnChangeProp<Value>;
   /** Blur event handler */
   onBlur: FieldOnBlurProp;
-}
+};
 
-export type FieldValidationResult = string | undefined | void;
+export type FieldValidationResult = string | void | Promise<string | void>;
 
-export type FieldValidator = (
-  value: any
+export type FieldValidator<Value> = (
+  value: Value
 ) => FieldValidationResult | Promise<FieldValidationResult>;
-
-export type ParseFn<Value> = (value: unknown, name: string) => Value;
-export type FormatFn<Value> = (value: Value, name: string) => any;
-
-export type FieldHookConfig<V = any> = {
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | string
-    | React.ComponentType<FieldInputProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  /**
-   * Function to parse raw input value before setting it to state
-   */
-  parse?: ParseFn<V>;
-
-  /**
-   * Function to transform value passed to input
-   */
-  format?: FormatFn<V>;
-
-  /**
-   * Wait until blur event before formatting input value?
-   * @default false
-   */
-  formatOnBlur?: boolean;
-
-  /**
-   * HTML multiple attribute
-   */
-  multiple?: boolean;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
 export interface FieldRegistry {
   [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
+    validate?: FieldValidator<any>;
   };
 }
 

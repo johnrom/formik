@@ -1,69 +1,39 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-import { useField } from './Field';
 import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
 import { useFormikConfig, useFormikContext } from './FormikContext';
-import { FieldMetaProps, FormikApi, FormikReducerState } from './types';
+import { FieldMetaProps, FormikApi, FormikReducerState, FormikValues } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
 import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
+import { useFieldMeta } from './hooks/hooks';
+import { ArrayHelpers, FieldArrayConfig, FieldArrayProps, UseFieldArrayConfig } from './FieldArray.types';
 
-export interface UseFieldArrayProps {
-  /** Really the path to the array field to be updated */
-  name: string;
-  /** Should field array validate the form AFTER array updates/changes? */
-  validateOnChange?: boolean;
-}
+type UpdateFieldArrayFn<Value> = (
+  array: Value[] | boolean[]
+) => void;
 
-export interface ArrayHelpers {
-  /** Imperatively add a value to the end of an array */
-  push: (obj: any) => void;
-  /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: any) => () => void;
-  /** Imperatively swap two values in an array */
-  swap: (indexA: number, indexB: number) => void;
-  /** Curried fn to swap two values in an array */
-  handleSwap: (indexA: number, indexB: number) => () => void;
-  /** Imperatively move an element in an array to another index */
-  move: (from: number, to: number) => void;
-  /** Imperatively move an element in an array to another index */
-  handleMove: (from: number, to: number) => () => void;
-  /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: any) => void;
-  /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: any) => () => void;
-  /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: any) => void;
-  /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: any) => () => void;
-  /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: any) => number;
-  /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: any) => () => void;
-  /** Curried fn to remove an element at an index of an array */
-  handleRemove: (index: number) => () => void;
-  /** Curried fn to remove a value from the end of the array */
-  handlePop: () => () => void;
-  /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
-  /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
-}
-
-export const useFieldArray = <Values, Value>(
-  props: UseFieldArrayProps
-): [FieldMetaProps<Value[]>, ArrayHelpers, FormikApi<Values>] => {
+export const useFieldArray = <
+  Value extends any = any,
+  Values extends FormikValues = any
+>(
+  props: UseFieldArrayConfig<Value, Values>
+): [
+  FieldMetaProps<Value[]>,
+  ArrayHelpers<Value>,
+  FormikApi<Values>
+] => {
   const formik = useFormikContext<Values>();
   const { setFormikState } = formik;
-  const [, fieldMeta] = useField<Value[]>(props.name);
+  const fieldMeta = useFieldMeta<Value[]>(props.name);
 
   const updateArrayField = useEventCallback(
     (
       // eslint-disable-next-line @typescript-eslint/ban-types
-      fn: Function,
+      fn: UpdateFieldArrayFn<Value>,
       // eslint-disable-next-line @typescript-eslint/ban-types
-      alterTouched: boolean | Function,
+      alterTouched: boolean | UpdateFieldArrayFn<Value>,
       // eslint-disable-next-line @typescript-eslint/ban-types
-      alterErrors: boolean | Function
+      alterErrors: boolean | UpdateFieldArrayFn<Value>
     ) => {
       const name = props.name;
 
@@ -109,8 +79,8 @@ export const useFieldArray = <Values, Value>(
     }
   );
 
-  const push = useEventCallback(
-    (value: any) =>
+  const push = useEventCallback<ArrayHelpers<Value>['push']>(
+    (value) =>
       updateArrayField(
         (arrayLike: ArrayLike<any>) => [
           ...copyArrayLike(arrayLike),
@@ -121,12 +91,12 @@ export const useFieldArray = <Values, Value>(
       )
   );
 
-  const handlePush = useEventCallback(
-    (value: any) => () => push(value),
+  const handlePush = useEventCallback<ArrayHelpers<Value>['handlePush']>(
+    (value) => () => push(value),
   );
 
-  const swap = useEventCallback(
-    (indexA: number, indexB: number) =>
+  const swap = useEventCallback<ArrayHelpers<Value>['swap']>(
+    (indexA, indexB) =>
       updateArrayField(
         (array: any[]) => arraySwap(array, indexA, indexB),
         true,
@@ -134,8 +104,8 @@ export const useFieldArray = <Values, Value>(
       )
   );
 
-  const handleSwap = useEventCallback(
-    (indexA: number, indexB: number) => () => swap(indexA, indexB)
+  const handleSwap = useEventCallback<ArrayHelpers<Value>['handleSwap']>(
+    (indexA, indexB) => () => swap(indexA, indexB)
   );
 
   const move = useEventCallback(
@@ -147,11 +117,11 @@ export const useFieldArray = <Values, Value>(
       )
   );
 
-  const handleMove = useEventCallback(
+  const handleMove = useEventCallback<ArrayHelpers<Value>['handleMove']>(
     (from: number, to: number) => () => move(from, to)
   );
 
-  const insert = useEventCallback(
+  const insert = useEventCallback<ArrayHelpers<Value>['insert']>(
     (index: number, value: any) =>
       updateArrayField(
         (array: any[]) => arrayInsert(array, index, value),
@@ -160,11 +130,11 @@ export const useFieldArray = <Values, Value>(
       )
   );
 
-  const handleInsert = useEventCallback(
+  const handleInsert = useEventCallback<ArrayHelpers<Value>['handleInsert']>(
     (index: number, value: any) => () => insert(index, value)
   );
 
-  const replace = useEventCallback(
+  const replace = useEventCallback<ArrayHelpers<Value>['replace']>(
     (index: number, value: any) =>
       updateArrayField(
         (array: any[]) => arrayReplace(array, index, value),
@@ -173,11 +143,11 @@ export const useFieldArray = <Values, Value>(
       )
   );
 
-  const handleReplace = useEventCallback(
+  const handleReplace = useEventCallback<ArrayHelpers<Value>['handleReplace']>(
     (index: number, value: any) => () => replace(index, value)
   );
 
-  const unshift = useEventCallback(
+  const unshift = useEventCallback<ArrayHelpers<Value>['unshift']>(
     (value: any) => {
       let length = -1;
       updateArrayField(
@@ -207,11 +177,11 @@ export const useFieldArray = <Values, Value>(
     }
   );
 
-  const handleUnshift = useEventCallback(
+  const handleUnshift = useEventCallback<ArrayHelpers<Value>['handleUnshift']>(
     (value: any) => () => unshift(value)
   );
 
-  const remove = useEventCallback(
+  const remove = useEventCallback<ArrayHelpers<Value>['remove']>(
     <T,>(index: number): T => {
       // We need to make sure we also remove relevant pieces of `touched` and `errors`
       let result: any;
@@ -235,12 +205,12 @@ export const useFieldArray = <Values, Value>(
     }
   );
 
-  const handleRemove = useEventCallback(
-    (index: number) => () => remove<any>(index)
+  const handleRemove = useEventCallback<ArrayHelpers<Value>['handleRemove']>(
+    (index: number) => () => remove(index)
   );
 
-  const pop = useEventCallback(
-    <T,>(): T => {
+  const pop = useEventCallback<ArrayHelpers<Value>['pop']>(
+    () => {
       // Remove relevant pieces of `touched` and `errors` too!
       let result: any;
       updateArrayField(
@@ -256,12 +226,12 @@ export const useFieldArray = <Values, Value>(
         true
       );
 
-      return result as T;
+      return result;
     }
   );
 
-  const handlePop = useEventCallback(
-    () => () => pop<any>()
+  const handlePop = useEventCallback<ArrayHelpers<Value>['handlePop']>(
+    () => () => pop()
   );
 
   /**
@@ -311,31 +281,11 @@ export const useFieldArray = <Values, Value>(
   ];
 };
 
-export type FieldArrayRenderProps<Values, Value> = ArrayHelpers & {
-  form: FormikApi<Values>;
-  field: FieldMetaProps<Value[]>;
-  name: string;
-};
-
-export type FieldArrayProps<Values, Value> = UseFieldArrayProps & {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-   component?: React.ComponentType<FieldArrayRenderProps<Values, Value>>;
-
-   /**
-    * Render prop (works like React router's <Route render={props =>} />)
-    */
-   render?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
-
-   /**
-    * Children render function <Field name>{props => ...}</Field>)
-    */
-   children?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
-};
-
-export const FieldArray = <Values, Value>(
-  rawProps: FieldArrayProps<Values, Value>
+export const FieldArray = <
+  Value extends any = any,
+  Values extends FormikValues = any
+>(
+  rawProps: FieldArrayConfig<Value, Values>
 ) => {
   const {
     component,
@@ -349,7 +299,7 @@ export const FieldArray = <Values, Value>(
     ...rest,
   };
 
-  const [field, arrayHelpers, formikApi] = useFieldArray<Values, Value>(props);
+  const [field, arrayHelpers, formikApi] = useFieldArray(props);
   const { validateForm } = formikApi;
   const { validateOnChange: apiValidateOnChange } = useFormikConfig();
 
@@ -362,7 +312,7 @@ export const FieldArray = <Values, Value>(
     }
   }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
 
-  const renderProps: FieldArrayRenderProps<Values, Value> = React.useMemo(
+  const renderProps: FieldArrayProps<Value, Values> = React.useMemo(
     () => ({
       ...arrayHelpers,
       form: formikApi,

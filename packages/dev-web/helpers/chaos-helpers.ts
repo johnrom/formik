@@ -1,4 +1,4 @@
-import { FormikApi } from 'formik';
+import { FormikApi } from '@johnrom/formik-v3';
 import { useMemo, useEffect } from 'react';
 import { selectRandomInt } from './random-helpers';
 

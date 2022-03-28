@@ -5,7 +5,7 @@ import {
   useFormik,
   FormikSubmitHandler,
   FormikProvider,
-} from 'formik';
+} from '@johnrom/formik-v3';
 
 const initialValues = { token: '' };
 const alertOnSubmit: FormikSubmitHandler<typeof initialValues> = async values => {

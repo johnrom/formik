@@ -1,4 +1,5 @@
 dist
+dist-untyped
 compiled
 *.log
 coverage
@@ -7,6 +8,7 @@ next.d.ts
 legacy.d.ts
 .idea
 *.orig
+__generated__
 
 node_modules
 package-lock.json

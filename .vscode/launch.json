@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run NPM Dev",
+            "name": "Run Dev Web App",
             "request": "launch",
             "type": "node",
             "runtimeArgs": [
                 "run",
-                "start:app"
+                "start:web"
             ],
             "runtimeExecutable": "npm",
             "cwd": "${workspaceFolder}",
@@ -19,7 +19,7 @@
             ]
         },
         {
-            "name": "Run Website",
+            "name": "Run Docs Website",
             "request": "launch",
             "type": "node",
             "runtimeArgs": [

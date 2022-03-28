@@ -5,7 +5,7 @@ import {
   Form,
   useField,
   FieldHookConfig,
-} from 'formik';
+} from '@johnrom/formik-v3';
 import './styles.css';
 import * as Yup from 'yup';
 import { sleep } from '../helpers';

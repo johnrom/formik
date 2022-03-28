@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, TextInput, Text, unstable_batchedUpdates } from 'react-native';
 import { unstable_batchedUpdates as domBatchedUpdates } from 'react-dom';
-import { Formik, getBatch } from 'formik';
+import { Formik, getBatch } from '@johnrom/formik-v3';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';

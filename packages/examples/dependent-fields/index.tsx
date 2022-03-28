@@ -7,7 +7,7 @@ import {
   useField,
   FieldAttributes,
   useFormikState,
-} from 'formik';
+} from '@johnrom/formik-v3';
 import './styles.css';
 
 // Note that we provide initalValues all 3 fields.

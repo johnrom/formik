@@ -7,7 +7,7 @@ import {
   FormikProvider,
   useFormik,
   useFormikContext,
-} from 'formik';
+} from '@johnrom/formik-v3';
 
 interface FormValues {
   email: string;

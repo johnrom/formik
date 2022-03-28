@@ -17,9 +17,7 @@
     "isolatedModules": true,
     "baseUrl": "../../",
     "paths": {
-      "formik": [
-        "packages/formik/src"
-      ],
+      "@johnrom/formik-v3": ["packages/formik/src"],
     }
   },
   "include": [

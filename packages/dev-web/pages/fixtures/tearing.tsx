@@ -6,7 +6,7 @@ import {
   useField,
   useFormik,
   useFormikContext,
-} from 'formik';
+} from '@johnrom/formik-v3';
 import { selectRandomArrayItem, selectRange } from '../../helpers/array-helpers';
 import { useCheckTearing } from '../../helpers/tearing-helpers';
 import {

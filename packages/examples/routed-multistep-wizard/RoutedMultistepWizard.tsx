@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { BrowserRouter as Router, Route, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Formik, Field, ErrorMessage, FormikConfig, FormikHelpers, FormikState, FormikErrors } from 'formik';
+import { Formik, Field, ErrorMessage, FormikConfig, FormikHelpers, FormikState, FormikErrors } from '@johnrom/formik-v3';
 import { Debug } from '../Debug';
 import { sleep } from '../helpers';
 

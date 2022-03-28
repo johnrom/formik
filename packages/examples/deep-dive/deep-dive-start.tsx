@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from '@johnrom/formik-v3';
 
 interface FormValues {
   email: string;

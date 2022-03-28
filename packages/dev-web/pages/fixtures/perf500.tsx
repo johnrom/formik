@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Form, useField, FieldAttributes } from 'formik';
+import { Formik, Form, useField, FieldAttributes } from '@johnrom/formik-v3';
 import { selectRange } from '../../helpers/array-helpers';
 
 const Input = (p: FieldAttributes<any>) => {

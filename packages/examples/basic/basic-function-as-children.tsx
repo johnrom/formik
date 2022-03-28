@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik } from 'formik';
+import { Formik } from '@johnrom/formik-v3';
 import { exampleOnSubmit, exampleInitialValues } from '../helpers/basic-helpers';
 
 const BasicExampleWithFunctionAsChildren = () => (

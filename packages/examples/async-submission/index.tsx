@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form } from '@johnrom/formik-v3';
 import { sleep } from '../helpers';
 
 const AsyncSubmissionExample = () => (

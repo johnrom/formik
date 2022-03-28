@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ErrorMessage, Field, Form, Formik, FormikBag, FormikConfig, FormikHelpers } from 'formik';
+import { ErrorMessage, Field, Form, Formik, FormikBag, FormikConfig, FormikHelpers } from '@johnrom/formik-v3';
 import * as Yup from 'yup';
 import { Debug } from '../Debug';
 import { sleep } from '../helpers';

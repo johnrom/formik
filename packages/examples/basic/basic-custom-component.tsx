@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, FormikProps } from 'formik';
+import { Formik, FormikProps } from '@johnrom/formik-v3';
 import { exampleOnSubmit, ExampleFormValues, exampleInitialValues } from '../helpers/basic-helpers';
 
 const CustomFormikComponent = (props: FormikProps<ExampleFormValues>) => {

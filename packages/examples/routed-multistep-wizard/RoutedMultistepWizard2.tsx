@@ -8,7 +8,7 @@ import {
   Redirect,
   RouteComponentProps,
 } from 'react-router-dom';
-import { Field, ErrorMessage, withFormik, FormikErrors, FormikProps } from 'formik';
+import { Field, ErrorMessage, withFormik, FormikErrors, FormikProps } from '@johnrom/formik-v3';
 import { Debug } from '../Debug';
 
 const required = <Value,>(value: Value) => (value ? undefined : 'Required');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, FastField, Form } from 'formik';
+import { Formik, FastField, Form } from '@johnrom/formik-v3';
 import { Debug } from '../Debug';
 
 /**

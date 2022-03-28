@@ -1,6 +1,6 @@
 {
-  "name": "formik-native",
-  "version": "2.1.17",
+  "name": "@johnrom/formik-native-v3",
+  "version": "3.1.0-types5",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formium/formik",
@@ -30,7 +30,7 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "formik": "2.2.9"
+    "@johnrom/formik-v3": "^3.1.0-types13"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form, useField, useFormikState, FieldAttributes } from 'formik';
+import { Formik, Field, Form, useField, useFormikState, FieldAttributes } from '@johnrom/formik-v3';
 import './styles.css';
 
 async function fetchNewTextC(a: string, b: string) {
