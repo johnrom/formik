@@ -38,6 +38,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@testing-library/react": "^12.1.4",
     "@tsconfig/node16-strictest": "^1.0.0",
     "@types/hoist-non-react-statics": "^3.3.1",

@@ -9,9 +9,26 @@
     "packages/*"
   ],
   "scripts": {
-    "lint:scripts": "eslint ."
+    "build": "lerna run build",
+    "lint:scripts": "eslint .",
+    "lint:fix": "",
+    "setup": "npm run setup:npm && npm run setup:yarn && npm run setup:install",
+    "setup:crossenv": "npm install -g cross-env",
+    "setup:expo": "cd ./packages/dev-native && expo-yarn-workspaces postinstall",
+    "setup:install": "yarn",
+    "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_node && nvm use $npm_package_engines_node\"",
+    "setup:yarn": "npm i -g yarn",
+    "start:web": "yarn --cwd ./packages/dev-web run start",
+    "start:native": "yarn --cwd ./packages/dev-native run start",
+    "start:website": "yarn --cwd ./packages/mochi-forms-docs-website run start",
+    "test": "lerna run test -- --silent",
+    "test:watch": "lerna run test --stream --no-sort -- --watch",
+    "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
+    "test:vscode": "lerna run test --stream --no-sort --"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/preset-react": "^7.16.7"
+  },
   "dependencies": {
     "@changesets/cli": "^2.21.1",
     "@tsconfig/node16-strictest-esm": "^1.0.0",

@@ -4,7 +4,6 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -31,7 +30,7 @@ export default function Home(): JSX.Element {
     <Layout title="Mochi Docs">
       <HomepageHeader />
       <main>
-        <HomepageFeatures />
+        <p>This project is a work-in-progress.</p>
       </main>
     </Layout>
   );

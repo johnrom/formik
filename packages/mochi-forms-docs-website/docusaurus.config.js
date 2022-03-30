@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Mochi Forms',
   tagline: "Lil' Forms of goodness.",
-  url: 'https://mochidocs.com/forms/',
+  url: 'https://mochidocs.com/',
   baseUrl: '/forms/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -52,9 +52,9 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'overview/overview',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Docs',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
           {

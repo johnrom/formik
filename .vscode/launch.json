@@ -17,6 +17,15 @@
         "--passWithNoTests",
         "--testTimeout=9999"
       ]
+    },
+    {
+      "name": "Run Docs Website",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["run", "start:website"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

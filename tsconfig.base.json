@@ -8,6 +8,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "jsx": "react-jsx",
+    "rootDir": "./packages",
     "paths": {
       "@mochi-forms/examples": ["./packages/mochi-forms-examples/src"],
       "@mochi-forms/react": ["./packages/mochi-forms-react/src"],
