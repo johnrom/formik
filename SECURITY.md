@@ -2,13 +2,8 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.x.x     | :white_check_mark: |
-| 1.5.x   | :white_check_mark:   |
-| <= 1.4   | :x:               |
+There are currently NO supported versions. Mochi Forms is currently pre-release.
 
 ## Reporting a Vulnerability
 
-Send a Twitter DM to [@jaredpalmer](http://twitter.com/@jaredpalmer) or an email to security@jaredpalmer.com
-
+Send an email to security@mochidocs.com

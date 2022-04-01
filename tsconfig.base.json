@@ -1,34 +1,22 @@
 {
-  
+  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
   "compilerOptions": {
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    "noImplicitAny": true,
-    "alwaysStrict": true,    
-    // output .d.ts declaration files for consumers
-    "declaration": true,
-    // output .js.map sourcemap files for consumers
-    "sourceMap": true,
-    // stricter type-checking for stronger correctness. Recommended by TS
-    "strict": true,
-    // linter checks for common issues
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    // noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    // use Node's module resolution algorithm, instead of the legacy TS one
+    "composite": true,
     "moduleResolution": "node",
-    // transpile JSX to React.createElement
-    "jsx": "react",
-    // interop between ESM and CJS modules. Recommended by TS
-    "esModuleInterop": true,
-    // significant perf increase by skipping checking .d.ts files, particularly those in node_modules. Recommended by TS
-    "skipLibCheck": true,
-    // error out if import and file system have a casing mismatch. Recommended by TS
-    "forceConsistentCasingInFileNames": true,
-    // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
-    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "rootDir": "./packages",
+    "paths": {
+      "@mochi-forms/examples": ["./packages/mochi-forms-examples/src"],
+      "@mochi-forms/react": ["./packages/mochi-forms-react/src"],
+      "@mochi-forms/react-native": ["./packages/mochi-forms-react-native/src"]
+    },
+    "types": ["node"],
+
+    // These should be removed eventually, but we'll override them while fixing Formik code.
+    "noImplicitOverride": false
   }
 }
