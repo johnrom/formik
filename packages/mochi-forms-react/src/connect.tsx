@@ -1,6 +1,6 @@
 import type { ComponentType, SFC, ReactNode, ComponentClass } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import invariant from 'invariant';
+import invariant from 'tiny-warning';
 
 import type { FormikContextType } from './types';
 import { FormikConsumer } from './FormikContext';
@@ -14,7 +14,7 @@ export function connect<OuterProps, Values = {}>(
 ) {
   const C: SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
-      {formik => {
+      {(formik) => {
         invariant(
           !!formik,
           `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${Comp.name}`
@@ -31,16 +31,16 @@ export function connect<OuterProps, Values = {}>(
 
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
-  (C as SFC<OuterProps> & {
-    WrappedComponent: ReactNode;
-  }).WrappedComponent = Comp;
+  (
+    C as SFC<OuterProps> & {
+      WrappedComponent: ReactNode;
+    }
+  ).WrappedComponent = Comp;
 
   C.displayName = `FormikConnect(${componentDisplayName})`;
 
   return hoistNonReactStatics(
     C,
-    Comp as ComponentClass<
-      OuterProps & { formik: FormikContextType<Values> }
-    > // cast type to ComponentClass (even if SFC)
+    Comp as ComponentClass<OuterProps & { formik: FormikContextType<Values> }> // cast type to ComponentClass (even if SFC)
   ) as ComponentType<OuterProps>;
 }

@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import type { SFC } from 'react';
 import * as Yup from 'yup';
 
-import { withFormik, FormikProps } from '../src';
+import { withFormik, FormikProps } from '@mochi-forms/react';
 import { noop } from './testHelpers';
 
 interface Values {
@@ -55,7 +55,7 @@ const renderWithFormik = (options?: any, props?: any) => {
     mapPropsToValues: () => InitialValues,
     handleSubmit: noop,
     ...options,
-  })(props => (injected = props) && <Form {...props} />);
+  })((props) => (injected = props) && <Form {...props} />);
 
   return {
     getProps() {

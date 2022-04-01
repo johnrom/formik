@@ -7,7 +7,7 @@ import {
   prepareDataForValidation,
   FormikProps,
   FormikConfig,
-} from '../src';
+} from '@mochi-forms/react';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -58,9 +58,9 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
       initialValues={InitialValues as any}
       {...props}
     >
-      {formikProps =>
+      {(formikProps) =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+          <Form {...(formikProps as unknown as FormikProps<Values>)} />
         )
       }
     </Formik>
@@ -77,9 +77,9 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
           initialValues={InitialValues as any}
           {...props}
         >
-          {formikProps =>
+          {(formikProps) =>
             (injected = formikProps) && (
-              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+              <Form {...(formikProps as unknown as FormikProps<Values>)} />
             )
           }
         </Formik>
@@ -123,7 +123,7 @@ describe('<Formik>', () => {
       let injected: any;
       const { getByTestId } = render(
         <Formik initialValues={InitialValues} onSubmit={noop}>
-          {formikProps =>
+          {(formikProps) =>
             (injected = formikProps) && (
               <input
                 onChange={formikProps.handleChange('name')}
@@ -170,7 +170,7 @@ describe('<Formik>', () => {
       let injected: any;
       const { getByTestId } = render(
         <Formik initialValues={InitialValues} onSubmit={noop}>
-          {formikProps =>
+          {(formikProps) =>
             (injected = formikProps) && (
               <input
                 onChange={formikProps.handleChange('name')}
@@ -273,7 +273,7 @@ describe('<Formik>', () => {
       let injected: any;
       const { getByTestId } = render(
         <Formik initialValues={InitialValues} onSubmit={noop}>
-          {formikProps =>
+          {(formikProps) =>
             (injected = formikProps) && (
               <input
                 onBlur={formikProps.handleBlur('name')}
@@ -615,7 +615,7 @@ describe('<Formik>', () => {
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
         const newValue: Values = { name: 'ian' };
-        const validate = jest.fn(_values => ({}));
+        const validate = jest.fn((_values) => ({}));
         // const { getProps, rerender } = renderFormik({ validate });
         const { getProps } = renderFormik({ validate });
 
@@ -975,8 +975,8 @@ describe('<Formik>', () => {
         content: [
           ['a1', 'a2'],
           ['b1', 'b2'],
-        ]
-      }
+        ],
+      };
 
       const dataForValidation = prepareDataForValidation(expected);
       expect(dataForValidation).toEqual(expected);
@@ -1287,7 +1287,7 @@ describe('<Formik>', () => {
   });
 
   it('should not eat an error thrown by the validationSchema', async () => {
-    const validationSchema = function() {
+    const validationSchema = function () {
       throw new Error('broken validations');
     };
 

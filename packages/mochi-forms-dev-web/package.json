@@ -1,0 +1,26 @@
+{
+  "name": "mochi-forms-dev-web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev:web": "next dev",
+    "build": "next build",
+    "start:web": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mochi-forms/react": "0.0.0",
+    "just-debounce-it": "^3.0.1",
+    "next": "^12.1.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.23",
+    "@types/react": "17.0.43",
+    "@types/react-dom": "17.0.14",
+    "eslint": "8.12.0",
+    "eslint-config-next": "12.1.4",
+    "typescript": "4.6.3"
+  }
+}

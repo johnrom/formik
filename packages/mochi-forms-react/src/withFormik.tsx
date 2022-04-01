@@ -1,4 +1,9 @@
-import type { ComponentClass, StatelessComponent, ComponentType } from 'react';
+import {
+  ComponentClass,
+  StatelessComponent,
+  ComponentType,
+  Component,
+} from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import { Formik } from './Formik';
@@ -80,9 +85,7 @@ export interface WithFormikConfig<
   validate?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 
-export type CompositeComponent<P> =
-  | ComponentClass<P>
-  | StatelessComponent<P>;
+export type CompositeComponent<P> = ComponentClass<P> | StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
   (component: CompositeComponent<TMergedProps>): ComponentType<TOwnProps>;
@@ -119,13 +122,14 @@ export function withFormik<
   OuterProps & FormikProps<Values>
 > {
   return function createFormik(
-    Component: CompositeComponent<OuterProps & FormikProps<Values>>
+    ComponentToWrap: CompositeComponent<OuterProps & FormikProps<Values>>
   ): ComponentClass<OuterProps> {
     const componentDisplayName =
-      Component.displayName ||
-      Component.name ||
-      (Component.constructor && Component.constructor.name) ||
+      ComponentToWrap.displayName ||
+      ComponentToWrap.name ||
+      (ComponentToWrap.constructor && ComponentToWrap.constructor.name) ||
       'Component';
+
     /**
      * We need to use closures here for to provide the wrapped component's props to
      * the respective withFormik config methods.
@@ -154,7 +158,7 @@ export function withFormik<
        * Just avoiding a render callback for perf here
        */
       renderFormComponent = (formikProps: FormikProps<Values>) => {
-        return <Component {...this.props} {...formikProps} />;
+        return <ComponentToWrap {...this.props} {...formikProps} />;
       };
 
       render() {
@@ -184,7 +188,7 @@ export function withFormik<
 
     return hoistNonReactStatics(
       C,
-      Component as ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
+      ComponentToWrap as ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
     ) as ComponentClass<OuterProps>;
   };
 }

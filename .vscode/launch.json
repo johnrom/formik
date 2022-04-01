@@ -4,19 +4,21 @@
       "type": "node",
       "name": "vscode-jest-tests",
       "request": "launch",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/lerna",
       "args": [
         "run",
         "test",
+        "--",
         "--runInBand",
         // when filtering, every package not matching will have no tests
         "--passWithNoTests",
         "--testTimeout=9999"
-      ]
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "protocol": "inspector",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
     },
     {
       "name": "Run Docs Website",

@@ -1,12 +1,12 @@
 {
   "name": "@mochi-forms/examples",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Examples of Mochi Forms usage.",
   "main": "index.tsx",
   "devDependencies": {},
   "dependencies": {
-    "@mochi-forms/react": "0.0.1",
+    "@mochi-forms/react": "0.0.0",
     "react-router-dom": "^6.2.2"
   }
 }

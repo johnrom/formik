@@ -1,5 +1,11 @@
-import { type ComponentType, type ForwardRefExoticComponent, type ReactNode, useEffect, createElement } from 'react';
-import invariant from 'invariant';
+import {
+  type ComponentType,
+  type ForwardRefExoticComponent,
+  type ReactNode,
+  useEffect,
+  createElement,
+} from 'react';
+import invariant from 'tiny-warning';
 
 import type {
   FormikProps,
@@ -109,10 +115,10 @@ export function useField<Val = any>(
   }, [registerField, unregisterField, fieldName, validateFn]);
 
   if (__DEV__) {
-  invariant(
-    formik,
-    'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
-  );
+    invariant(
+      formik,
+      'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
+    );
   }
 
   invariant(

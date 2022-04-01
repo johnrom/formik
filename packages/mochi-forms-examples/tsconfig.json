@@ -7,5 +7,6 @@
     "moduleResolution": "node",
 
     "preserveConstEnums": true
-  }
+  },
+  "references": [{ "path": "../mochi-forms-react" }]
 }

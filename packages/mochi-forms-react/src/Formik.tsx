@@ -11,7 +11,8 @@ import type {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers, FormikHandlers,
+  FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -25,9 +26,23 @@ import {
   isObject,
 } from './utils';
 import { FormikProvider } from './FormikContext';
-import invariant from 'invariant';
+import invariant from 'tiny-warning';
 import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
-import { Reducer, useEffect, useRef, useReducer, useCallback, ChangeEvent, Children, createElement, FormEvent, ReactNode, useImperativeHandle, useLayoutEffect, useMemo } from 'react';
+import {
+  Reducer,
+  useEffect,
+  useRef,
+  useReducer,
+  useCallback,
+  ChangeEvent,
+  Children,
+  createElement,
+  FormEvent,
+  ReactNode,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+} from 'react';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -190,10 +205,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
-            errors => {
+            (errors) => {
               resolve(errors || emptyErrors);
             },
-            actualException => {
+            (actualException) => {
               if (process.env.NODE_ENV !== 'production') {
                 console.warn(
                   `Warning: An unhandled error was caught during validation in <Formik validate />`,
@@ -257,7 +272,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const runSingleFieldLevelValidation = useCallback(
     (field: string, value: void | string): Promise<string> => {
-      return new Promise(resolve =>
+      return new Promise((resolve) =>
         resolve(fieldRegistry.current[field].validate(value))
       );
     },
@@ -268,12 +283,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values): Promise<FormikErrors<Values>> => {
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
-      ).filter(f => isFunction(fieldRegistry.current[f].validate));
+      ).filter((f) => isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
       const fieldValidations: Promise<string>[] =
         fieldKeysWithValidation.length > 0
-          ? fieldKeysWithValidation.map(f =>
+          ? fieldKeysWithValidation.map((f) =>
               runSingleFieldLevelValidation(f, getIn(values, f))
             )
           : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
@@ -328,13 +343,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values = state.values) => {
       return unstable_runWithPriority(unstable_LowPriority, () => {
         return runAllValidations(values)
-          .then(combinedErrors => {
+          .then((combinedErrors) => {
             if (!!isMounted.current) {
               dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
             }
             return combinedErrors;
           })
-          .catch(actualException => {
+          .catch((actualException) => {
             if (process.env.NODE_ENV !== 'production') {
               // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
               console.warn(
@@ -351,7 +366,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runAllValidations(values).then(combinedErrors => {
+      return runAllValidations(values).then((combinedErrors) => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
           if (!isEqual(state.errors, combinedErrors)) {
@@ -618,16 +633,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           ? (eventOrTextValue as ChangeEvent<any>).target
           : (eventOrTextValue as ChangeEvent<any>).currentTarget;
 
-        const {
-          type,
-          name,
-          id,
-          value,
-          checked,
-          outerHTML,
-          options,
-          multiple,
-        } = target;
+        const { type, name, id, value, checked, outerHTML, options, multiple } =
+          target;
 
         field = maybePath ? maybePath : name ? name : id;
         if (!field && __DEV__) {
@@ -659,7 +666,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       eventOrPath: string | ChangeEvent<any>
     ): void | ((eventOrTextValue: string | ChangeEvent<any>) => void) => {
       if (isString(eventOrPath)) {
-        return event => executeChange(event, eventOrPath);
+        return (event) => executeChange(event, eventOrPath);
       } else {
         executeChange(eventOrPath);
       }
@@ -707,7 +714,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const handleBlur = useEventCallback<FormikHandlers['handleBlur']>(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
-        return event => executeBlur(event, eventOrString);
+        return (event) => executeBlur(event, eventOrString);
       } else {
         executeBlur(eventOrString);
       }
@@ -775,13 +782,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           }
 
           return Promise.resolve(promiseOrUndefined)
-            .then(result => {
+            .then((result) => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
               return result;
             })
-            .catch(_errors => {
+            .catch((_errors) => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
                 // This is a legit error rejected by the onSubmit fn
@@ -802,43 +809,41 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     );
   });
 
-  const handleSubmit = useEventCallback(
-    (e?: FormEvent<HTMLFormElement>) => {
-      if (e && e.preventDefault && isFunction(e.preventDefault)) {
-        e.preventDefault();
-      }
-
-      if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
-        e.stopPropagation();
-      }
-
-      // Warn if form submission is triggered by a <button> without a
-      // specified `type` attribute during development. This mitigates
-      // a common gotcha in forms with both reset and submit buttons,
-      // where the dev forgets to add type="button" to the reset button.
-      if (__DEV__ && typeof document !== 'undefined') {
-        // Safely get the active element (works with IE)
-        const activeElement = getActiveElement();
-        if (
-          activeElement !== null &&
-          activeElement instanceof HTMLButtonElement
-        ) {
-          invariant(
-            activeElement.attributes &&
-              activeElement.attributes.getNamedItem('type'),
-            'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
-          );
-        }
-      }
-
-      submitForm().catch(reason => {
-        console.warn(
-          `Warning: An unhandled error was caught from submitForm()`,
-          reason
-        );
-      });
+  const handleSubmit = useEventCallback((e?: FormEvent<HTMLFormElement>) => {
+    if (e && e.preventDefault && isFunction(e.preventDefault)) {
+      e.preventDefault();
     }
-  );
+
+    if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
+      e.stopPropagation();
+    }
+
+    // Warn if form submission is triggered by a <button> without a
+    // specified `type` attribute during development. This mitigates
+    // a common gotcha in forms with both reset and submit buttons,
+    // where the dev forgets to add type="button" to the reset button.
+    if (__DEV__ && typeof document !== 'undefined') {
+      // Safely get the active element (works with IE)
+      const activeElement = getActiveElement();
+      if (
+        activeElement !== null &&
+        activeElement instanceof HTMLButtonElement
+      ) {
+        invariant(
+          activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type'),
+          'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+        );
+      }
+    }
+
+    submitForm().catch((reason) => {
+      console.warn(
+        `Warning: An unhandled error was caught from submitForm()`,
+        reason
+      );
+    });
+  });
 
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
@@ -861,7 +866,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     return onSubmit(state.values, imperativeMethods);
   });
 
-  const handleReset = useEventCallback(e => {
+  const handleReset = useEventCallback((e) => {
     if (e && e.preventDefault && isFunction(e.preventDefault)) {
       e.preventDefault();
     }
@@ -890,8 +895,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const getFieldHelpers = useCallback(
     (name: string): FieldHelperProps<any> => {
       return {
-        setValue: (value: any, shouldValidate?: boolean) => setFieldValue(name, value, shouldValidate),
-        setTouched: (value: boolean, shouldValidate?: boolean) => setFieldTouched(name, value, shouldValidate),
+        setValue: (value: any, shouldValidate?: boolean) =>
+          setFieldValue(name, value, shouldValidate),
+        setTouched: (value: boolean, shouldValidate?: boolean) =>
+          setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
     },
@@ -1007,10 +1014,10 @@ export function Formik<
 
   useEffect(() => {
     if (__DEV__) {
-    invariant(
-      !props.render,
-      `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
-    );
+      invariant(
+        !props.render,
+        `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
+      );
     }
     // eslint-disable-next-line
   }, []);
@@ -1119,7 +1126,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function(e: any, i: number) {
+  source.forEach(function (e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);
@@ -1138,8 +1145,8 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
   return Array.from(options)
-    .filter(el => el.selected)
-    .map(el => el.value);
+    .filter((el) => el.selected)
+    .map((el) => el.value);
 }
 
 /** Return the next value for a checkbox */

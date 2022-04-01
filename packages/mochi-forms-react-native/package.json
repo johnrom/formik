@@ -1,7 +1,7 @@
 {
   "name": "@mochi-forms/react-native",
-  "description": "Lil' Forms of goodness.",
-  "version": "0.0.1",
+  "description": "A Sweet React Form Library",
+  "version": "0.0.0",
   "license": "MIT",
   "author": "John Rom <web@johnrom.com>",
   "repository": "johnrom/mochi-forms",
@@ -21,7 +21,9 @@
   "files": [
     "dist"
   ],
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-native": "^0.67.4"

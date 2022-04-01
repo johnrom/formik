@@ -1,23 +1,12 @@
-const consoleError = console.error;
-
-let consoleErrorLog: any[] = [];
+let consoleWarnMock: jest.SpyInstance | undefined = undefined;
+let consoleErrorMock: jest.SpyInstance | undefined = undefined;
 
 beforeEach(() => {
-  consoleErrorLog = [];
-  // Make sure we aren't triggering React console.error calls
-  console.error = (...args: any[]) => {
-    // NOTE: We can't throw in here directly as most console.error calls happen
-    // inside promises and result in an unhandled promise rejection
-    consoleErrorLog.push(`console.error called with args: ${args}`);
-    consoleError.apply(console, args as any);
-  };
+  consoleWarnMock = jest.spyOn(global.console, 'warn').mockImplementation();
+  consoleErrorMock = jest.spyOn(global.console, 'error').mockImplementation();
 });
 
 afterEach(() => {
-  if (consoleErrorLog.length > 0) {
-    // Not using an Error object here because the stacktrace is misleading
-    throw consoleErrorLog[0];
-  }
-
-  console.error = consoleError;
+  consoleWarnMock?.mockRestore();
+  consoleErrorMock?.mockRestore();
 });

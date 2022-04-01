@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "engines": {
-    "node": ">=12"
+    "node": ">=12",
+    "nodedev": "16.14.2"
   },
   "workspaces": [
     "packages/*"
@@ -16,7 +17,7 @@
     "setup:crossenv": "npm install -g cross-env",
     "setup:expo": "cd ./packages/dev-native && expo-yarn-workspaces postinstall",
     "setup:install": "yarn",
-    "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_node && nvm use $npm_package_engines_node\"",
+    "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_nodedev && nvm use $npm_package_engines_nodedev\"",
     "setup:yarn": "npm i -g yarn",
     "start:web": "yarn --cwd ./packages/dev-web run start",
     "start:native": "yarn --cwd ./packages/dev-native run start",

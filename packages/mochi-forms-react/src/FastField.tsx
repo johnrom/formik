@@ -1,5 +1,10 @@
-import { Component, type ReactNode, createElement, type ComponentClass } from 'react';
-import invariant from 'invariant';
+import {
+  Component,
+  type ReactNode,
+  createElement,
+  type ComponentClass,
+} from 'react';
+import invariant from 'tiny-warning';
 
 import type {
   FormikProps,
@@ -32,9 +37,10 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
   T;
 
-type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
-  Props
-> & { formik: FormikContextType<Values> };
+type FastFieldInnerProps<
+  Values = {},
+  Props = {}
+> = FastFieldAttributes<Props> & { formik: FormikContextType<Values> };
 
 /**
  * Custom Field component for quickly hooking into Formik

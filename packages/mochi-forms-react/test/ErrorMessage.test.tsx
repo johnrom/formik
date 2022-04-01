@@ -8,7 +8,7 @@ interface TestFormValues {
   email: string;
 }
 
-const TestForm: SFC<any> = p => (
+const TestForm: SFC<any> = (p) => (
   <Formik
     onSubmit={noop}
     initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
@@ -32,7 +32,7 @@ describe('<ErrorMessage />', () => {
           return (
             <div>
               <ErrorMessage name="email">
-                {props => (actual = props) || <div>{props}</div>}
+                {(props) => (actual = props) || <div>{props}</div>}
               </ErrorMessage>
             </div>
           );
