@@ -1,11 +1,11 @@
 {
   "files": [],
-  "include": [],
+  "include": ["types"],
   "references": [
     { "path": "./packages/mochi-forms-docs-website" },
     { "path": "./packages/mochi-forms-examples" },
-    { "path": "./packages/mochi-forms-react" }, 
-    { "path": "./packages/mochi-forms-react/test" }, 
+    { "path": "./packages/mochi-forms-react" },
+    { "path": "./packages/mochi-forms-react/test" },
     { "path": "./packages/mochi-forms-react-native" },
     { "path": "./packages/mochi-forms-react-native/test" },
   ],

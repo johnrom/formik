@@ -1,7 +1,3 @@
-# Formik Native
+# `@mochi-forms/react`
 
-```
-yarn add formik formik-native
-```
-
-This is an experimental package. DO NOT USE IN PRODUCTION.
+React Native implementation of `@mochi-forms/core`.
