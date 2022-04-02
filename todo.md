@@ -1,0 +1,1 @@
+- Add a default formatter from file to `multiple ? target.files : target.files[0]`.
