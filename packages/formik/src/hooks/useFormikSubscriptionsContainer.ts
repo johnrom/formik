@@ -1,5 +1,4 @@
 import React, { Reducer } from 'react';
-import { useSubscription } from 'use-subscription';
 import { populateComputedState, IsFormValidFn, selectFullState } from '../helpers/form-helpers';
 import {
   FormikMessage,
@@ -13,8 +12,9 @@ import {
 } from 'use-optimized-selector';
 import { useEventCallback } from './useEventCallback';
 import { BatchCallback, getBatch } from '../helpers/batch-helpers';
+import { useFormikSubscription } from './useFormikSubscription';
 
-export const useFormikSubscriptions = <Values>(
+export const useFormikSubscriptionsContainer = <Values>(
   initialState: FormikReducerState<Values>,
   formikReducer: Reducer<FormikReducerState<Values>, FormikMessage<Values>>,
   isFormValid: IsFormValidFn<Values>
@@ -51,6 +51,16 @@ export const useFormikSubscriptions = <Values>(
    */
   const getState = React.useCallback(() => computedStateRef.current, [computedStateRef]);
 
+  const subscribe = React.useCallback((callback: Function) => {
+    subscriptionsRef.current.push(callback);
+
+    return () => {
+      subscriptionsRef.current = subscriptionsRef.current.filter(
+        (cb: Function) => cb !== callback
+      );
+    }
+  }, [subscriptionsRef]);
+
   /**
    * Update Subscriptions using RenderState.
    */
@@ -60,31 +70,17 @@ export const useFormikSubscriptions = <Values>(
       comparer: Comparer<Return> = Object.is,
       shouldSubscribe: boolean = true
     ) => {
+      
       // eslint-disable-next-line react-hooks/rules-of-hooks
       selector = useOptimizedSelector(selector, comparer);
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const subscription = React.useMemo(
-        () => ({
-          getCurrentValue: () => selector(getState()),
-          subscribe: shouldSubscribe
-            ? (callback: Function) => {
-                subscriptionsRef.current.push(callback);
+      const getCurrentValue = React.useCallback(() => selector(getState()), [selector, getState]);
+      const subscribeFn = React.useMemo(() => shouldSubscribe ? subscribe : () => () => { }, [shouldSubscribe, subscribe]);
 
-                return () =>
-                  subscriptionsRef.current.filter(
-                    (cb: Function) => cb !== callback
-                  );
-              }
-            : () => () => {},
-        }),
-        [selector, shouldSubscribe]
-      );
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      return useSubscription(subscription);
+      return useFormikSubscription(getCurrentValue, subscribeFn);
     },
-    [subscriptionsRef, computedStateRef]
+    [subscriptionsRef, computedStateRef, getState, subscribe]
   );
 
   /**
@@ -113,8 +109,9 @@ export const useFormikSubscriptions = <Values>(
   );
 
   return {
-      useState,
-      getState: getComputedState,
-      dispatch
+    useState,
+    getState: getComputedState,
+    subscribe,
+    dispatch
   }
 };

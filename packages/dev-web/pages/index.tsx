@@ -68,6 +68,11 @@ function Home() {
               <a>Updating Config</a>
             </Link>
           </li>
+          <li>
+            <Link href="/fixtures/formik-refs">
+              <a>Using Refs</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <style jsx>{`

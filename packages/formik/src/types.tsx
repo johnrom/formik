@@ -3,7 +3,7 @@ import { Comparer, Selector } from 'use-optimized-selector';
 import { TypedField } from './Field.types';
 import { TypedFieldArray } from './FieldArray.types';
 import { PathLikeValue, PathMatchingValue, PathOf } from './helpers/path-helpers';
-export { PathMatchingValue, PathOf, ValueMatchingPath } from './helpers/path-helpers';
+export { PathMatchingValue, PathOf, ValueMatchingPath } from './helpers/path-helpers'; 
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
 export type FormatFn<Value> = (value: Value, name: string) => any;
@@ -127,6 +127,8 @@ export type FormikState<Values> = FormikReducerState<Values> &
 
 export type GetStateFn<Values> = () => FormikState<Values>;
 
+export type FormikSubscribeFn = (callback: Function) => () => void;
+
 export type RegisterFieldFn<Values> = <Value,>(
   name: PathMatchingValue<Value, Values>,
   args: { validate?: FieldValidator<SingleValue<Value>> },
@@ -228,6 +230,7 @@ export interface FormikHelpers<Values> {
 export interface FormikStateHelpers<Values> {
   /** Get Formik State from outside of Render. */
   getState: GetStateFn<Values>;
+  subscribe: FormikSubscribeFn;
   /** Use Formik State from within Render. */
   useState: <Return = FormikState<Values>>(
     selector?: Selector<FormikState<Values>, Return>,
@@ -342,6 +345,7 @@ export type FormikProps<Values> = FormikSharedConfig<Values> &
   FormikReducerState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &
+  FormikStateHelpers<Values> &
   FormikFieldHelpers<Values> &
   FormikHandlers &
   FormikComputedState &

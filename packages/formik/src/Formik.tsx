@@ -39,7 +39,7 @@ import {
   IsFormValidFn,
   selectFullState,
 } from './helpers/form-helpers';
-import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
+import { useFormikSubscriptionsContainer } from './hooks/useFormikSubscriptionsContainer';
 import { useEventCallback } from './hooks/useEventCallback';
 import { useTypedField } from './Field.helpers';
 import { useTypedFieldArray } from './FieldArray.helpers';
@@ -188,8 +188,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const {
     useState,
     getState,
+    subscribe,
     dispatch
-  } = useFormikSubscriptions(
+  } = useFormikSubscriptionsContainer(
     {
       initialValues: props.initialValues,
       initialErrors: props.initialErrors ?? emptyErrors,
@@ -988,6 +989,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       registerField,
       // state helpers
       getState,
+      subscribe,
       useState,
       TypedField,
       TypedFieldArray
