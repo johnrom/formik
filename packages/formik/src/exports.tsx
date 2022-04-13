@@ -1,5 +1,6 @@
 export * from './helpers/batch-helpers';
 export * from './hooks/useFormikState';
+export * from './hooks/useFormikSubscriptionByRef';
 export * from './hooks/hooks';
 export * from './Formik';
 export * from './Field';
