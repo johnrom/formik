@@ -3903,6 +3903,21 @@
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
 
+"@johnrom/formik-v3@3.0.0-native3":
+  version "3.0.0-native3"
+  resolved "https://registry.yarnpkg.com/@johnrom/formik-v3/-/formik-v3-3.0.0-native3.tgz#103da2a0835391ab41a21b6fa76ae6f25fa9e1b7"
+  integrity sha512-XKi+P7W0RmJEoxbd2YIPz6I/uzwK0+Q1FpHtc8KLUhwrT5f5bz41y59ZvNlgO87FA+d7XbLIajuNmE/Rbt9dxw==
+  dependencies:
+    deepmerge "^2.1.1"
+    hoist-non-react-statics "^3.3.0"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    react-fast-compare "^2.0.1"
+    tiny-warning "^1.0.2"
+    tslib "^1.10.0"
+    use-optimized-selector "^1.0.0-beta3"
+    use-subscription "^1.5.1"
+
 "@johnrom/tsdx@0.14.2-noclean3":
   version "0.14.2-noclean3"
   resolved "https://registry.yarnpkg.com/@johnrom/tsdx/-/tsdx-0.14.2-noclean3.tgz#cf3d9bf90147d2e3af1dafb6452ecde329cc59fe"

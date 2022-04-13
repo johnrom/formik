@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@johnrom/formik-v3": "3.0.0-native3",
+    "@johnrom/formik-v3": "3.0.1-alpha1",
     "next": "9.5.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
