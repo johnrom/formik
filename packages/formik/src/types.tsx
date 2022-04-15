@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
 import { TypedField } from './Field.types';
 import { TypedFieldArray } from './FieldArray.types';
-import { PathLikeValue, PathMatchingValue, PathOf } from './helpers/path-helpers';
-export { PathMatchingValue, PathOf, ValueMatchingPath } from './helpers/path-helpers'; 
+export { PathMatchingValue, PathOf, PathLikeValue, ValueMatchingPath } from './helpers/path-helpers'; 
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
 export type FormatFn<Value> = (value: Value, name: string) => any;
@@ -306,6 +305,10 @@ export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FormikRegistration<Values> &
   FormikFieldHelpers<Values>;
 
+export type FormValidator<Values extends FormikValues> = (
+  values: Values,
+) => void | FormikErrors<Values> | Promise<FormikErrors<Values> | void>;
+
 export interface FormikValidationConfig<Values> {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
@@ -321,7 +324,7 @@ export interface FormikValidationConfig<Values> {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | ValidateFn<Values>;
+  validate?: FormValidator<Values>;
 }
 
 /**
@@ -497,11 +500,6 @@ export interface FieldRegistry {
     validate?: FieldValidator<any>;
   };
 }
-
-export type ValidationHandler<Values extends FormikValues> = (
-  values: Values,
-  field?: string
-) => Promise<FormikErrors<Values>>;
 
 /**
  * If an object has optional properties, force passing undefined.
