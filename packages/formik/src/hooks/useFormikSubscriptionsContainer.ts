@@ -50,7 +50,7 @@ export const useFormikSubscriptionsContainer = <Values>(
    * but uses previously computed state created by dispatch.
    */
   const getState = React.useCallback(() => computedStateRef.current, [computedStateRef]);
-
+  
   const subscribe = React.useCallback((callback: Function) => {
     subscriptionsRef.current.push(callback);
 
@@ -73,11 +73,11 @@ export const useFormikSubscriptionsContainer = <Values>(
       
       // eslint-disable-next-line react-hooks/rules-of-hooks
       selector = useOptimizedSelector(selector, comparer);
-
+      
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const getCurrentValue = React.useCallback(() => selector(getState()), [selector, getState]);
       const subscribeFn = React.useMemo(() => shouldSubscribe ? subscribe : () => () => { }, [shouldSubscribe, subscribe]);
-
+          
       return useFormikSubscription(getCurrentValue, subscribeFn);
     },
     [subscriptionsRef, computedStateRef, getState, subscribe]

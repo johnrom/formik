@@ -18,7 +18,9 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
@@ -30,12 +32,13 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "@johnrom/formik-v3": "^3.1.0-types13"
+    "@johnrom/formik-v3": "^3.1.0-types14"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
     "@types/react": "^16.9.55",
     "@types/react-native": "^0.63.32",
+    "expo-yarn-workspaces": "^1.7.0",
     "react": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
   }

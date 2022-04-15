@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Formik, Field, FormikProps } from '@johnrom/formik-v3';
+import { Formik, Field, FormikProps, useFormikSubscriptionByRef } from '@johnrom/formik-v3';
 import { DebugProps } from '../../components/debugging/DebugProps';
-import { useFormikSubscriptionByRef } from 'packages/formik/src/hooks/useFormikSubscription';
 
 const initialValues = {
   name: '',

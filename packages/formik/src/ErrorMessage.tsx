@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { isFunction } from './utils';
 import { useFieldMeta } from './hooks/hooks';
-import { PathOf } from './types';
+import { PathOf } from './helpers/path-helpers';
 
 export interface ErrorMessageProps<Values> {
   name: PathOf<Values>;

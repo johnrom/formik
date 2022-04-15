@@ -5,7 +5,6 @@
   "author": "Jared Palmer <jared@palmer.net>",
   "license": "MIT",
   "scripts": {
-    "build": "next build && npm run sitemap",
     "start": "next dev",
     "serve": "next start",
     "rss": "node ./.next/server/scripts/build-rss.js",
@@ -15,7 +14,7 @@
     "@babel/preset-typescript": "^7.10.1",
     "@docsearch/css": "1.0.0-alpha.27",
     "@docsearch/react": "1.0.0-alpha.27",
-    "@johnrom/formik-v3": "^3.1.0-types13",
+    "@johnrom/formik-v3": "^3.1.0-types14",
     "@johnrom/remark-code-import": "0.4.1-beta1",
     "@nmbl/code-snippets-remark-plugin": "1.0.0-beta.0",
     "@mdx-js/loader": "^1.5.1",
@@ -87,7 +86,7 @@
     "postcss-preset-env": "^6.7.0",
     "remark-parse": "^8.0.2",
     "tailwindcss": "^1.9.1",
-    "typescript": "^3.8.3",
+    "typescript": "^4.6.3",
     "unified": "^9.0.0",
     "webp-loader": "^0.6.0"
   },

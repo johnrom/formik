@@ -4,7 +4,7 @@
   "description": "This example demonstrates how to use async/await to submit a Formik form",
   "main": "index.js",
   "dependencies": {
-    "@johnrom/formik-v3": "3.1.0-types13",
+    "@johnrom/formik-v3": "3.1.0-types14",
     "@material-ui/core": "^4.12.3",
     "@types/react-router-dom": "^5.3.1",
     "format-string-by-pattern": "^1.2.2",
@@ -17,6 +17,6 @@
   "devDependencies": {
     "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
-    "typescript": "^4.0.3"
+    "typescript": "^4.6.3"
   }
 }

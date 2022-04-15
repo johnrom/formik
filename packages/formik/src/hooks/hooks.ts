@@ -12,8 +12,9 @@ import {
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isObject, isShallowEqual } from '../utils';
-import { PathMatchingValue, SingleValue } from '../types';
+import { SingleValue } from '../types';
 import { FieldHookConfig } from '../Field.types';
+import { PathMatchingValue } from '../helpers/path-helpers';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.

@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { PathMatchingValue } from './helpers/path-helpers';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FieldMetaProps,
   FieldInputProps,
   FieldValidator,
-  PathMatchingValue,
   SingleValue,
   ParseFn,
   FormatFn,

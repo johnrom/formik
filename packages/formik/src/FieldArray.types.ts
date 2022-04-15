@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { FieldMetaProps, FormikApi, PathMatchingValue } from './types';
+import { PathMatchingValue } from './helpers/path-helpers';
+import { FieldMetaProps, FormikApi } from './types';
 
 export type TypedFieldArray<Values> = <Value>(
   props: FieldArrayConfig<Value, Values>

@@ -3,7 +3,6 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  PathMatchingValue,
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
@@ -11,6 +10,7 @@ import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 import { FieldConfig, FieldHookConfig } from './Field.types';
+import { PathMatchingValue } from './helpers/path-helpers';
 
 export function useField<
   Value = any,

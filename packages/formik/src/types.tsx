@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
 import { TypedField } from './Field.types';
 import { TypedFieldArray } from './FieldArray.types';
-export { PathMatchingValue, PathOf, PathLikeValue, ValueMatchingPath } from './helpers/path-helpers'; 
+import { PathMatchingValue, PathOf, PathLikeValue } from './helpers/path-helpers'; 
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
 export type FormatFn<Value> = (value: Value, name: string) => any;
@@ -229,6 +229,11 @@ export interface FormikHelpers<Values> {
 export interface FormikStateHelpers<Values> {
   /** Get Formik State from outside of Render. */
   getState: GetStateFn<Values>;
+  /** 
+   * Subscribe to changes when Formik updates.
+   * 
+   * Probably avoid using this, instead use `useFormikSubscriptionByRef(formikRef.current, initialValues, selector, comparer)`
+   */
   subscribe: FormikSubscribeFn;
   /** Use Formik State from within Render. */
   useState: <Return = FormikState<Values>>(
