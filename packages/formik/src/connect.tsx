@@ -1,5 +1,5 @@
-import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import invariant from 'tiny-warning';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';

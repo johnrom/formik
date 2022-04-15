@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { FormikApi, FormikConnectedType, FormikContextType, FormikSharedConfig, FormikValues, NotOptional } from './types';
+import {
+  FormikApi,
+  FormikConnectedType,
+  FormikContextType,
+  FormikSharedConfig,
+  FormikValues,
+  NotOptional
+} from './types';
 import invariant from 'tiny-warning';
 import { selectFullState } from './helpers/form-helpers';
 
@@ -49,6 +56,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     // state helpers
     getState,
     useState,
+    subscribe,
     // config
     validateOnChange,
     validateOnBlur,
@@ -57,6 +65,8 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     validationSchema,
     validate,
     isInitialValid,
+    TypedField,
+    TypedFieldArray,
   } = props.value;
 
    const formikApi = React.useMemo<NotOptional<FormikApi<Values>>>(
@@ -82,6 +92,9 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       registerField,
       getState,
       useState,
+      subscribe,
+      TypedField,
+      TypedFieldArray,
     }),
     [
       handleBlur,
@@ -105,6 +118,9 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       registerField,
       getState,
       useState,
+      subscribe,
+      TypedField,
+      TypedFieldArray,
     ]
   );
 

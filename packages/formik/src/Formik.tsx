@@ -16,6 +16,9 @@ import {
   HandleChangeEventFn,
   HandleChangeFn,
   FormikSharedConfig,
+  RegisterFieldFn,
+  UnregisterFieldFn,
+  ValidateFieldFn,
   InputElements,
   FieldRegistry,
   FormikMessage,
@@ -36,8 +39,10 @@ import {
   IsFormValidFn,
   selectFullState,
 } from './helpers/form-helpers';
-import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
+import { useFormikSubscriptionsContainer } from './hooks/useFormikSubscriptionsContainer';
 import { useEventCallback } from './hooks/useEventCallback';
+import { useTypedField } from './Field.helpers';
+import { useTypedFieldArray } from './FieldArray.helpers';
 import { selectFieldOnChange } from './helpers/field-helpers';
 
 // State reducer
@@ -183,8 +188,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const {
     useState,
     getState,
+    subscribe,
     dispatch
-  } = useFormikSubscriptions(
+  } = useFormikSubscriptionsContainer(
     {
       initialValues: props.initialValues,
       initialErrors: props.initialErrors ?? emptyErrors,
@@ -287,7 +293,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
+        resolve(fieldRegistry.current[field].validate?.(value) as string)
       );
     },
     []
@@ -552,7 +558,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     maybeUpdateInitialStatus(props.initialStatus, enableReinitialize);
   }, [maybeUpdateInitialStatus, enableReinitialize, props.initialStatus]);
 
-  const validateField = useEventCallback((name: string) => {
+  const validateField = useEventCallback<ValidateFieldFn<Values>>((name) => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
@@ -562,7 +568,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       isFunction(fieldRegistry.current[name].validate)
     ) {
       const value = getIn(getState().values, name);
-      const maybePromise = fieldRegistry.current[name].validate(value);
+      const maybePromise = fieldRegistry.current[name].validate?.(value);
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -601,13 +607,13 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     return Promise.resolve();
   });
 
-  const registerField = React.useCallback((name: string, { validate }: any) => {
+  const registerField = React.useCallback<RegisterFieldFn<Values>>((name, { validate }) => {
     fieldRegistry.current[name] = {
       validate,
     };
   }, []);
 
-  const unregisterField = React.useCallback((name: string) => {
+  const unregisterField = React.useCallback<UnregisterFieldFn<Values>>((name) => {
     delete fieldRegistry.current[name];
   }, []);
 
@@ -948,7 +954,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     resetForm();
   });
 
-  // mostly optimized renders
+  const TypedField = useTypedField<Values>();
+  const TypedFieldArray = useTypedFieldArray<Values>();
+
   return {
       // config
       enableReinitialize,
@@ -981,7 +989,10 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       registerField,
       // state helpers
       getState,
+      subscribe,
       useState,
+      TypedField,
+      TypedFieldArray
   };
 }
 

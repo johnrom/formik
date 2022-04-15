@@ -1,0 +1,22 @@
+{
+  "name": "@formik/examples",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to use async/await to submit a Formik form",
+  "main": "index.js",
+  "dependencies": {
+    "@johnrom/formik-v3": "3.1.0-types14",
+    "@material-ui/core": "^4.12.3",
+    "@types/react-router-dom": "^5.3.1",
+    "format-string-by-pattern": "^1.2.2",
+    "just-debounce-it": "^1.5.0",
+    "react": "latest",
+    "react-app-polyfill": "^1.0.5",
+    "react-dom": "latest",
+    "react-router-dom": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9",
+    "typescript": "^4.6.3"
+  }
+}

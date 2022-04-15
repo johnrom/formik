@@ -1,103 +1,18 @@
 ---
-id: tutorial
-title: Tutorial
+id: deep-dive
+title: A Deep Dive into Formik
 description: Learn how to build forms in React with Formik.
 ---
 
 ## Before we start
 
-Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
+Welcome to the Formik tutorial. This will teach you everything you need to know to build simple forms in React.
 
-If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#installation).
+If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview.md#getting-started). If you're looking for a deeper knowledge of Formik, check out the [deep dive](./deep-dive.md).
 
-### What are we building?
+## What is Formik?
 
-In this tutorial, we’ll build a complex newsletter signup form with React and Formik.
-
-You can see what we’ll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn’t make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
-
-### Prerequisites
-
-You’ll need to have familiarity with HTML, CSS, [modern JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript), and [React](https://reactjs.org) (and [React Hooks](https://reactjs.org/docs/hooks-intro.html)) to fully understand Formik and how it works. In this tutorial, we’re using [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), [const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment), [computed property names](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names), and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) . You can use the [Babel REPL](https://babeljs.io/repl/#?presets=react&code_lz=MYewdgzgLgBApgGzgWzmWBeGAeAFgRgD4AJRBEAGhgHcQAnBAEwEJsB6AwgbgChRJY_KAEMAlmDh0YWRiGABXVOgB0AczhQAokiVQAQgE8AkowAUAcjogQUcwEpeAJTjDgUACIB5ALLK6aRklTRBQ0KCohMQk6Bx4gA) to check what ES6 code compiles to.
-
-## Setup for the Tutorial
-
-There are two ways to complete this tutorial: you can either write the code in your browser, or you can set up a local development environment on your computer.
-
-### Setup Option 1: Write Code in the Browser
-
-This is the quickest way to get started!
-
-First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input, a submit button, and some React code. We’ll be editing the React code in this tutorial.
-
-Skip the second setup option, and go to the [Overview](#overview-what-is-formik) section to get an overview of Formik.
-
-### Setup Option 2: Local Development Environment
-
-This is completely optional and not required for this tutorial!
-
-<details>
-
-<summary><b>Optional: Instructions for following along locally using your preferred text editor</b></summary>
-
-This setup requires more work, but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
-
-1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-1. Follow the [installation instructions for Create React App](https://create-react-app.dev) to make a new project.
-
-```bash
-npx create-react-app my-app
-```
-
-1. Install Formik
-
-```bash
-npm i formik
-```
-
-Or
-
-```bash
-yarn add formik
-```
-
-1. Delete all files in the `src/` folder of the new project
-
-> Note:
->
-> **Don’t delete the entire `src` folder, just the original source files inside it.** We’ll replace the default source files with examples for this project in the next step.
-
-```bash
-cd my-app
-cd src
-
-# If you’re using a Mac or Linux:
-rm -f *
-
-# Or, if you’re on Windows:
-del *
-
-# Then, switch back to the project folder
-cd ..
-```
-
-5. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
-
-6. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
-
-Now run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
-
-We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
-
-</details>
-
-### Help, I’m Stuck!
-
-If you get stuck, check out Formik’s [GitHub Discussions](https://github.com/formik/formik/discussions). In addition, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly too. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
-
-## Overview: What is Formik?
-
-Formik is a small group of React components and hooks for building forms in React and React Native. It helps with the three most annoying parts:
+Formik is a small group of React components, hooks and helpers for building forms in React and React Native. It helps with the three most annoying parts:
 
 1.  Getting values in and out of form state
 2.  Validation and error messages
@@ -106,45 +21,71 @@ Formik is a small group of React components and hooks for building forms in Reac
 By colocating all of the above in one place, Formik keeps things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
 
-## The Basics
+### What are we building?
 
-We’re going to start with the _most verbose_ way of using Formik. While this may seem a bit long-winded, it’s important to see how Formik builds on itself so you have a full grasp of what’s possible and a complete mental model of how it works.
+In this tutorial, we’ll build a newsletter signup form with React and Formik. We'll start with a basic form and add validation, submit logic, etc.
 
-### A simple newsletter signup form
+You can see what we’ll be building here: [Final Result](#final-result). If the code doesn’t make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
 
-Imagine we want to add a newsletter signup form for a blog. To start, our form will have just one field named `email`. With Formik, this is just a few lines of code.
+## Setting Up
 
-```jsx
-import React from 'react';
-import { useFormik } from 'formik';
+There are two ways to complete this tutorial: you can either write the code in your browser, or you can set up a local development environment on your computer.
 
-const SignupForm = () => {
-  // Pass the useFormik() hook initial form values and a submit function that will
-  // be called when the form is submitted
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-    },
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
-  return (
-    <form onSubmit={formik.handleSubmit}>
-      <label htmlFor="email">Email Address</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        onChange={formik.handleChange}
-        value={formik.values.email}
-      />
+### Using a Playground
 
-      <button type="submit">Submit</button>
-    </form>
-  );
-};
+This is the quickest way to get started!
+
+First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input, a submit button, and some React code. We’ll be editing the React code in this tutorial.
+
+Continue to [What is Formik?](#what-is-formik), or try...
+
+### Using a local development environment.
+
+To set up your own development environment, including setting up Create React App and running a local server, check out [Development Setup](./development-setup.md).
+
+This is completely optional and not required for this tutorial! To get started quickly, try [Using a Playground](#using-a-playground).
+
+## A Basic Formik App
+
+We're going to start with a simple app and explore how Formik's helper components can help us to create interactive forms. Imagine we want to add a newsletter signup form for a blog. We'll start off with a basic functional component:
+
+```tsx file=packages/examples/tutorial/tutorial-start.tsx
 ```
+
+As you can see, we're starting with 4 main components from Formik, which are automagically connected and ready for user interaction:
+
+- `<Formik />`
+  - `<Form />`
+    - `<Field />`
+    - `<ErrorMessage />`
+
+Let's see how these components come together to create a usable form.
+
+### [`<Formik />`](./components/Formik.md)
+
+`<Formik />` is a helper component which creates a Formik instance and passes it down the hierarchy via React context. It also contains the main configuration for how Formik should work, including the initial values of the form, how to validate the form at the form level, and what to do on submit.
+
+> ⚠ `Formik.initialValues` and `Formik.onSubmit` are both required properties due to the way that Formik works internally.
+
+To read more about configuring Formik, check out [Configuring Formik](./guides/configuring-formik.md).
+
+### `<Form />`
+
+`<Form />` is a helper component which replaces the html `<form />` element. It is connected to Formik, so that submitting the form via the normal HTML methods will run validations and trigger `Formik.onSubmit`.
+
+### `<Form />`
+
+`<Form />` is a helper component which replaces the html `<form />` element. It is connected to Formik, so that submitting the form via the normal HTML methods will run validations and trigger `Formik.onSubmit`.
+
+### `<Field />`
+
+`<Field />` is a helper component which represents the html `<input />`, `<select />` and `<textarea />` elements. It is connected to Formik, so that modifying the contents of an underlying HTML field will update Formik's state and can trigger effects like validation.
+
+### `<ErrorMessage />`
+
+`<ErrorMessage />` is a helper component which conditionally displays errors when a field is invalid according to form-level or field-level validations.
+
+--- TODO Show how to use other helper components and build a complete basic application. ---
 
 We pass our form’s `initialValues` and a submission function (`onSubmit`) to the `useFormik()` hook. The hook then returns to us a goodie bag of form state and helper methods in a variable we call `formik`. For now, the only helper methods we care about are as follows:
 

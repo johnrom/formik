@@ -5,18 +5,39 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run NPM Dev",
+            "name": "Run Dev Web App",
             "request": "launch",
             "type": "node",
             "runtimeArgs": [
                 "run",
-                "start:app"
+                "start:web"
             ],
             "runtimeExecutable": "npm",
             "cwd": "${workspaceFolder}",
             "skipFiles": [
                 "<node_internals>/**"
             ]
+        },
+        {
+            "name": "Run Docs Website",
+            "request": "launch",
+            "type": "node",
+            "runtimeArgs": [
+                "run",
+                "start:website"
+            ],
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/app"
         },
         {
             "type": "node",
@@ -37,13 +58,6 @@
             "protocol": "inspector",
             "internalConsoleOptions": "neverOpen",
             "disableOptimisticBPs": true
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/app"
         }
     ]
 }
