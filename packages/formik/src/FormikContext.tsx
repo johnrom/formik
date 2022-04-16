@@ -49,6 +49,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     // state helpers
     getState,
     useState,
+    subscribe,
     // config
     validateOnChange,
     validateOnBlur,
@@ -82,6 +83,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       registerField,
       getState,
       useState,
+      subscribe,
     }),
     [
       handleBlur,
@@ -105,6 +107,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       registerField,
       getState,
       useState,
+      subscribe,
     ]
   );
 

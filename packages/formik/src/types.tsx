@@ -115,6 +115,8 @@ export type FormikState<Values> = FormikReducerState<Values> &
   FormikComputedState;
 
 export type GetStateFn<Values> = () => FormikState<Values>;
+export type FormikSubscribeFn = (callback: Function) => () => void;
+
 export type UnregisterFieldFn = (name: string) => void;
 export type RegisterFieldFn = (name: string, { validate }: any) => void;
 
@@ -209,6 +211,12 @@ export interface FormikHelpers<Values> {
 export interface FormikStateHelpers<Values> {
   /** Get Formik State from outside of Render. */
   getState: GetStateFn<Values>;
+  /** 
+   * Subscribe to changes when Formik updates.
+   * 
+   * Probably avoid using this, instead use `useFormikSubscriptionByRef(formikRef.current, initialValues, selector, comparer)`
+   */
+  subscribe: FormikSubscribeFn;
   /** Use Formik State from within Render. */
   useState: <Return = FormikState<Values>>(
     selector?: Selector<FormikState<Values>, Return>,
@@ -380,6 +388,7 @@ export type FormikProps<Values> = FormikSharedConfig<Values> &
   FormikReducerState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &
+  FormikStateHelpers<Values> &
   FormikHandlers &
   FormikComputedState &
   FormikRegistration;
