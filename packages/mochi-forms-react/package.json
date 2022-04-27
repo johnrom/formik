@@ -1,14 +1,13 @@
 {
-  "name": "@johnrom/formik-v3",
-  "description": "Build forms in React, without the tears",
-  "version": "3.1.0-types14",
+  "name": "@mochi-forms/react",
+  "description": "A sweet React form library",
+  "version": "0.0.0",
   "license": "Apache-2.0",
-  "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
-  "repository": "formium/formik",
-  "homepage": "https://formik.org",
+  "author": "John Rom <web@johnrom.com>",
+  "repository": "johnrom/mochi-forms",
+  "homepage": "https://mochidocs.com",
   "keywords": [
     "formik",
-    "form",
     "forms",
     "react",
     "react-dom",
@@ -19,12 +18,6 @@
     "validation",
     "higher order component",
     "hoc"
-  ],
-  "funding": [
-    {
-      "type": "individual",
-      "url": "https://opencollective.com/formik"
-    }
   ],
   "main": "dist/index.js",
   "react-native": "dist/index.native.js",
@@ -49,8 +42,8 @@
   ],
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": "^16.8.0",
-    "react-native": "^0.64.2"
+    "react-dom": ">=16.8.0",
+    "react-native": "^0.67.4"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -80,23 +73,23 @@
     "lodash-es": "^4.17.21",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
-    "tslib": "^2.0.1",
     "use-optimized-selector": "^1.0.0-beta3",
     "use-subscription": "^1.5.1"
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.0",
+    "@tsconfig/node16-strictest": "^1.0.0",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.9.55",
-    "@types/react-dom": "^16.9.9",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
     "@types/use-subscription": "^1.0.0",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
-    "just-debounce-it": "^1.1.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-native": "^0.67.4",
+    "typescript": "^4.6.3",
     "yup": "^0.28.1"
   },
   "jest": {

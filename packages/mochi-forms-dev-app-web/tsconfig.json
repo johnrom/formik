@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // and https://www.npmjs.com/package/@tsconfig/next
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "allowJs": true,
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@mochi-forms/react": ["../mochi-forms-react/src"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
+  "references": [{ "path": "../mochi-forms-react" }]
+}

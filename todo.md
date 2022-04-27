@@ -6,3 +6,5 @@
 - UseOptimizedSelector has a sourcemap issue.
 - UseFieldMeta is not properly typed
 - Remove requirement of initialValues using the FieldRegistry.
+- Correctly use `ref` instead of `innerRef`.
+- Fix or remove lodash

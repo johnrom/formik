@@ -1,9 +1,10 @@
 {
-  "name": "@johnrom/formik-native-v3",
-  "version": "3.1.0-types5",
+  "name": "@mochi-forms/react-native",
+  "description": "A sweet React Native form library",
+  "version": "0.0.0",
   "license": "Apache-2.0",
-  "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "formium/formik",
+  "author": "John Rom <web@johnrom.com>",
+  "repository": "johnrom/mochi-forms",
   "keywords": [
     "formik",
     "react",
@@ -29,17 +30,21 @@
     "prepublish": "yarn build"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-native": "^0.67.4"
   },
   "dependencies": {
-    "@johnrom/formik-v3": "^3.1.0-types14"
+    "@mochi-forms/react": "0.0.0"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
-    "@types/react": "^16.9.55",
-    "@types/react-native": "^0.63.32",
+    "@tsconfig/node16-strictest": "^1.0.0",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "babel-jest": "^27.5.1",
     "expo-yarn-workspaces": "^1.7.0",
-    "react": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
+    "jest": "^27.5.1",
+    "react": "^17.0.2",
+    "react-native": "^0.67.4"
   }
 }

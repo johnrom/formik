@@ -13,9 +13,8 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "lib": ["es2015", "es2016", "dom"],
-    "baseUrl": "../../",
-    "paths": {      
-      "@johnrom/formik-native-v3": ["packages/react-native/src"],
-    }
+    "baseUrl": "../../"
   },
+  "include": ["./src"],
+  "references": [{ "path": "../mochi-forms-react" }]
 }
