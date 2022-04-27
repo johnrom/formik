@@ -1,7 +1,6 @@
 ---
-"formik-native": major
-"formik": major
-"app": major
+'@mochi-forms/react-native': major
+'@mochi-forms/react': major
 ---
 
 Use FormikApi + FormikState Subscriptions

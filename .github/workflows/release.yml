@@ -1,27 +1,30 @@
+# Copyright 2022 John Rom
+# Copyright 2021 Formik, Inc.
+# SPDX-License-Identifier: Apache-2.0
 name: Release
 on:
   push:
     branches:
-      - master
+      - main
       - next
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'formium/formik'
+    if: github.repository == 'johnrom/mochi-forms'
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 12.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          version: 12.x
+          version: 16.14.2
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
 
-      - name: Create Release Pull Request or Publish to npm
+      - name: Publish to NPM
         uses: changesets/action@master
         with:
           publish: yarn release

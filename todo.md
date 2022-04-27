@@ -1,0 +1,8 @@
+- Add a default parser and formatter from file to `multiple ? target.files : target.files[0]`. (Make sure formatter always uses undefined, since it's an uncontrolled field)
+- `FieldInputProps.value` should be a different type -- the result of `format` / the `value` prop expected by `as={Component}`
+- Add File demo.
+- `<Formik />` only accepts a single child (Children.Only) ??
+- Add original event to `parse` to support `event.target.files`.
+- UseOptimizedSelector has a sourcemap issue.
+- UseFieldMeta is not properly typed
+- Remove requirement of initialValues using the FieldRegistry.

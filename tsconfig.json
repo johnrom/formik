@@ -1,13 +1,12 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": ["packages", "types", "scripts"],
-  "compilerOptions": {
-    "allowJs": false,
-    "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types", "./types"],
-    "paths": {
-      "@johnrom/formik-v3": ["packages/formik/src"],
-      "@johnrom/formik-native-v3": ["packages/react-native/src"],
-    }
-  }
+  "files": [],
+  "include": ["types"],
+  "references": [
+    { "path": "./packages/mochi-forms-docs-website" },
+    { "path": "./packages/mochi-forms-examples" },
+    { "path": "./packages/mochi-forms-react" },
+    { "path": "./packages/mochi-forms-react/test" },
+    { "path": "./packages/mochi-forms-react-native" },
+    { "path": "./packages/mochi-forms-react-native/test" }
+  ]
 }

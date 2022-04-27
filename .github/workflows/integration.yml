@@ -1,3 +1,6 @@
+# Copyright 2022 John Rom
+# Copyright 2021 Formik, Inc.
+# SPDX-License-Identifier: Apache-2.0
 name: E2E Test
 
 on: [pull_request]

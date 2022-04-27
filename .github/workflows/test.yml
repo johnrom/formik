@@ -1,3 +1,6 @@
+# Copyright 2022 John Rom
+# Copyright 2021 Formik, Inc.
+# SPDX-License-Identifier: Apache-2.0
 name: Unit Test
 
 on:
@@ -10,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node: ['12.x']
+        node: ['14.x']
 
     name: Test on node ${{ matrix.node }}
 

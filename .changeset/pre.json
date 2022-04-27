@@ -1,0 +1,9 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@mochi-forms/react": "0.0.0",
+    "@mochi-forms/react-native": "0.0.0"
+  },
+  "changesets": ["fifty-shrimps-leave", "flat-peaches-hug"]
+}

@@ -1,26 +1,9 @@
+# Copyright 2022 John Rom
+# Copyright 2021 Formik, Inc.
+# SPDX-License-Identifier: Apache-2.0
+.DS_Store
+*.log
 dist
 dist-untyped
-compiled
-*.log
-coverage
-.DS_Store
-next.d.ts
-legacy.d.ts
-.idea
-*.orig
-__generated__
-
 node_modules
-package-lock.json
-yarn.lock
-!/docs/yarn.lock
-!/yarn.lock
-
-website/translated_docs
-website/build
-!website/yarn.lock
-website/node_modules
-website/i18n
-!website2/yarn.lock
-.env
-.vercel
+coverage
