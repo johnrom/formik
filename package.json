@@ -13,14 +13,16 @@
     "**/typescript": "^4.6.3",
     "**/eslint-plugin-react-hooks": "^4.3.0",
     "**/@typescript-eslint/parser": "^5.21.0",
-    "**/@typescript-eslint/eslint-plugin": "^5.21.0"
+    "**/@typescript-eslint/eslint-plugin": "^5.21.0",
+    "**/@types/react": "^17.0.21"
   },
   "scripts": {
     "build": "lerna run build",
     "lint:scripts": "eslint .",
+    "postinstall": "npm run setup:expo",
     "setup": "npm run setup:npm && npm run setup:yarn && npm run setup:install",
     "setup:crossenv": "npm install -g cross-env",
-    "setup:expo": "cd ./packages/dev-native && expo-yarn-workspaces postinstall",
+    "setup:expo": "cd ./packages/mochi-forms-dev-app-native && expo-yarn-workspaces postinstall",
     "setup:install": "yarn",
     "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_node && nvm use $npm_package_engines_node\"",
     "setup:yarn": "npm i -g yarn",
@@ -33,12 +35,15 @@
     "test:vscode": "lerna run test --stream --no-sort --"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
     "@changesets/cli": "^2.21.1",
     "@tsconfig/node16-strictest-esm": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
-    "eslint": "^8.11.0",
+    "eslint": "7.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",
     "husky": "^4.3.0",

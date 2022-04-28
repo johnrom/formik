@@ -17,7 +17,8 @@
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint"],
   "rules": {
-    "@typescript-eslint/no-empty-interface": 0
+    "@typescript-eslint/no-empty-interface": 0,
+    "@typescript-eslint/no-unused-vars": 0
   },
   "ignorePatterns": ["**/dist/*"]
 }

@@ -43,7 +43,7 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "react-native": "^0.67.4"
+    "react-native": "^0.64.2"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -77,22 +77,23 @@
     "use-subscription": "^1.5.1"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.1.0",
+    "@babel/core": "^7.0.0",
     "@johnrom/tsdx": "0.14.2-noclean3",
+    "@testing-library/react": "^11.1.0",
     "@tsconfig/node16-strictest": "^1.0.0",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^17.0.43",
-    "@types/react-dom": "^17.0.14",
+    "@types/react": "^17.0.21",
+    "@types/react-dom": "^17.0.11",
     "@types/use-subscription": "^1.0.0",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
-    "react": "^17.0.2",
+    "react": "17.0.1",
     "react-dom": "^17.0.2",
-    "react-native": "^0.67.4",
+    "react-native": "0.64.3",
     "typescript": "^4.6.3",
     "yup": "^0.28.1"
   }

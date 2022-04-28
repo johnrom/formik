@@ -6,7 +6,9 @@ interface SubmitButtonProps {
   title?: string;
 }
 
-export const SubmitButton = ({ title = 'Submit' }) => {
+export const SubmitButton: React.FunctionComponent<SubmitButtonProps> = ({
+  title = 'Submit',
+}) => {
   const { onPress } = useSubmitButton();
 
   return <Button title={title} onPress={onPress} />;

@@ -1,6 +1,11 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "checkJs": false
+  },
+  "references": [
+    { "path": "../mochi-forms-react" },
+    { "path": "../mochi-forms-react-native" }
+  ]
 }

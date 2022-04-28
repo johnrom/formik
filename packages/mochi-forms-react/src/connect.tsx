@@ -10,7 +10,9 @@ import { FormikConnectedType } from './types';
  * @param Comp React Component
  */
 export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<OuterProps & { formik: FormikConnectedType<Values> }>
+  Comp: React.ComponentType<
+    OuterProps & { formik: FormikConnectedType<Values> }
+  >
 ) {
   const C: React.FC<OuterProps> = (props: OuterProps) => {
     const formik = useFormikContext<Values>();
@@ -26,7 +28,7 @@ export function connect<OuterProps, Values = {}>(
       ...formik,
       ...config,
       ...state,
-    }
+    };
 
     return <Comp {...props} formik={legacyBag} />;
   };
@@ -39,9 +41,11 @@ export function connect<OuterProps, Values = {}>(
 
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
-  (C as React.FC<OuterProps> & {
-    WrappedComponent: React.ReactNode;
-  }).WrappedComponent = Comp;
+  (
+    C as React.FC<OuterProps> & {
+      WrappedComponent: React.ReactNode;
+    }
+  ).WrappedComponent = Comp;
 
   C.displayName = `FormikConnect(${componentDisplayName})`;
 
