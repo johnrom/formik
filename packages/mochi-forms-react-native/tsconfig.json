@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.legacy.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "rootDir": "./src",
+    "target": "es5",
+    "module": "esnext",
+    "lib": ["es2015", "es2016", "esnext"],
+    "jsx": "react-native"
+  },
+  "references": [{ "path": "../mochi-forms-react" }]
+}

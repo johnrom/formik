@@ -11,9 +11,11 @@ const initialValues = {
   name: '',
 };
 
+interface FormProps {}
+
 const FormWithRef = React.forwardRef<
   FormikProps<typeof initialValues>,
-  React.PropsWithChildren<{}>
+  React.PropsWithChildren<FormProps>
 >(({ children }, ref) => {
   return (
     <Formik
@@ -25,6 +27,8 @@ const FormWithRef = React.forwardRef<
     </Formik>
   );
 });
+
+FormWithRef.displayName = 'FormWithRef';
 
 const ComponentsPage = () => {
   const formikRef = React.useRef<FormikProps<typeof initialValues> | null>(

@@ -4,14 +4,19 @@ import Link from 'next/link';
 function Home() {
   return (
     <main>
-      <h1>Formik Tutorial and Fixtures</h1>
+      <h1>Formik Examples and Fixtures</h1>
       <nav>
-        <h2>Tutorial</h2>
+        <h2>Guides</h2>
         <ul>
           <li>
-            <Link href="/tutorial/basic">
-              <a>Basic Form</a>
-            </Link>
+            <h3>Deep Dive</h3>
+            <ul>
+              <li>
+                <Link href="/guides/deep-dive/DeepDiveStartExample">
+                  <a>Deep Dive Starting Example</a>
+                </Link>
+              </li>
+            </ul>
           </li>
           <li>
             <Link href="/tutorial/sign-in">

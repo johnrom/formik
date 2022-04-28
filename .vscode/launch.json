@@ -21,6 +21,15 @@
       "disableOptimisticBPs": true
     },
     {
+      "name": "Run Dev Web App",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["run", "start:web"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
       "name": "Run Docs Website",
       "request": "launch",
       "type": "node",

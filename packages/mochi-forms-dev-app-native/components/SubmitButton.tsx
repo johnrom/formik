@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Button } from 'react-native';
-import { useSubmitButton } from 'formik-native';
+import { useSubmitButton } from '@mochi-forms/react-native';
 
 interface SubmitButtonProps {
-    title?: string
+  title?: string;
 }
 
-export const SubmitButton = ({ title = "Submit" }) => {
-    const { onPress } = useSubmitButton();
+export const SubmitButton = ({ title = 'Submit' }) => {
+  const { onPress } = useSubmitButton();
 
-    return <Button title={title} onPress={onPress} />;
-}
+  return <Button title={title} onPress={onPress} />;
+};

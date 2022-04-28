@@ -54,16 +54,16 @@
     }
   },
   "scripts": {
-    "test": "tsdx test --env=jsdom",
+    "test": "jest --silent",
     "test:watch": "yarn test -- --watchAll",
-    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "start": "tsdx watch --verbose --noClean",
     "build": "yarn run build-native && yarn run move-native && yarn run build-alternate && yarn run move-alternate && yarn run build-web && yarn run build-untyped",
-    "build-native": "yarn run tsdx build --tsconfig tsconfig.build.json --entry src/index.native.tsx --name formik-v3.native",
+    "build-native": "yarn run tsdx build --entry src/index.native.tsx --name formik-v3.native",
     "move-native": "mv dist/index.js dist/index.native.js",
-    "build-alternate": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean --entry src/index.alternate.tsx --name formik-v3.alternate",
+    "build-alternate": "yarn run tsdx build --noClean --entry src/index.alternate.tsx --name formik-v3.alternate",
     "move-alternate": "mv dist/index.js dist/index.alternate.js",
-    "build-web": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean",
-    "build-untyped": "tsc --emitDeclarationOnly --noEmit false --project tsconfig.build.json --outDir dist-untyped && mv -f dist-untyped/helpers/path-helpers.untyped.d.ts dist-untyped/helpers/path-helpers.d.ts",
+    "build-web": "yarn run tsdx build --noClean",
+    "build-untyped": "rimraf dist-untyped && tsc --emitDeclarationOnly --noEmit false --outDir dist-untyped",
     "lint": "tsdx lint"
   },
   "dependencies": {
@@ -78,29 +78,22 @@
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.0",
+    "@johnrom/tsdx": "0.14.2-noclean3",
     "@tsconfig/node16-strictest": "^1.0.0",
     "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.119",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/use-subscription": "^1.0.0",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-native": "^0.67.4",
     "typescript": "^4.6.3",
     "yup": "^0.28.1"
-  },
-  "jest": {
-    "globals": {
-      "__DEV__": "boolean"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/test/setupTests.ts"
-    ]
   }
 }

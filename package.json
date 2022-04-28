@@ -1,6 +1,7 @@
 {
   "name": "@mochi-forms/workspace",
   "private": true,
+  "author": "John Rom <web@johnrom.com>",
   "version": "0.0.0",
   "engines": {
     "node": "16.14.2"
@@ -8,6 +9,12 @@
   "workspaces": [
     "packages/*"
   ],
+  "resolutions": {
+    "**/typescript": "^4.6.3",
+    "**/eslint-plugin-react-hooks": "^4.3.0",
+    "**/@typescript-eslint/parser": "^5.21.0",
+    "**/@typescript-eslint/eslint-plugin": "^5.21.0"
+  },
   "scripts": {
     "build": "lerna run build",
     "lint:scripts": "eslint .",
@@ -17,8 +24,8 @@
     "setup:install": "yarn",
     "setup:npm": "npm run setup:crossenv && cross-env-shell \"nvm install $npm_package_engines_node && nvm use $npm_package_engines_node\"",
     "setup:yarn": "npm i -g yarn",
-    "start:web": "yarn --cwd ./packages/dev-web run start",
-    "start:native": "yarn --cwd ./packages/dev-native run start",
+    "start:web": "yarn --cwd ./packages/mochi-forms-dev-app-web run dev",
+    "start:native": "yarn --cwd ./packages/mochi-forms-dev-app-native run start",
     "start:website": "yarn --cwd ./packages/mochi-forms-docs-website run start",
     "test": "lerna run test -- --silent",
     "test:watch": "lerna run test --stream --no-sort -- --watch",
@@ -29,10 +36,14 @@
     "@babel/preset-react": "^7.16.7",
     "@changesets/cli": "^2.21.1",
     "@tsconfig/node16-strictest-esm": "^1.0.0",
-    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
     "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.29.4",
+    "husky": "^4.3.0",
     "lerna": "^4.0.0",
+    "lint-staged": "^10.4.0",
     "prettier": "^2.6.1",
     "typescript": "^4.6.3"
   }

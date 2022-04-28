@@ -1,12 +1,14 @@
+// Copyright 2022 John Rom
+// Copyright 2021 Formik, Inc.
+// SPDX-License-Identifier: Apache-2.0
 {
   "files": [],
   "include": ["types"],
   "references": [
+    { "path": "./packages/mochi-forms-dev-app-native" },
+    { "path": "./packages/mochi-forms-dev-app-web" },
     { "path": "./packages/mochi-forms-docs-website" },
-    { "path": "./packages/mochi-forms-examples" },
     { "path": "./packages/mochi-forms-react" },
-    { "path": "./packages/mochi-forms-react/test" },
-    { "path": "./packages/mochi-forms-react-native" },
-    { "path": "./packages/mochi-forms-react-native/test" }
+    { "path": "./packages/mochi-forms-react-native" }
   ]
 }

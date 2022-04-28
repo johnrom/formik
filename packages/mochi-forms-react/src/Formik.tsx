@@ -35,10 +35,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import {
-  IsFormValidFn,
-  selectFullState,
-} from './helpers/form-helpers';
+import { IsFormValidFn, selectFullState } from './helpers/form-helpers';
 import { useFormikSubscriptionsContainer } from './hooks/useFormikSubscriptionsContainer';
 import { useEventCallback } from './hooks/useEventCallback';
 import { useTypedField } from './Field.helpers';
@@ -168,45 +165,41 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const emptyTouched: FormikTouched<unknown> = {};
 
   const isFormValid = React.useCallback<IsFormValidFn<Values>>(
-   (errors, dirty) => {
-     return typeof props.isInitialValid !== 'undefined'
-       ? dirty
-         ? errors && Object.keys(errors).length === 0
-         : props.isInitialValid !== false && isFunction(props.isInitialValid)
-         ? props.isInitialValid(props)
-         : props.isInitialValid
-       : errors && Object.keys(errors).length === 0;
-   },
-   [props]
- );
+    (errors, dirty) => {
+      return typeof props.isInitialValid !== 'undefined'
+        ? dirty
+          ? errors && Object.keys(errors).length === 0
+          : props.isInitialValid !== false && isFunction(props.isInitialValid)
+          ? props.isInitialValid(props)
+          : props.isInitialValid
+        : errors && Object.keys(errors).length === 0;
+    },
+    [props]
+  );
 
   /**
    * `useState` is a special hook intended for other components and hooks.
    * `getState` is used to get state imperatively.
    * `dispatch` is used to update Formik's state.
    */
-  const {
-    useState,
-    getState,
-    subscribe,
-    dispatch
-  } = useFormikSubscriptionsContainer(
-    {
-      initialValues: props.initialValues,
-      initialErrors: props.initialErrors ?? emptyErrors,
-      initialTouched: props.initialTouched ?? emptyTouched,
-      initialStatus: props.initialStatus,
-      values: props.initialValues,
-      errors: props.initialErrors ?? emptyErrors,
-      touched: props.initialTouched ?? emptyTouched,
-      status: props.initialStatus,
-      isSubmitting: false,
-      isValidating: false,
-      submitCount: 0,
-    },
-    formikReducer,
-    isFormValid,
-  );
+  const { useState, getState, subscribe, dispatch } =
+    useFormikSubscriptionsContainer(
+      {
+        initialValues: props.initialValues,
+        initialErrors: props.initialErrors ?? emptyErrors,
+        initialTouched: props.initialTouched ?? emptyTouched,
+        initialStatus: props.initialStatus,
+        values: props.initialValues,
+        errors: props.initialErrors ?? emptyErrors,
+        touched: props.initialTouched ?? emptyTouched,
+        status: props.initialStatus,
+        isSubmitting: false,
+        isValidating: false,
+        submitCount: 0,
+      },
+      formikReducer,
+      isFormValid
+    );
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -383,7 +376,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const resetForm = useEventCallback(
     (nextState?: Partial<FormikReducerState<Values>>) => {
       const values =
-        nextState?.values ?? nextState?.initialValues ?? getState().initialValues;
+        nextState?.values ??
+        nextState?.initialValues ??
+        getState().initialValues;
       const errors =
         nextState?.errors ??
         nextState?.initialErrors ??
@@ -558,7 +553,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     maybeUpdateInitialStatus(props.initialStatus, enableReinitialize);
   }, [maybeUpdateInitialStatus, enableReinitialize, props.initialStatus]);
 
-  const validateField = useEventCallback<ValidateFieldFn<Values>>((name) => {
+  const validateField = useEventCallback<ValidateFieldFn<Values>>(name => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
@@ -607,13 +602,16 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     return Promise.resolve();
   });
 
-  const registerField = React.useCallback<RegisterFieldFn<Values>>((name, { validate }) => {
-    fieldRegistry.current[name] = {
-      validate,
-    };
-  }, []);
+  const registerField = React.useCallback<RegisterFieldFn<Values>>(
+    (name, { validate }) => {
+      fieldRegistry.current[name] = {
+        validate,
+      };
+    },
+    []
+  );
 
-  const unregisterField = React.useCallback<UnregisterFieldFn<Values>>((name) => {
+  const unregisterField = React.useCallback<UnregisterFieldFn<Values>>(name => {
     delete fieldRegistry.current[name];
   }, []);
 
@@ -637,7 +635,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const setValues = useEventCallback(
     (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
-      const resolvedValues = isFunction(values) ? values(getState().values) : values;
+      const resolvedValues = isFunction(values)
+        ? values(getState().values)
+        : values;
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
@@ -676,7 +676,12 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<React.ElementRef<InputElements>>, maybePath?: string) => {
+    (
+      eventOrTextValue:
+        | string
+        | React.ChangeEvent<React.ElementRef<InputElements>>,
+      maybePath?: string
+    ) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
@@ -689,7 +694,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         // @see https://reactjs.org/docs/events.html#event-pooling
         //
         // but first, check if someone might have faked this value
-        if (typeof eventOrTextValue.persist !== "undefined") {
+        if (typeof eventOrTextValue.persist !== 'undefined') {
           eventOrTextValue.persist();
         }
 
@@ -697,11 +702,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
           ? eventOrTextValue.target
           : eventOrTextValue.currentTarget;
 
-        const {
-          name,
-          id,
-          outerHTML,
-        } = target;
+        const { name, id, outerHTML } = target;
 
         field = maybePath ? maybePath : name ? name : id;
 
@@ -714,9 +715,11 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         }
 
         selectFieldOnChange({ setFieldValue, getState })(eventOrTextValue);
-
       } else if (field) {
-        selectFieldOnChange({ setFieldValue, getState }, field)(eventOrTextValue);
+        selectFieldOnChange(
+          { setFieldValue, getState },
+          field
+        )(eventOrTextValue);
       }
     },
     [setFieldValue]
@@ -958,41 +961,41 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const TypedFieldArray = useTypedFieldArray<Values>();
 
   return {
-      // config
-      enableReinitialize,
-      isInitialValid: props.isInitialValid,
-      validateOnBlur,
-      validateOnChange,
-      validateOnMount,
-      validationSchema: props.validationSchema,
-      validate: props.validate,
-      // handlers
-      handleBlur,
-      handleChange,
-      handleReset,
-      handleSubmit,
-      // helpers
-      resetForm,
-      setErrors,
-      setFormikState,
-      setFieldTouched,
-      setFieldValue,
-      setFieldError,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      submitForm,
-      validateForm: validateFormWithHighPriority,
-      validateField,
-      unregisterField,
-      registerField,
-      // state helpers
-      getState,
-      subscribe,
-      useState,
-      TypedField,
-      TypedFieldArray
+    // config
+    enableReinitialize,
+    isInitialValid: props.isInitialValid,
+    validateOnBlur,
+    validateOnChange,
+    validateOnMount,
+    validationSchema: props.validationSchema,
+    validate: props.validate,
+    // handlers
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
+    // helpers
+    resetForm,
+    setErrors,
+    setFormikState,
+    setFieldTouched,
+    setFieldValue,
+    setFieldError,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    submitForm,
+    validateForm: validateFormWithHighPriority,
+    validateField,
+    unregisterField,
+    registerField,
+    // state helpers
+    getState,
+    subscribe,
+    useState,
+    TypedField,
+    TypedFieldArray,
   };
 }
 

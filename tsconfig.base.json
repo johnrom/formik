@@ -1,3 +1,6 @@
+// Copyright 2022 John Rom
+// Copyright 2021 Formik, Inc.
+// SPDX-License-Identifier: Apache-2.0
 {
   "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
   "compilerOptions": {
@@ -8,12 +11,6 @@
     "emitDeclarationOnly": true,
     "sourceMap": true,
     "jsx": "react-jsx",
-    "rootDir": "./packages",
-    "paths": {
-      "@mochi-forms/examples": ["./packages/mochi-forms-examples/src"],
-      "@mochi-forms/react": ["./packages/mochi-forms-react/src"],
-      "@mochi-forms/react-native": ["./packages/mochi-forms-react-native/src"]
-    },
     "types": ["node"],
 
     // These should be removed eventually, but we'll override them while fixing Formik code.

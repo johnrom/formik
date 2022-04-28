@@ -10,7 +10,7 @@ import {
 } from '@mochi-forms/react';
 import { DebugProps } from '../../components/debugging/DebugProps';
 
-const Input = React.memo((p: FieldAttributes<any>) => {
+const Input = React.memo((p: FieldAttributes<any, any>) => {
   const [field, meta] = useField(p);
 
   const renders = React.useRef(0);

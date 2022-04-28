@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NativeSyntheticEvent, NativeTouchEvent } from 'react-native';
+import type { NativeSyntheticEvent, NativeTouchEvent } from 'react-native';
 import { useFormikContext } from '@mochi-forms/react';
 
 export function useSubmitButton() {

@@ -50,7 +50,7 @@ const ComponentsPage = () => (
       }}
     >
       <Form>
-        <Field name="name" children={RenderComponent} />
+        <Field name="name">{RenderComponent}</Field>
         <Field name="name" render={RenderComponent} />
         <Field name="name" component={ComponentComponent} />
         <Field name="name" as={AsComponent} />

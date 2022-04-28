@@ -8,6 +8,9 @@ module.exports = {
   roots: ['./test'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.[jt]sx?$': 'babel-jest',
+    '^.+\\.[jt]sx?$': [
+      'babel-jest',
+      { configFile: '../../babel.config.test.js' },
+    ],
   },
 };
