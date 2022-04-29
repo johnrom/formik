@@ -1,9 +1,10 @@
 import React, { Reducer } from 'react';
-import { populateComputedState, IsFormValidFn, selectFullState } from '../helpers/form-helpers';
+import { populateComputedState, IsFormValidFn } from '../helpers/form-helpers';
 import {
   FormikMessage,
-  FormikReducerState,
-  FormikState,
+  FormReducerState,
+  FormState,
+  SubscriptionCallbackFn,
 } from '../types';
 import {
   Selector,
@@ -13,23 +14,24 @@ import {
 import { useEventCallback } from './useEventCallback';
 import { BatchCallback, getBatch } from '../helpers/batch-helpers';
 import { useFormikSubscription } from './useFormikSubscription';
+import { selectFullState } from '../helpers/state-selectors';
 
 export const useFormikSubscriptionsContainer = <Values>(
-  initialState: FormikReducerState<Values>,
-  formikReducer: Reducer<FormikReducerState<Values>, FormikMessage<Values>>,
+  initialState: FormReducerState<Values>,
+  formikReducer: Reducer<FormReducerState<Values>, FormikMessage<Values>>,
   isFormValid: IsFormValidFn<Values>
 ) => {
   /**
    * A list of callbacks for updating subscriptions.
    * These should only be updated during a batch when using React-Dom / React-Native renderers.
    */
-  const subscriptionsRef = React.useRef<Function[]>([]);
+  const subscriptionsRef = React.useRef<SubscriptionCallbackFn[]>([]);
 
   /**
    * StateRef contains only the Reducer State.
    * Not computed state like isDirty, isValid.
    */
-  const stateRef = React.useRef<FormikReducerState<Values>>(initialState);
+  const stateRef = React.useRef<FormReducerState<Values>>(initialState);
 
   /**
    * Get computed state from current reducer state.
@@ -38,46 +40,59 @@ export const useFormikSubscriptionsContainer = <Values>(
    *
    * Use computedStateRef to access the value.
    */
-  const getComputedState = useEventCallback(
-    () => populateComputedState(isFormValid, stateRef.current),
+  const getComputedState = useEventCallback(() =>
+    populateComputedState(isFormValid, stateRef.current)
   );
 
   // Don't call getComputedState on every render.
-  const computedStateRef = React.useRef(React.useMemo(() => getComputedState(), []));
+  const computedStateRef = React.useRef(
+    React.useMemo(() => getComputedState(), [])
+  );
 
   /**
    * Get latest state. Does not recreate state,
    * but uses previously computed state created by dispatch.
    */
-  const getState = React.useCallback(() => computedStateRef.current, [computedStateRef]);
-  
-  const subscribe = React.useCallback((callback: Function) => {
-    subscriptionsRef.current.push(callback);
+  const getState = React.useCallback(
+    () => computedStateRef.current,
+    [computedStateRef]
+  );
 
-    return () => {
-      subscriptionsRef.current = subscriptionsRef.current.filter(
-        (cb: Function) => cb !== callback
-      );
-    }
-  }, [subscriptionsRef]);
+  const subscribe = React.useCallback(
+    (callback: SubscriptionCallbackFn) => {
+      subscriptionsRef.current.push(callback);
+
+      return () => {
+        subscriptionsRef.current = subscriptionsRef.current.filter(
+          (cb: SubscriptionCallbackFn) => cb !== callback
+        );
+      };
+    },
+    [subscriptionsRef]
+  );
 
   /**
    * Update Subscriptions using RenderState.
    */
   const useState = React.useCallback(
     <Return>(
-      selector: Selector<FormikState<Values>, Return> = selectFullState as any,
+      selector: Selector<FormState<Values>, Return> = selectFullState as any,
       comparer: Comparer<Return> = Object.is,
-      shouldSubscribe: boolean = true
+      shouldSubscribe = true
     ) => {
-      
       // eslint-disable-next-line react-hooks/rules-of-hooks
       selector = useOptimizedSelector(selector, comparer);
-      
+
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const getCurrentValue = React.useCallback(() => selector(getState()), [selector, getState]);
-      const subscribeFn = React.useMemo(() => shouldSubscribe ? subscribe : () => () => { }, [shouldSubscribe, subscribe]);
-          
+      const getCurrentValue = React.useCallback(
+        () => selector(getState()),
+        [selector, getState]
+      );
+      const subscribeFn = React.useMemo(
+        () => (shouldSubscribe ? subscribe : () => () => {}),
+        [shouldSubscribe, subscribe]
+      );
+
       return useFormikSubscription(getCurrentValue, subscribeFn);
     },
     [subscriptionsRef, computedStateRef, getState, subscribe]
@@ -103,7 +118,7 @@ export const useFormikSubscriptionsContainer = <Values>(
 
       batch(() => {
         subscriptionsRef.current.forEach(callback => callback());
-      })
+      });
     },
     [stateRef]
   );
@@ -112,6 +127,6 @@ export const useFormikSubscriptionsContainer = <Values>(
     useState,
     getState: getComputedState,
     subscribe,
-    dispatch
-  }
+    dispatch,
+  };
 };

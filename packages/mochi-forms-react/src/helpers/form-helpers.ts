@@ -1,5 +1,5 @@
 import isEqual from 'react-fast-compare';
-import { FormikReducerState, FormikErrors } from "../types";
+import { FormReducerState, FormikErrors } from '../types';
 
 /**
  * Validity function where Formik combines its props with these bits of state
@@ -18,7 +18,7 @@ export type IsFormValidFn<Values> = (
  */
 export const populateComputedState = (
   isFormValid: IsFormValidFn<any>,
-  state: FormikReducerState<any>
+  state: FormReducerState<any>
 ) => {
   // we do not want to run a deep equals on every render
   const dirty = !isEqual(state.initialValues, state.values);
@@ -30,5 +30,3 @@ export const populateComputedState = (
     isValid,
   };
 };
-
-export const selectFullState = <T,>(state: T) => state;

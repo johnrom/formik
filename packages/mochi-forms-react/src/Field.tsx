@@ -1,36 +1,33 @@
 import * as React from 'react';
-import {
-  FieldMetaProps,
-  FieldHelperProps,
-  FieldInputProps,
-} from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
-import { useFormikConfig, useFormikContext } from './FormikContext';
-import { selectFullState } from './helpers/form-helpers';
-import { FieldConfig, FieldHookConfig } from './Field.types';
+import { FieldConfig, FieldPassThroughConfig } from './Field.types';
 import { PathMatchingValue } from './helpers/path-helpers';
+import { useFieldProps } from './FieldProps';
+import { FieldInputProps } from './types';
+import { FieldMetaProps, useFieldMeta } from './FieldMeta';
+import { FieldHelperProps, useFieldHelpers } from './FieldHelpers';
+import { useFormApi } from './FormApi';
+import { useFormConfig } from './FormConfig';
+import { selectFullState } from './helpers/state-selectors';
 
-export function useField<
-  Value = any,
-  Values = any
->(
+export type UseFieldProps<Value, Values> = {
+  as?: any;
+} & FieldPassThroughConfig<Value, Values>;
+
+export function useField<Value = any, Values = any>(
   propsOrFieldName:
-    PathMatchingValue<Value, Values> |
-    FieldHookConfig<Value, Values>
+    | PathMatchingValue<Value, Values>
+    | UseFieldProps<Value, Values>
 ): [
   FieldInputProps<Value, Values>,
   FieldMetaProps<Value>,
   FieldHelperProps<Value>
 ] {
-  const formik = useFormikContext<Values>();
-  const {
-    registerField,
-    unregisterField,
-  } = formik;
+  const formik = useFormApi<Values>();
+  const { registerField, unregisterField } = formik;
 
-  const props: FieldHookConfig<Value, Values> = isObject(propsOrFieldName)
+  const props: UseFieldProps<Value, Values> = isObject(propsOrFieldName)
     ? propsOrFieldName
     : { name: propsOrFieldName };
 
@@ -70,13 +67,9 @@ export function useField<
   ];
 }
 
-export function Field<
-  Value = any,
-  Values = any,
->(
+export function Field<Value = any, Values = any>(
   props: FieldConfig<Value, Values>
 ) {
-
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
@@ -117,18 +110,20 @@ export function Field<
    *
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
-  const formikApi = useFormikContext<Values>();
-  const formikConfig = useFormikConfig();
+  const formikApi = useFormApi<Values>();
+  const formikConfig = useFormConfig();
   const formikState = formikApi.useState(
     selectFullState,
     Object.is,
-    !!props.render || isFunction(props.children) || (!!props.component && typeof props.component !== 'string')
+    !!props.render ||
+      isFunction(props.children) ||
+      (!!props.component && typeof props.component !== 'string')
   );
 
   const form = {
-      ...formikApi,
-      ...formikConfig,
-      ...formikState,
+    ...formikApi,
+    ...formikConfig,
+    ...formikState,
   };
 
   if (props.render) {
@@ -140,28 +135,12 @@ export function Field<
   }
 
   if (props.as && typeof props.as !== 'string') {
-    const {
-      render,
-      component,
-      as,
-      children,
-      ...fieldAsProps
-    } = props;
-    return React.createElement(
-      as,
-      { ...fieldAsProps, ...field },
-      children
-    );
+    const { render, component, as, children, ...fieldAsProps } = props;
+    return React.createElement(as, { ...fieldAsProps, ...field }, children);
   }
 
   if (props.component && typeof props.component !== 'string') {
-    const {
-      render,
-      children,
-      as,
-      component,
-      ...componentProps
-    } = props;
+    const { render, children, as, component, ...componentProps } = props;
 
     // We don't pass `meta` for backwards compat
     return React.createElement(
@@ -187,7 +166,7 @@ export function Field<
   } = props;
 
   return React.createElement(
-    props.as || props.component || "input",
+    props.as || props.component || 'input',
     // field has FieldValue<> while HTML expects
     { ref: props.innerRef, ...field, ...htmlProps },
     children

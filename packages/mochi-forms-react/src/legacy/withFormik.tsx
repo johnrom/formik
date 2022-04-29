@@ -1,28 +1,14 @@
-import hoistNonReactStatics from 'hoist-non-react-statics';
-import * as React from 'react';
-import { Formik } from './Formik';
+import React from 'react';
+import { FormController } from '../FormController';
 import {
-  FormikHelpers,
-  FormikProps,
-  FormikSharedConfig,
-  FormikValues,
-  FormikTouched,
   FormikErrors,
-} from './types';
-import { isFunction } from './utils';
-
-/**
- * State, handlers, and helpers injected as props into the wrapped form component.
- * Used with withFormik()
- *
- * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
- */
-export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
-
-/**
- * Formik helpers + { props }
- */
-export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
+  FormHelpers,
+  FormikTouched,
+  FormikValues,
+} from '../types';
+import { isFunction } from '../utils';
+import { FormikBag, FormikProps, FormikSharedConfig } from './legacy-types';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -87,10 +73,6 @@ export interface ComponentDecorator<TOwnProps, TMergedProps> {
   (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
 }
 
-export interface InferableComponentDecorator<TOwnProps> {
-  <T extends CompositeComponent<TOwnProps>>(component: T): T;
-}
-
 /**
  * A public higher-order component to access the imperative API
  */
@@ -100,9 +82,10 @@ export function withFormik<
   Payload = Values
 >({
   mapPropsToValues = (vanillaProps: OuterProps): Values => {
-    let val: Values = {} as Values;
-    for (let k in vanillaProps) {
+    const val = {} as Values;
+    for (const k in vanillaProps) {
       if (
+        // eslint-disable-next-line no-prototype-builtins
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'
       ) {
@@ -133,16 +116,16 @@ export function withFormik<
       static displayName = `WithFormik(${componentDisplayName})`;
 
       validate = (values: Values): void | object | Promise<any> => {
-        return config.validate!(values, this.props);
+        return config.validate?.(values, this.props);
       };
 
       validationSchema = () => {
         return isFunction(config.validationSchema)
-          ? config.validationSchema!(this.props)
+          ? config.validationSchema?.(this.props)
           : config.validationSchema;
       };
 
-      handleSubmit = (values: Values, actions: FormikHelpers<Values>) => {
+      handleSubmit = (values: Values, actions: FormHelpers<Values>) => {
         return config.handleSubmit(values, {
           ...actions,
           props: this.props,
@@ -159,7 +142,7 @@ export function withFormik<
       render() {
         const { children, ...props } = this.props as any;
         return (
-          <Formik
+          <FormController
             {...props}
             {...config}
             validate={config.validate && this.validate}

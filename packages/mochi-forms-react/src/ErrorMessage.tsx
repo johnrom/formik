@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { isFunction } from './utils';
-import { useFieldMeta } from './hooks/hooks';
 import { PathOf } from './helpers/path-helpers';
+import { useFieldMeta } from './FieldMeta';
 
 export interface ErrorMessageProps<Values> {
   name: PathOf<Values>;
@@ -33,4 +33,4 @@ export function ErrorMessage<Values = any>({
       ? React.createElement(component, rest as any, error)
       : (error as any)
     : null;
-};
+}

@@ -1,28 +1,40 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
-import { useFormikConfig, useFormikContext } from './FormikContext';
-import { FieldMetaProps, FormikApi, FormikReducerState, FormikValues } from './types';
+import {
+  arraySwap,
+  arrayMove,
+  arrayInsert,
+  arrayReplace,
+  copyArrayLike,
+} from './helpers/array-helpers';
+import { FormApi, FormikValues, FormReducerState } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
-import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
-import { useFieldMeta } from './hooks/hooks';
-import { ArrayHelpers, FieldArrayConfig, FieldArrayProps, UseFieldArrayConfig } from './FieldArray.types';
+import {
+  getIn,
+  isEmptyArray,
+  isEmptyChildren,
+  isFunction,
+  setIn,
+} from './utils';
+import {
+  ArrayHelpers,
+  FieldArrayConfig,
+  FieldArrayProps,
+  UseFieldArrayConfig,
+} from './FieldArray.types';
+import { useFormApi } from './FormApi';
+import { useFormConfig } from './FormConfig';
+import { FieldMetaProps, useFieldMeta } from './FieldMeta';
 
-type UpdateFieldArrayFn<Value> = (
-  array: Value[] | boolean[]
-) => void;
+type UpdateFieldArrayFn<Value> = (array: Value[] | boolean[]) => void;
 
 export const useFieldArray = <
   Value extends any = any,
   Values extends FormikValues = any
 >(
   props: UseFieldArrayConfig<Value, Values>
-): [
-  FieldMetaProps<Value[]>,
-  ArrayHelpers<Value>,
-  FormikApi<Values>
-] => {
-  const formik = useFormikContext<Values>();
+): [FieldMetaProps<Value[]>, ArrayHelpers<Value>, FormApi<Values>] => {
+  const formik = useFormApi<Values>();
   const { setFormikState } = formik;
   const fieldMeta = useFieldMeta<Value[]>(props.name);
 
@@ -37,7 +49,7 @@ export const useFieldArray = <
     ) => {
       const name = props.name;
 
-      setFormikState((prevState: FormikReducerState<Values>) => {
+      setFormikState((prevState: FormReducerState<Values>) => {
         const updateErrors =
           typeof alterErrors === 'function' ? alterErrors : fn;
         const updateTouched =
@@ -79,42 +91,35 @@ export const useFieldArray = <
     }
   );
 
-  const push = useEventCallback<ArrayHelpers<Value>['push']>(
-    (value) =>
-      updateArrayField(
-        (arrayLike: ArrayLike<any>) => [
-          ...copyArrayLike(arrayLike),
-          cloneDeep(value),
-        ],
-        false,
-        false
-      )
+  const push = useEventCallback<ArrayHelpers<Value>['push']>(value =>
+    updateArrayField(
+      (arrayLike: ArrayLike<any>) => [
+        ...copyArrayLike(arrayLike),
+        cloneDeep(value),
+      ],
+      false,
+      false
+    )
   );
 
   const handlePush = useEventCallback<ArrayHelpers<Value>['handlePush']>(
-    (value) => () => push(value),
+    value => () => push(value)
   );
 
-  const swap = useEventCallback<ArrayHelpers<Value>['swap']>(
-    (indexA, indexB) =>
-      updateArrayField(
-        (array: any[]) => arraySwap(array, indexA, indexB),
-        true,
-        true
-      )
+  const swap = useEventCallback<ArrayHelpers<Value>['swap']>((indexA, indexB) =>
+    updateArrayField(
+      (array: any[]) => arraySwap(array, indexA, indexB),
+      true,
+      true
+    )
   );
 
   const handleSwap = useEventCallback<ArrayHelpers<Value>['handleSwap']>(
     (indexA, indexB) => () => swap(indexA, indexB)
   );
 
-  const move = useEventCallback(
-    (from: number, to: number) =>
-      updateArrayField(
-        (array: any[]) => arrayMove(array, from, to),
-        true,
-        true
-      )
+  const move = useEventCallback((from: number, to: number) =>
+    updateArrayField((array: any[]) => arrayMove(array, from, to), true, true)
   );
 
   const handleMove = useEventCallback<ArrayHelpers<Value>['handleMove']>(
@@ -209,26 +214,24 @@ export const useFieldArray = <
     (index: number) => () => remove(index)
   );
 
-  const pop = useEventCallback<ArrayHelpers<Value>['pop']>(
-    () => {
-      // Remove relevant pieces of `touched` and `errors` too!
-      let result: any;
-      updateArrayField(
-        // so this gets call 3 times
-        (array: any[]) => {
-          const tmp = array;
-          if (!result) {
-            result = tmp && tmp.pop && tmp.pop();
-          }
-          return tmp;
-        },
-        true,
-        true
-      );
+  const pop = useEventCallback<ArrayHelpers<Value>['pop']>(() => {
+    // Remove relevant pieces of `touched` and `errors` too!
+    let result: any;
+    updateArrayField(
+      // so this gets call 3 times
+      (array: any[]) => {
+        const tmp = array;
+        if (!result) {
+          result = tmp && tmp.pop && tmp.pop();
+        }
+        return tmp;
+      },
+      true,
+      true
+    );
 
-      return result;
-    }
-  );
+    return result;
+  });
 
   const handlePop = useEventCallback<ArrayHelpers<Value>['handlePop']>(
     () => () => pop()
@@ -294,32 +297,37 @@ export const FieldArray = <
     validateOnChange = true,
     ...rest
   } = rawProps;
-  const props = {
+  const fieldArrayConfig = {
     validateOnChange,
     ...rest,
   };
 
-  const [field, arrayHelpers, formikApi] = useFieldArray(props);
+  const [field, arrayHelpers, formikApi] = useFieldArray(fieldArrayConfig);
   const { validateForm } = formikApi;
-  const { validateOnChange: apiValidateOnChange } = useFormikConfig();
+  const { validateOnChange: apiValidateOnChange } = useFormConfig();
 
   /**
    * Should this go here?! Probably not. We should accept a validate fn and push it all the way to useField.
    */
   React.useEffect(() => {
-    if (props.validateOnChange && apiValidateOnChange) {
+    if (fieldArrayConfig.validateOnChange && apiValidateOnChange) {
       validateForm();
     }
-  }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
+  }, [
+    fieldArrayConfig.validateOnChange,
+    field.value,
+    apiValidateOnChange,
+    validateForm,
+  ]);
 
   const renderProps: FieldArrayProps<Value, Values> = React.useMemo(
     () => ({
       ...arrayHelpers,
       form: formikApi,
       field: field,
-      name: props.name,
+      name: fieldArrayConfig.name,
     }),
-    [arrayHelpers, field, formikApi, props.name]
+    [arrayHelpers, field, formikApi, fieldArrayConfig.name]
   );
 
   return component

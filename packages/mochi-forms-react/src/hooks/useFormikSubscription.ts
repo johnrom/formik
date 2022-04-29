@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useSubscription } from 'use-subscription';
-import { FormikState, FormikSubscribeFn } from '../types';
+import { FormState, FormikSubscribeFn } from '../types';
 
-export const useFormikSubscription = <Values, Return = FormikState<Values>>(
+export const useFormikSubscription = <Values, Return = FormState<Values>>(
   getCurrentValue: () => Return,
-  subscribe: FormikSubscribeFn,
+  subscribe: FormikSubscribeFn
 ): Return => {
-
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const subscription = useMemo(
     () => ({

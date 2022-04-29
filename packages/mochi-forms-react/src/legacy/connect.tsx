@@ -2,8 +2,8 @@ import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import invariant from 'tiny-warning';
 import { useFormikConfig, useFormikContext } from './FormikContext';
-import { selectFullState } from './helpers/form-helpers';
-import { FormikConnectedType } from './types';
+import { FormikConnectedType } from './legacy-types';
+import { selectFullState } from '../helpers/state-selectors';
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;

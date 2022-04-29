@@ -38,8 +38,14 @@ export const isPromise = (value: any): value is Promise<any> =>
   isObject(value) && isFunction((value as Promise<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
-export const isInputEvent = (value: any): value is React.SyntheticEvent<React.ElementRef<InputElements>> =>
-  value && isObject(value) && isObject((value as React.SyntheticEvent<React.ElementRef<InputElements>>).target);
+export const isInputEvent = (
+  value: any
+): value is React.SyntheticEvent<React.ElementRef<InputElements>> =>
+  value &&
+  isObject(value) &&
+  isObject(
+    (value as React.SyntheticEvent<React.ElementRef<InputElements>>).target
+  );
 
 /** @private Are we in RN? */
 export const isReactNative =
@@ -59,9 +65,11 @@ export const isShallowEqual = (
 
   const prevKeys = Object.keys(prev);
 
-  return prevKeys.length === Object.keys(next).length &&
-    prevKeys.every(key => Object.is(prev[key], next[key]));
-}
+  return (
+    prevKeys.length === Object.keys(next).length &&
+    prevKeys.every(key => Object.is(prev[key], next[key]))
+  );
+};
 
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
@@ -127,14 +135,14 @@ export function getIn(
  * @see https://github.com/jaredpalmer/formik/pull/123
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = clone(obj); // this keeps inheritance when obj is a class
+  const res = clone(obj); // this keeps inheritance when obj is a class
   let resVal: any = res;
   let i = 0;
-  let pathArray = toPath(path);
+  const pathArray = toPath(path);
 
   for (; i < pathArray.length - 1; i++) {
     const currentPath: string = pathArray[i];
-    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
+    const currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
     if (currentObj && (isObject(currentObj) || Array.isArray(currentObj))) {
       resVal = resVal[currentPath] = clone(currentObj);
@@ -178,7 +186,7 @@ export function setNestedObjectValues<T>(
   visited: any = new WeakMap(),
   response: any = {}
 ): T {
-  for (let k of Object.keys(object)) {
+  for (const k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
       if (!visited.get(val)) {
@@ -198,22 +206,22 @@ export function setNestedObjectValues<T>(
 }
 
 export const getValueFromEvent = (event: React.SyntheticEvent<any>) => {
-    // React Native/Expo Web/maybe other render envs
-    if (
-      !isReactNative &&
-      event.nativeEvent &&
-      (event.nativeEvent as any).text !== undefined
-    ) {
-      return (event.nativeEvent as any).text;
-    }
-
-    // React Native
-    if (isReactNative && event.nativeEvent) {
-      return (event.nativeEvent as any).text;
-    }
-
-    const target = event.target ? event.target : event.currentTarget;
-    const { value } = target;
-
-    return value;
+  // React Native/Expo Web/maybe other render envs
+  if (
+    !isReactNative &&
+    event.nativeEvent &&
+    (event.nativeEvent as any).text !== undefined
+  ) {
+    return (event.nativeEvent as any).text;
   }
+
+  // React Native
+  if (isReactNative && event.nativeEvent) {
+    return (event.nativeEvent as any).text;
+  }
+
+  const target = event.target ? event.target : event.currentTarget;
+  const { value } = target;
+
+  return value;
+};

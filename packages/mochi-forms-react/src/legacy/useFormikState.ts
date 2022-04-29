@@ -1,8 +1,7 @@
 import { Selector, Comparer } from 'use-optimized-selector';
-import { useFormikContext } from '../FormikContext';
-import { FormikApi, FormikState } from '../types';
-
-const selectFullState = <Values,>(state: FormikState<Values>) => state;
+import { selectFullState } from '../helpers/state-selectors';
+import { useFormikContext } from './FormikContext';
+import { FormikApi, FormikState } from './legacy-types';
 
 /**
  * Use Formik State from within Render.

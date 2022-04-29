@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { FieldMetaProps } from './FieldMeta';
 import { PathMatchingValue } from './helpers/path-helpers';
-import { FieldMetaProps, FormikApi } from './types';
+import { FormApi } from './types';
 
 export type TypedFieldArray<Values> = <Value>(
   props: FieldArrayConfig<Value, Values>
-) =>
-  React.ReactElement | null;
+) => React.ReactElement | null;
 
 export interface UseFieldArrayConfig<Value = any, Values = any> {
   /** Really the path to the array field to be updated */
@@ -49,27 +49,30 @@ export interface ArrayHelpers<Value> {
   pop(): Value | undefined;
 }
 
-export type FieldArrayProps<Value, Values> =
-  ArrayHelpers<Value> & {
-    form: FormikApi<Values>;
-    field: FieldMetaProps<Value[]>;
-    name: PathMatchingValue<Value[], Values>;
-  };
+export type FieldArrayProps<Value, Values> = ArrayHelpers<Value> & {
+  form: FormApi<Values>;
+  field: FieldMetaProps<Value[]>;
+  name: PathMatchingValue<Value[], Values>;
+};
 
-export type FieldArrayConfig<Value, Values> =
-  UseFieldArrayConfig<Value, Values> & {
-    /**
-     * Field component to render. Can either be a string like 'select' or a component.
-     */
-    component?: React.ComponentType<FieldArrayProps<Value, Values>>;
+export type FieldArrayConfig<Value, Values> = UseFieldArrayConfig<
+  Value,
+  Values
+> & {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?: React.ComponentType<FieldArrayProps<Value, Values>>;
 
-    /**
-      * Render prop (works like React router's <Route render={props =>} />)
-      */
-    render?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   */
+  render?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
 
-    /**
-      * Children render function <Field name>{props => ...}</Field>)
-      */
-    children?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
-  };
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?: (
+    props: FieldArrayProps<Value, Values>
+  ) => React.ReactElement | null;
+};

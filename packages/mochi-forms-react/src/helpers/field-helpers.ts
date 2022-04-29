@@ -1,30 +1,6 @@
-import { FieldHookConfig } from '../Field.types';
-import { FormikApi, FormikReducerState, InputElements } from '../types';
+import { UseFieldProps } from '../Field';
+import { FormApi, InputElements } from '../types';
 import { getIn, getValueFromEvent, isInputEvent, isObject } from '../utils';
-
-/**
- * @internal
- *
- * Get FieldMetaProps from state.
- */
-export const selectFieldMetaByName = <Values>(name: string) => (
-  state: Pick<
-    FormikReducerState<Values>,
-    | 'values'
-    | 'errors'
-    | 'touched'
-    | 'initialValues'
-    | 'initialTouched'
-    | 'initialErrors'
-  >
-) => ({
-  value: getIn(state.values, name),
-  error: getIn(state.errors, name),
-  touched: !!getIn(state.touched, name),
-  initialValue: getIn(state.initialValues, name),
-  initialTouched: !!getIn(state.initialTouched, name),
-  initialError: getIn(state.initialErrors, name),
-});
 
 export const defaultParseFn = (value: unknown, _name: string) => value;
 
@@ -41,8 +17,8 @@ export const selectFieldOnChange = <Value, Values>(
   {
     setFieldValue,
     getState,
-  }: Pick<FormikApi<Values>, 'setFieldValue' | 'getState'>,
-  nameOrConfig?: string | FieldHookConfig<Value, Values>
+  }: Pick<FormApi<Values>, 'setFieldValue' | 'getState'>,
+  nameOrConfig?: string | UseFieldProps<Value, Values>
 ) => {
   return (
     eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | unknown
@@ -52,7 +28,7 @@ export const selectFieldOnChange = <Value, Values>(
       name,
       parse: configParse,
       multiple,
-    }: FieldHookConfig<Value, Values> = isObject(nameOrConfig)
+    }: UseFieldProps<Value, Values> = isObject(nameOrConfig)
       ? nameOrConfig
       : isInputEvent(eventOrValue) && eventOrValue.target
       ? (eventOrValue.target as any)
@@ -68,20 +44,22 @@ export const selectFieldOnChange = <Value, Values>(
       ? getValueFromEvent(eventOrValue)
       : eventOrValue;
 
-    const defaultParse = type && /number|range/.test(type)
-      ? numberParseFn
-      : // radios and checkboxes don't have a default parser
-      // the default parser won't work for grouped fields
-      type && !/radio|checkbox/.test(type)
-      ? defaultParseFn
-      : undefined;
+    const defaultParse =
+      type && /number|range/.test(type)
+        ? numberParseFn
+        : // radios and checkboxes don't have a default parser
+        // the default parser won't work for grouped fields
+        type && !/radio|checkbox/.test(type)
+        ? defaultParseFn
+        : undefined;
 
     const parse = configParse ?? defaultParse;
     const parsedValue = parse ? parse(value, name) : value;
 
     setFieldValue(
       name,
-      type && /checkbox/.test(type) &&
+      type &&
+        /checkbox/.test(type) &&
         isInputEvent(eventOrValue) &&
         eventOrValue.target instanceof HTMLInputElement
         ? getValueForCheckbox(
@@ -89,9 +67,11 @@ export const selectFieldOnChange = <Value, Values>(
             eventOrValue.target.checked,
             parsedValue
           )
-        : multiple && isInputEvent(eventOrValue) && eventOrValue.target instanceof HTMLSelectElement // <select multiple>
-          ? getSelectedValues(eventOrValue.target.options)
-          : parsedValue
+        : multiple &&
+          isInputEvent(eventOrValue) &&
+          eventOrValue.target instanceof HTMLSelectElement // <select multiple>
+        ? getSelectedValues(eventOrValue.target.options)
+        : parsedValue
     );
   };
 };

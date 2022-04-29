@@ -3,48 +3,48 @@ import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
 import {
-  FormikConfig,
   FormikErrors,
-  FormikReducerState,
   FormikTouched,
   FormikValues,
-  FormikProps,
-  FormikHelpers,
-  FormikApi,
+  FormHelpers,
   HandleBlurFn,
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  FormikSharedConfig,
+  FormSharedConfig,
   RegisterFieldFn,
   UnregisterFieldFn,
   ValidateFieldFn,
   InputElements,
   FieldRegistry,
   FormikMessage,
+  FormReducerState,
+  FormApi,
+  FormEventConfig,
+  FormInitialConfig,
 } from './types';
 import {
   isFunction,
   isString,
   setIn,
-  isEmptyChildren,
   isPromise,
   getActiveElement,
   getIn,
   setNestedObjectValues,
 } from './utils';
-import { FormikProvider } from './FormikContext';
+import { FormProvider } from './FormContext';
 import invariant from 'tiny-warning';
-import { IsFormValidFn, selectFullState } from './helpers/form-helpers';
+import { IsFormValidFn } from './helpers/form-helpers';
 import { useFormikSubscriptionsContainer } from './hooks/useFormikSubscriptionsContainer';
 import { useEventCallback } from './hooks/useEventCallback';
 import { useTypedField } from './Field.helpers';
 import { useTypedFieldArray } from './FieldArray.helpers';
 import { selectFieldOnChange } from './helpers/field-helpers';
+import { warnAboutMissingIdentifier } from './helpers/dev-helpers';
 
 // State reducer
-function formikReducer<Values>(
-  state: FormikReducerState<Values>,
+function formReducer<Values>(
+  state: FormReducerState<Values>,
   msg: FormikMessage<Values>
 ) {
   switch (msg.type) {
@@ -108,9 +108,14 @@ function formikReducer<Values>(
   }
 }
 
-export function useFormik<Values extends FormikValues = FormikValues>(
-  rawProps: FormikConfig<Values>
-): FormikApi<Values> & FormikSharedConfig<Values> {
+export interface UseFormControllerProps<Values>
+  extends FormSharedConfig<Values>,
+    FormEventConfig<Values>,
+    FormInitialConfig<Values> {}
+
+export function useFormController<Values extends FormikValues = FormikValues>(
+  rawProps: UseFormControllerProps<Values>
+): FormApi<Values> & FormSharedConfig<Values> {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -125,33 +130,11 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     ...rest,
   };
 
-  if (__DEV__) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
-      invariant(
-        typeof props.isInitialValid === 'undefined',
-        'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
-      );
-      // eslint-disable-next-line
-    }, []);
-  }
-
   /**
    * Refs
    */
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
-
-  if (__DEV__) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
-      invariant(
-        typeof props.isInitialValid === 'undefined',
-        'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
-      );
-      // eslint-disable-next-line
-    }, []);
-  }
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -164,18 +147,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const emptyErrors: FormikErrors<unknown> = {};
   const emptyTouched: FormikTouched<unknown> = {};
 
-  const isFormValid = React.useCallback<IsFormValidFn<Values>>(
-    (errors, dirty) => {
-      return typeof props.isInitialValid !== 'undefined'
-        ? dirty
-          ? errors && Object.keys(errors).length === 0
-          : props.isInitialValid !== false && isFunction(props.isInitialValid)
-          ? props.isInitialValid(props)
-          : props.isInitialValid
-        : errors && Object.keys(errors).length === 0;
-    },
-    [props]
-  );
+  const isFormValid = React.useCallback<IsFormValidFn<Values>>(errors => {
+    return errors && Object.keys(errors).length === 0;
+  }, []);
 
   /**
    * `useState` is a special hook intended for other components and hooks.
@@ -197,7 +171,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         isValidating: false,
         submitCount: 0,
       },
-      formikReducer,
+      formReducer,
       isFormValid
     );
 
@@ -374,7 +348,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, [performValidationOnMount]);
 
   const resetForm = useEventCallback(
-    (nextState?: Partial<FormikReducerState<Values>>) => {
+    (nextState?: Partial<FormReducerState<Values>>) => {
       const values =
         nextState?.values ??
         nextState?.initialValues ??
@@ -440,9 +414,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const maybeUpdateInitialValues = useEventCallback(
     (
-      nextInitialValuesProp: FormikConfig<Values>['initialValues'],
-      nextEnableReinitialize: FormikConfig<Values>['enableReinitialize'],
-      nextValidateOnMount: FormikConfig<Values>['validateOnMount']
+      nextInitialValuesProp: UseFormControllerProps<Values>['initialValues'],
+      nextEnableReinitialize: UseFormControllerProps<Values>['enableReinitialize'],
+      nextValidateOnMount: UseFormControllerProps<Values>['validateOnMount']
     ) => {
       if (
         isMounted.current === true &&
@@ -474,8 +448,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const maybeUpdateInitialErrors = useEventCallback(
     (
-      nextInitialErrorsProp: FormikConfig<Values>['initialErrors'],
-      nextEnableReinitialize: FormikConfig<Values>['enableReinitialize']
+      nextInitialErrorsProp: UseFormControllerProps<Values>['initialErrors'],
+      nextEnableReinitialize: UseFormControllerProps<Values>['enableReinitialize']
     ) => {
       if (
         nextEnableReinitialize &&
@@ -501,8 +475,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const maybeUpdateInitialTouched = useEventCallback(
     (
-      nextInitialTouchedProp: FormikConfig<Values>['initialTouched'],
-      nextEnableReinitialize: FormikConfig<Values>['enableReinitialize']
+      nextInitialTouchedProp: UseFormControllerProps<Values>['initialTouched'],
+      nextEnableReinitialize: UseFormControllerProps<Values>['enableReinitialize']
     ) => {
       if (
         nextEnableReinitialize &&
@@ -528,8 +502,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const maybeUpdateInitialStatus = useEventCallback(
     (
-      nextInitialStatusProp: FormikConfig<Values>['initialStatus'],
-      nextEnableReinitialize: FormikConfig<Values>['enableReinitialize']
+      nextInitialStatusProp: UseFormControllerProps<Values>['initialStatus'],
+      nextEnableReinitialize: UseFormControllerProps<Values>['enableReinitialize']
     ) => {
       if (
         nextEnableReinitialize &&
@@ -709,7 +683,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         if (!field && __DEV__) {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
-            documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+            documentationPath: 'warnings#handle-change-identifier-missing',
             handlerName: 'handleChange',
           });
         }
@@ -766,7 +740,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       if (!field && __DEV__) {
         warnAboutMissingIdentifier({
           htmlContent: outerHTML,
-          documentationAnchorLink: 'handleblur-e-any--void',
+          documentationPath: 'warnings#handle-blur-identifier-missing',
           handlerName: 'handleBlur',
         });
       }
@@ -796,8 +770,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const setFormikState = React.useCallback(
     (
       stateOrCb:
-        | FormikReducerState<Values>
-        | ((state: FormikReducerState<Values>) => FormikReducerState<Values>)
+        | FormReducerState<Values>
+        | ((state: FormReducerState<Values>) => FormReducerState<Values>)
     ): void => {
       if (isFunction(stateOrCb)) {
         dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
@@ -925,7 +899,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     }
   );
 
-  const imperativeMethods: FormikHelpers<Values> = {
+  const imperativeMethods: FormHelpers<Values> = {
     resetForm,
     validateForm: validateFormWithHighPriority,
     validateField,
@@ -945,7 +919,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     return props.onSubmit(getState().values, imperativeMethods);
   });
 
-  const handleReset = useEventCallback(e => {
+  const handleReset = useEventCallback((e: any) => {
     if (e && e.preventDefault && isFunction(e.preventDefault)) {
       e.preventDefault();
     }
@@ -963,7 +937,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   return {
     // config
     enableReinitialize,
-    isInitialValid: props.isInitialValid,
     validateOnBlur,
     validateOnChange,
     validateOnMount,
@@ -999,73 +972,30 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   };
 }
 
-export function Formik<
-  Values extends FormikValues = FormikValues,
-  ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
-  const formik = useFormik<Values>(props);
-  const { component, children, render, innerRef } = props;
+export interface FormControllerProps<Values>
+  extends UseFormControllerProps<Values> {
+  children?: ((props: FormApi<Values>) => React.ReactNode) | React.ReactNode;
+}
 
-  // Get initial Full State, but if we don't need it, we won't subscribe to updates
-  const formikState = formik.useState(
-    selectFullState,
-    Object.is,
-    !!component || !!render || isFunction(children) || !!innerRef
-  );
+export const FormController = React.forwardRef(
+  <Values extends FormikValues = FormikValues>(
+    { children, ...useFormControllerProps }: FormControllerProps<Values>,
+    ref: React.ForwardedRef<FormApi<Values>>
+  ) => {
+    const formApi = useFormController<Values>(useFormControllerProps);
 
-  const formikbag: FormikProps<Values> = {
-    ...formik,
-    ...formikState,
-  };
+    // This allows folks to pass a ref to <Formik />
+    React.useImperativeHandle(ref, () => formApi);
 
-  // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikbag);
-
-  if (__DEV__) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
-      invariant(
-        !props.render,
-        `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
-      );
-      // eslint-disable-next-line
-    }, []);
+    return (
+      <FormProvider value={formApi}>
+        {isFunction(children) ? children(formApi) : children}
+      </FormProvider>
+    );
   }
-  return (
-    <FormikProvider value={formik}>
-      {component
-        ? React.createElement(component as any, formikbag)
-        : render
-        ? render(formikbag)
-        : children // children come last, always called
-        ? isFunction(children)
-          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
-              formikbag as FormikProps<Values>
-            )
-          : !isEmptyChildren(children)
-          ? React.Children.only(children)
-          : null
-        : null}
-    </FormikProvider>
-  );
-}
+);
 
-function warnAboutMissingIdentifier({
-  htmlContent,
-  documentationAnchorLink,
-  handlerName,
-}: {
-  htmlContent: string;
-  documentationAnchorLink: string;
-  handlerName: string;
-}) {
-  console.warn(
-    `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
-    ${htmlContent}
-    Formik cannot determine which value to update. For more info see https://formik.org/docs/api/formik#${documentationAnchorLink}
-  `
-  );
-}
+FormController.displayName = 'FormController';
 
 /**
  * Transform Yup ValidationError to a more usable object
@@ -1076,7 +1006,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
     if (yupError.inner.length === 0) {
       return setIn(errors, yupError.path, yupError.message);
     }
-    for (let err of yupError.inner) {
+    for (const err of yupError.inner) {
       if (!getIn(errors, err.path)) {
         errors = setIn(errors, err.path, err.message);
       }
@@ -1107,8 +1037,8 @@ export function validateYupSchema<T extends FormikValues>(
 export function prepareDataForValidation<T extends FormikValues>(
   values: T
 ): FormikValues {
-  let data: FormikValues = Array.isArray(values) ? [] : {};
-  for (let k in values) {
+  const data: FormikValues = Array.isArray(values) ? [] : {};
+  for (const k in values) {
     if (Object.prototype.hasOwnProperty.call(values, k)) {
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
