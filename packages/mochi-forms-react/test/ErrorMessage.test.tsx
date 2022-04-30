@@ -20,7 +20,7 @@ describe('<ErrorMessage />', () => {
   it('renders with children as a function', async () => {
     let actual: any; /** ErrorMessage ;) */
     let actualFProps: any;
-    let message = 'Wrong';
+    const message = 'Wrong';
     render(
       <TestForm
         render={(fProps: FormikProps<TestFormValues>) => {

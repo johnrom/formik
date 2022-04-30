@@ -2,7 +2,7 @@ export * from './helpers/batch-helpers';
 export * from './helpers/path-helpers';
 export * from './helpers/state-selectors';
 export * from './hooks/useFormikSubscriptionByRef';
-export * from './hooks/hooks';
+export * from './hooks/micro-hooks';
 export * from './FormController';
 export * from './Field';
 export * from './Field.helpers';

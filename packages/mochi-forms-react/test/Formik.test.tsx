@@ -70,7 +70,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     >
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+          <Form {...(formikProps as unknown as FormikProps<Values>)} />
         )
       }
     </Formik>
@@ -89,7 +89,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
         >
           {formikProps =>
             (injected = formikProps) && (
-              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+              <Form {...(formikProps as unknown as FormikProps<Values>)} />
             )
           }
         </Formik>
@@ -840,34 +840,6 @@ describe('<Formik>', () => {
       expect(getProps().dirty).toBeTruthy();
     });
 
-    it('should compute isValid if isInitialValid is present and returns true', () => {
-      const { getProps } = renderFormik({ isInitialValid: () => true });
-
-      expect(getProps().dirty).toBeFalsy();
-      expect(getProps().isValid).toBeTruthy();
-    });
-
-    it('should compute isValid if isInitialValid is present and returns false', () => {
-      const { getProps } = renderFormik({ isInitialValid: () => false });
-
-      expect(getProps().dirty).toBeFalsy();
-      expect(getProps().isValid).toBeFalsy();
-    });
-
-    it('should compute isValid if isInitialValid boolean is present and set to true', () => {
-      const { getProps } = renderFormik({ isInitialValid: true });
-
-      expect(getProps().dirty).toBeFalsy();
-      expect(getProps().isValid).toBeTruthy();
-    });
-
-    it('should compute isValid if isInitialValid is present and set to false', () => {
-      const { getProps } = renderFormik({ isInitialValid: false });
-
-      expect(getProps().dirty).toBeFalsy();
-      expect(getProps().isValid).toBeFalsy();
-    });
-
     it('should compute isValid if the form is dirty and there are errors', () => {
       const { getProps } = renderFormik();
 
@@ -1283,12 +1255,10 @@ describe('<Formik>', () => {
     // so it should change
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(true);
-    try {
-      await act(async () => {
-        // resolve the promise to check final state.
-        await submitFormPromise;
-      });
-    } catch (err) {}
+    await act(async () => {
+      // resolve the promise to check final state.
+      await submitFormPromise;
+    });
     // now both should be false because validation failed
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);

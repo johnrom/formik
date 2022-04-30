@@ -1,3 +1,4 @@
+- Move yup into a separate package, use it by default for backwards compatibility
 - Add a default parser and formatter from file to `multiple ? target.files : target.files[0]`. (Make sure formatter always uses undefined, since it's an uncontrolled field)
 - `FieldInputProps.value` should be a different type -- the result of `format` / the `value` prop expected by `as={Component}`
 - Add File demo.

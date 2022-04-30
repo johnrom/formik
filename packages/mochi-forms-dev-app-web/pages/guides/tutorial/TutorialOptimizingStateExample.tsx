@@ -33,6 +33,7 @@ type FormWithOnChangeProps<Values> = Omit<FormikFormProps, 'onChange'> &
   WithFormikChangeHandlerProp<Values>;
 
 // @snippet:start selector
+// Note: `mochi-forms` provides basic selectors like this for convenience's sake
 const selectValues = <Values,>(state: FormikState<Values>) => state.values;
 // @snippet:end selector
 
@@ -103,7 +104,7 @@ const TutorialOptimizingStateExample = () => {
 
   useEffect(() => {
     onChange(values);
-  }, [values]);
+  }, [onChange, values]);
   // @snippet:end formik-useState
 
   return (

@@ -2,5 +2,5 @@
   "extends": "../../../tsconfig.test.json",
   "include": [".", "../src"],
   "compilerOptions": {},
-  "references": [{ "path": "../" }, { "path": "../mochi-forms-react" }]
+  "references": [{ "path": "../" }, { "path": "../../mochi-forms-react" }]
 }

@@ -1,4 +1,5 @@
 import { FieldPassThroughConfig } from '../Field.types';
+import { UseFormControllerProps } from '../FormController';
 import {
   FormApi,
   FormSharedConfig,
@@ -57,7 +58,7 @@ export type FormikProps<Values> = FormikSharedConfig<Values> &
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormSharedConfig<Values> {
+export interface FormikConfig<Values> extends UseFormControllerProps<Values> {
   /**
    * Form component to render
    */

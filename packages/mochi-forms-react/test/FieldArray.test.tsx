@@ -150,7 +150,7 @@ describe('<FieldArray />', () => {
     });
 
     it('should push clone not actual reference', () => {
-      let personTemplate = { firstName: '', lastName: '' };
+      const personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;
       let arrayHelpers: any;
       render(
@@ -337,7 +337,7 @@ describe('<FieldArray />', () => {
     beforeEach(() => {
       render(
         <TestForm>
-          {(props) => {
+          {props => {
             formikBag = props;
             return (
               <FieldArray

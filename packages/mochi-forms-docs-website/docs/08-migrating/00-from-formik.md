@@ -6,3 +6,4 @@ todo: not much to do for the initial migration, but there is plenty to do to opt
 
 - choose the proper helper for each scenario: helper component, hook, or higher-order component
   - see Helpers
+- `isInitialValid` has been removed. Use `initialErrors` instead.
