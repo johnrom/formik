@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 import { sleep } from '../helpers';
 
 const ParseFormatExample = () => {
@@ -17,7 +17,7 @@ const ParseFormatExample = () => {
         {({ values }) => (
           <Form>
             <label htmlFor="username">Username</label>
-            <Field
+            <LegacyField
               id="username"
               name="username"
               parse={(value: unknown) =>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 import { object, string } from 'yup';
 import { Debug } from '../helpers/Debug';
 
@@ -24,12 +24,12 @@ const ValidateFieldWithSchemaExample = () => (
         <Form>
           <label htmlFor="username">Username</label>
           <div>
-            <Field name="username" type="text" placeholder="Username" />
+            <LegacyField name="username" type="text" placeholder="Username" />
             <ErrorMessage name="username" />
           </div>
           <br />
           <div>
-            <Field name="email" type="text" placeholder="Email" />
+            <LegacyField name="email" type="text" placeholder="Email" />
             <ErrorMessage name="email" />
           </div>
 

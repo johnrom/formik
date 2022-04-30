@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFormikState, Formik, Field, Form } from '@mochi-forms/react';
+import { useFormikState, Formik, LegacyField, Form } from '@mochi-forms/react';
 import { Debug } from '../helpers/Debug';
 import debounce from 'just-debounce-it';
 
@@ -60,13 +60,13 @@ const DebouncedAutoSaveExample = () => (
         </h1>
 
         <label htmlFor="firstName">First Name</label>
-        <Field name="firstName" placeholder="Jane" />
+        <LegacyField name="firstName" placeholder="Jane" />
 
         <label htmlFor="lastName">Last Name</label>
-        <Field name="lastName" placeholder="Doe" />
+        <LegacyField name="lastName" placeholder="Doe" />
 
         <label htmlFor="email">Email</label>
-        <Field name="email" placeholder="jane@acme.com" type="email" />
+        <LegacyField name="email" placeholder="jane@acme.com" type="email" />
         <button type="submit">Submit</button>
 
         <Debug />

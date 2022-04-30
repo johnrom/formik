@@ -17,11 +17,13 @@ export * from './types';
 export * from './legacy/connect';
 export * from './ErrorMessage';
 export * from './FormContext';
-export * from './FastField';
+export * from './legacy/FastField';
 
 export * from './legacy/legacy-types';
 
 export * from './legacy/connect';
+export * from './legacy/LegacyField';
+export * from './legacy/FastField';
 export * from './legacy/Formik';
 export * from './legacy/FormikContext';
 export * from './legacy/useFormikState';

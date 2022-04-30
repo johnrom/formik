@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 import {
   exampleOnSubmit,
   exampleInitialValues,
@@ -12,13 +12,13 @@ const FormControllerExample = () => {
       <Formik initialValues={exampleInitialValues} onSubmit={exampleOnSubmit}>
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <Field id="firstName" name="firstName" placeholder="John" />
+          <LegacyField id="firstName" name="firstName" placeholder="John" />
 
           <label htmlFor="lastName">Last Name</label>
-          <Field id="lastName" name="lastName" placeholder="Doe" />
+          <LegacyField id="lastName" name="lastName" placeholder="Doe" />
 
           <label htmlFor="email">Email</label>
-          <Field
+          <LegacyField
             id="email"
             name="email"
             placeholder="john@acme.com"

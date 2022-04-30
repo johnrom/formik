@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   FormikProps,
   useFormikSubscriptionByRef,
 } from '@mochi-forms/react';
@@ -44,7 +44,7 @@ const ComponentsPage = () => {
     <div>
       <h1>Test Components</h1>
       <FormWithRef ref={formikRef}>
-        <Field name="name" />
+        <LegacyField name="name" />
       </FormWithRef>
       <DebugProps {...values} />
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 
 const RadioGroupExample = () => (
   <div>
@@ -18,11 +18,11 @@ const RadioGroupExample = () => (
           <div id="my-radio-group">Picked</div>
           <div role="group" aria-labelledby="my-radio-group">
             <label>
-              <Field type="radio" name="picked" value="One" />
+              <LegacyField type="radio" name="picked" value="One" />
               One
             </label>
             <label>
-              <Field type="radio" name="picked" value="Two" />
+              <LegacyField type="radio" name="picked" value="Two" />
               Two
             </label>
             <div>Picked: {values.picked}</div>

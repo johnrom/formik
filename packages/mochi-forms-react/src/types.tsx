@@ -8,8 +8,14 @@ import {
   PathLikeValue,
 } from './helpers/path-helpers';
 
-export type ParseFn<Value> = (value: unknown, name: string) => Value;
-export type FormatFn<Value> = (value: Value, name: string) => any;
+export type ParseFn<Value, OnChangeValue = unknown> = (
+  value: OnChangeValue,
+  name: string
+) => Value;
+export type FormatFn<Value, FormattedValue = any> = (
+  value: Value,
+  name: string
+) => FormattedValue;
 
 export type SingleValue<Value> = Value extends (infer SingleValue)[]
   ? SingleValue
@@ -383,38 +389,13 @@ export type FormikSubmitHandler<Values> = (
   formikHelpers: FormHelpers<Values>
 ) => void | Promise<any>;
 
-export type GenericFieldHTMLAttributes =
-  | JSX.IntrinsicElements['input']
-  | JSX.IntrinsicElements['select']
-  | JSX.IntrinsicElements['textarea'];
-
 /**
  * @deprecated use `SetFieldTouchedFn`
  */
 export type SetFieldTouched<Values> = SetFieldTouchedFn<Values>;
 
-export type FieldOnChangeProp<Value> = (
-  eventOrValue: React.ChangeEvent<any> | Value
-) => void;
-export type FieldOnBlurProp = (
-  eventOrValue: React.ChangeEvent<any> | any
-) => void;
-
-/** Field input value, name, and event handlers */
-export type FieldInputProps<Value, Values> = {
-  /** Value of the field */
-  value: SingleValue<Value>;
-  /** Name of the field */
-  name: PathMatchingValue<Value, Values>;
-  /** Multiple select? */
-  multiple?: boolean;
-  /** Is the field checked? */
-  checked?: boolean;
-  /** Change event handler */
-  onChange: FieldOnChangeProp<Value>;
-  /** Blur event handler */
-  onBlur: FieldOnBlurProp;
-};
+export type FieldOnChangeProp<OnChangeValue> = (value: OnChangeValue) => void;
+export type FieldOnBlurProp = (event: React.FocusEvent) => void;
 
 export type FieldValidationResult = string | void | Promise<string | void>;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
 import { Debug } from './Debug';
 
@@ -38,7 +38,7 @@ const ErrorMessagesExample = () => (
       render={({ errors, touched }) => (
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" placeholder="Jane" type="text" />
+          <LegacyField name="firstName" placeholder="Jane" type="text" />
           <ErrorMessage
             name="firstName"
             component="div"
@@ -46,7 +46,7 @@ const ErrorMessagesExample = () => (
           />
 
           <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" type="text" />
+          <LegacyField name="lastName" placeholder="Doe" type="text" />
           <ErrorMessage name="firstName">
             {(msg /** this is the same as the above */) => (
               <div className="field-error">{msg}</div>
@@ -54,7 +54,7 @@ const ErrorMessagesExample = () => (
           </ErrorMessage>
 
           <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="jane@acme.com" type="email" />
+          <LegacyField name="email" placeholder="jane@acme.com" type="email" />
           {/* This will render a string */}
           <ErrorMessage name="email" className="field-error" />
 

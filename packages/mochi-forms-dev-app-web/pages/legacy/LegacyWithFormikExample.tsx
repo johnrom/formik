@@ -1,6 +1,6 @@
 import {
   ErrorMessage,
-  Field,
+  LegacyField,
   Form,
   FormikProps,
   withFormik,
@@ -42,7 +42,7 @@ const MyForm = <Values,>(props: FormikProps<Values>) => {
   return (
     <Form>
       <label htmlFor="email">Email</label>
-      <Field name="email" placeholder="jane@acme.com" type="email" />
+      <LegacyField name="email" placeholder="jane@acme.com" type="email" />
       <div>
         <ErrorMessage name="email" />
       </div>

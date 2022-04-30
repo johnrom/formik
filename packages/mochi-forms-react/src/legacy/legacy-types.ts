@@ -1,4 +1,4 @@
-import { FieldPassThroughConfig } from '../Field.types';
+import React from 'react';
 import { UseFormControllerProps } from '../FormController';
 import {
   FormApi,
@@ -15,6 +15,7 @@ import {
   FormComputedState,
   FieldRegistration,
 } from '../types';
+import { FieldPassThroughConfig } from './LegacyField';
 
 export type FormikConnectedType<Values> = FormikApi<Values> &
   FormSharedConfig<Values> &

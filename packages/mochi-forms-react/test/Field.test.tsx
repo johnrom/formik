@@ -9,7 +9,7 @@ import {
 import * as Yup from 'yup';
 import {
   Formik,
-  Field,
+  LegacyField,
   FastField,
   FieldAsProps,
   FormikProps,
@@ -84,7 +84,7 @@ const createRenderField =
     };
   };
 
-const renderField = createRenderField(Field as any);
+const renderField = createRenderField(LegacyField as any);
 const renderFastField = createRenderField(FastField as any);
 
 function cases(
@@ -104,7 +104,7 @@ describe('Field / FastField', () => {
 
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
-      const { container } = renderForm(<Field name="name" />);
+      const { container } = renderForm(<LegacyField name="name" />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
     });
 
@@ -139,10 +139,10 @@ describe('Field / FastField', () => {
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
-          <Field name="name" children={RenderField} />
-          <Field name="name" render={RenderField} />
-          <Field name="name" component={ComponentField} />
-          <Field name="name" as={AsField} />
+          <LegacyField name="name" children={RenderField} />
+          <LegacyField name="name" render={RenderField} />
+          <LegacyField name="name" component={ComponentField} />
+          <LegacyField name="name" as={AsField} />
         </>
       );
 
@@ -289,10 +289,10 @@ describe('Field / FastField', () => {
   describe('children', () => {
     cases('renders a child element with component', () => {
       const { container } = renderForm(
-        <Field name="name" component="select">
+        <LegacyField name="name" component="select">
           <option value="Jared" label={TEXT} />
           <option value="Brent" label={TEXT} />
-        </Field>
+        </LegacyField>
       );
 
       expect(container.querySelectorAll('option')).toHaveLength(2);
@@ -300,10 +300,10 @@ describe('Field / FastField', () => {
 
     cases('renders a child element with as', () => {
       const { container } = renderForm(
-        <Field name="name" as="select">
+        <LegacyField name="name" as="select">
           <option value="Jared" label={TEXT} />
           <option value="Brent" label={TEXT} />
-        </Field>
+        </LegacyField>
       );
 
       expect(container.querySelectorAll('option')).toHaveLength(2);

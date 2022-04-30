@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   ErrorMessage,
-  Field,
+  LegacyField,
   Form,
   Formik,
   FormikBag,
@@ -131,7 +131,7 @@ const MultistepWizardExample = () => (
       >
         <div>
           <label htmlFor="firstName">First Name</label>
-          <Field
+          <LegacyField
             autoComplete="given-name"
             component="input"
             id="firstName"
@@ -143,7 +143,7 @@ const MultistepWizardExample = () => (
         </div>
         <div>
           <label htmlFor="lastName">Last Name</label>
-          <Field
+          <LegacyField
             autoComplete="family-name"
             component="input"
             id="lastName"
@@ -164,7 +164,7 @@ const MultistepWizardExample = () => (
       >
         <div>
           <label htmlFor="email">Email</label>
-          <Field
+          <LegacyField
             autoComplete="email"
             component="input"
             id="email"

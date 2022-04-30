@@ -1,4 +1,4 @@
-import { Field, FieldArrayProps } from '@mochi-forms/react';
+import { LegacyField, FieldArrayProps } from '@mochi-forms/react';
 import React from 'react';
 import { NumberAsField } from './number-as-field';
 
@@ -10,7 +10,7 @@ export const NumberRepeaterField = <Values,>(
       {props.field.value?.length > 0 ? (
         props.field.value.map((_value, index) => (
           <div key={index}>
-            <Field
+            <LegacyField
               name={`${props.name}.${index}`}
               as={NumberAsField}
               type="number"

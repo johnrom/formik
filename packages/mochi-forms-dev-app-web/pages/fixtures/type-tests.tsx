@@ -1,6 +1,6 @@
 import {
   CustomField,
-  Field,
+  LegacyField,
   FieldAsProps,
   FieldComponentClass,
   FieldComponentProps,
@@ -156,54 +156,54 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
     <Formik initialValues={person} onSubmit={noopVoid}>
       <Form>
         {/* Default */}
-        <Field name="age" />
+        <LegacyField name="age" />
         <TypedField name="age" />
         <TypedField name="friends.0.name.first" />
 
-        <Field name="aeg" />
+        <LegacyField name="aeg" />
         {/* @ts-expect-error name doesn't match PathOf<Values> */}
         <TypedField name="aeg" />
         {/* @ts-expect-error name doesn't match PathOf<Values> */}
         <TypedField name="friends.NOPE.name.first" />
 
-        <Field name="age" format={(value: string) => {}} />
+        <LegacyField name="age" format={(value: string) => {}} />
         <TypedField name="age" format={(value: number) => {}} />
         {/* @ts-expect-error TypedField must match value */}
         <TypedField name="age" format={(value: string) => {}} />
 
-        <Field name="age" aria-required={true} />
+        <LegacyField name="age" aria-required={true} />
         <TypedField name="age" aria-required={true} />
         <TypedField name="friends.0.name.first" aria-required={true} />
 
         {/* FieldAsString */}
-        <Field name="age" as="select" />
+        <LegacyField name="age" as="select" />
 
         {/* FieldStringComponent */}
-        <Field name="age" component="select" />
+        <LegacyField name="age" component="select" />
         <TypedField name="age" component="select" />
 
         {/* FieldAsComponent */}
-        <Field name="age" as={proplessFC} />
+        <LegacyField name="age" as={proplessFC} />
         <TypedField name="age" as={proplessFC} />
-        <Field name="age" as={propsAnyFC} />
+        <LegacyField name="age" as={propsAnyFC} />
         <TypedField name="age" as={propsAnyFC} />
-        <Field name="age" as={PropsAnyClass} />
-        <Field name="age" as={partialPropsFC} />
-        <Field name="age" as={PartialPropsClass} />
+        <LegacyField name="age" as={PropsAnyClass} />
+        <LegacyField name="age" as={partialPropsFC} />
+        <LegacyField name="age" as={PartialPropsClass} />
 
-        <Field name="age" as={asAnyFC} />
-        <Field name="age" as={asNumberFC} />
+        <LegacyField name="age" as={asAnyFC} />
+        <LegacyField name="age" as={asNumberFC} />
         <TypedField name="age" as={asNumberFC} />
-        <Field name="age" as={asAnyFC}>
+        <LegacyField name="age" as={asAnyFC}>
           <div />
-        </Field>
-        <Field name="age" as={asNumberFC}>
+        </LegacyField>
+        <LegacyField name="age" as={asNumberFC}>
           <div />
-        </Field>
+        </LegacyField>
         <TypedField name="age" as={asNumberFC}>
           <div />
         </TypedField>
-        <Field name="age" as={AsNumberClass} />
+        <LegacyField name="age" as={AsNumberClass} />
         <TypedField name="age" as={AsNumberClass} />
 
         <TypedField name="age" as={PropsAnyClass} />
@@ -215,28 +215,28 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField name="motto" as={AsNumberClass} />
 
         {/* FieldComponent */}
-        <Field name="age" component={proplessFC} />
+        <LegacyField name="age" component={proplessFC} />
         <TypedField name="age" component={proplessFC} />
-        <Field name="age" component={propsAnyFC} />
+        <LegacyField name="age" component={propsAnyFC} />
         <TypedField name="age" component={propsAnyFC} />
-        <Field name="age" component={PropsAnyClass} />
-        <Field name="age" component={partialPropsFC} />
-        <Field name="age" component={PartialPropsClass} />
-        <Field name="age" component={componentAnyFC} />
-        <Field name="age" component={componentNumberFC} />
+        <LegacyField name="age" component={PropsAnyClass} />
+        <LegacyField name="age" component={partialPropsFC} />
+        <LegacyField name="age" component={PartialPropsClass} />
+        <LegacyField name="age" component={componentAnyFC} />
+        <LegacyField name="age" component={componentNumberFC} />
         <TypedField name="age" component={componentNumberFC} />
-        <Field name="age" component={componentAnyFC}>
+        <LegacyField name="age" component={componentAnyFC}>
           <div />
-        </Field>
-        <Field name="age" component={componentNumberFC}>
+        </LegacyField>
+        <LegacyField name="age" component={componentNumberFC}>
           <div />
-        </Field>
+        </LegacyField>
         <TypedField name="age" component={componentNumberFC}>
           <div />
         </TypedField>
         <TypedField name="age" component={PropsAnyClass} />
         <TypedField name="age" component={PartialPropsClass} />
-        <Field name="age" component={ComponentNumberClass} />
+        <LegacyField name="age" component={ComponentNumberClass} />
         <TypedField name="age" component={ComponentNumberClass} />
 
         {/* @ts-expect-error field value should match */}
@@ -245,19 +245,19 @@ const FieldTests = (props: FieldConfig<number, Person>) => {
         <TypedField name="motto" component={ComponentNumberClass} />
 
         {/* FieldRender */}
-        <Field name="age" render={renderAnyFn} />
+        <LegacyField name="age" render={renderAnyFn} />
         {/* @ts-expect-error render function doesn't have child component */}
-        <Field name="age" render={renderAnyFn}>
+        <LegacyField name="age" render={renderAnyFn}>
           <div />
-        </Field>
+        </LegacyField>
 
         {/* FieldChildren */}
-        <Field name="age" children={renderAnyFn} />
-        <Field name="age">{renderAnyFn}</Field>
+        <LegacyField name="age" children={renderAnyFn} />
+        <LegacyField name="age">{renderAnyFn}</LegacyField>
 
         {/* Pass-Through Props */}
-        <Field<any, any> {...props} />
-        <Field {...props} />
+        <LegacyField<any, any> {...props} />
+        <LegacyField {...props} />
 
         {/* FieldRender */}
         <TypedField name="age" render={renderNumberFN} />

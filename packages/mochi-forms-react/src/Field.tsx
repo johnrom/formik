@@ -1,36 +1,118 @@
 import * as React from 'react';
-import { isFunction, isEmptyChildren, isObject } from './utils';
+import { isFunction } from './utils';
 import invariant from 'tiny-warning';
-import { FieldConfig, FieldPassThroughConfig } from './Field.types';
 import { PathMatchingValue } from './helpers/path-helpers';
 import { useFieldProps } from './FieldProps';
-import { FieldInputProps } from './types';
 import { FieldMetaProps, useFieldMeta } from './FieldMeta';
 import { FieldHelperProps, useFieldHelpers } from './FieldHelpers';
 import { useFormApi } from './FormApi';
-import { useFormConfig } from './FormConfig';
-import { selectFullState } from './helpers/state-selectors';
+import {
+  FieldOnBlurProp,
+  FieldOnChangeProp,
+  FieldValidator,
+  FormatFn,
+  ParseFn,
+  SingleValue,
+} from './types';
 
-export type UseFieldProps<Value, Values> = {
-  as?: any;
-} & FieldPassThroughConfig<Value, Values>;
+export type FieldCompatibleComponent = React.ElementType<
+  FieldAsProps<any, any, any, any>
+>;
 
-export function useField<Value = any, Values = any>(
-  propsOrFieldName:
-    | PathMatchingValue<Value, Values>
-    | UseFieldProps<Value, Values>
+export type FieldAsComponent<Values, Value, FormattedValue, OnChangeValue> =
+  React.ElementType<FieldAsProps<Values, Value, FormattedValue, OnChangeValue>>;
+
+/**
+ * These props configure how the field works.
+ */
+export type FieldConfigProps<Values, Value, FormattedValue, OnChangeValue> = {
+  /**
+   * Field name
+   */
+  name: PathMatchingValue<Value, Values>;
+
+  /**
+   * Validate a single field value independently
+   */
+  validate?: FieldValidator<SingleValue<Value>>;
+
+  /**
+   * Function to parse raw input value before setting it to state
+   */
+  parse?: ParseFn<SingleValue<Value>, OnChangeValue>;
+
+  /**
+   * Function to transform value passed to input
+   */
+  format?: FormatFn<SingleValue<Value>, FormattedValue>;
+
+  /**
+   * Wait until blur event before formatting input value?
+   * @default false
+   */
+  formatOnBlur?: boolean;
+
+  /** checkbox value to match against current value */
+  value?: FormattedValue;
+};
+
+export interface FieldAsProps<Values, Value, FormattedValue, OnChangeValue> {
+  /** Value of the field */
+  value: FormattedValue;
+  /** Name of the field */
+  name: PathMatchingValue<Value, Values>;
+  /** Change event handler */
+  onChange: FieldOnChangeProp<OnChangeValue>;
+  /** Blur event handler */
+  onBlur: FieldOnBlurProp;
+}
+
+export type UseFieldProps<
+  Values,
+  Value,
+  FieldAs extends FieldCompatibleComponent
+> = FieldAs extends FieldAsComponent<
+  Values,
+  Value,
+  infer FormattedValue,
+  infer OnChangeValue
+>
+  ? FieldConfigProps<Values, Value, FormattedValue, OnChangeValue> &
+      Omit<
+        React.ComponentPropsWithoutRef<FieldAs>,
+        keyof FieldConfigProps<Values, Value, FormattedValue, OnChangeValue>
+      > & {
+        as?: FieldAs;
+      }
+  : never;
+
+/** Field input value, name, and event handlers */
+export type FieldAsComponentProps<
+  Values,
+  Value,
+  FieldAs extends FieldCompatibleComponent
+> = FieldAs extends FieldAsComponent<
+  Values,
+  Value,
+  infer FormattedValue,
+  infer OnChangeValue
+>
+  ? FieldAsProps<Values, Value, FormattedValue, OnChangeValue>
+  : never;
+
+export function useField<
+  Values,
+  Value,
+  FieldAs extends FieldCompatibleComponent = 'input'
+>(
+  props: UseFieldProps<Values, Value, FieldAs>
 ): [
-  FieldInputProps<Value, Values>,
+  FieldAsComponentProps<Values, Value, FieldAs>,
   FieldMetaProps<Value>,
   FieldHelperProps<Value>
 ] {
-  const formik = useFormApi<Values>();
-  const { registerField, unregisterField } = formik;
-
-  const props: UseFieldProps<Value, Values> = isObject(propsOrFieldName)
-    ? propsOrFieldName
-    : { name: propsOrFieldName };
-
+  const formApi = useFormApi<Values>();
+  const { registerField, unregisterField } = formApi;
   const { name: fieldName, validate: validateFn } = props;
 
   const fieldMeta = useFieldMeta<Value>(fieldName);
@@ -50,7 +132,7 @@ export function useField<Value = any, Values = any>(
 
   if (__DEV__) {
     invariant(
-      formik,
+      formApi,
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
     );
   }
@@ -67,108 +149,58 @@ export function useField<Value = any, Values = any>(
   ];
 }
 
-export function Field<Value = any, Values = any>(
-  props: FieldConfig<Value, Values>
-) {
+type FieldChildRenderFn<
+  Values,
+  Value,
+  FieldAs extends FieldCompatibleComponent
+> = (
+  props: FieldAsComponentProps<Values, Value, FieldAs>
+) => React.ReactElement | null;
+
+export type FieldProps<
+  Values,
+  Value,
+  FieldAs extends FieldCompatibleComponent
+> = UseFieldProps<Values, Value, FieldAs> & {
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+  children:
+    | FieldChildRenderFn<Values, Value, FieldAs>
+    | React.ReactNode
+    | undefined;
+};
+
+export const Field = <
+  Values,
+  Value = any,
+  FieldAs extends FieldCompatibleComponent = 'input'
+>({
+  children,
+  innerRef,
+  ...useFieldProps
+}: FieldProps<Values, Value, FieldAs>) => {
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
-        !props.render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${props.name}" render={({field, form}) => ...} /> with <Field name="${props.name}">{({field, form, meta}) => ...}</Field>`
-      );
-
-      invariant(
-        !(props.as && props.children && isFunction(props.children)),
+        !(useFieldProps.as && children && isFunction(children)),
         'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
       );
-
-      invariant(
-        !(props.component && props.children && isFunction(props.children)),
-        'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
-      );
-
-      invariant(
-        !(
-          props.render &&
-          props.children &&
-          // impossible type
-          !isEmptyChildren((props as any).children)
-        ),
-        'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
-      );
-      // eslint-disable-next-line
     }, []);
   }
 
-  const [field, meta] = useField(props);
+  // todo: not sure why this isn't matching
+  const [field] = useField<Values, Value, FieldAs>(useFieldProps as any);
 
-  /**
-   * If we use render function or use functional children, we continue to
-   * subscribe to the full FormikState because these do not have access to hooks.
-   * We also do this for Component for backwards compatibility.
-   *
-   * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
-   */
-  const formikApi = useFormApi<Values>();
-  const formikConfig = useFormConfig();
-  const formikState = formikApi.useState(
-    selectFullState,
-    Object.is,
-    !!props.render ||
-      isFunction(props.children) ||
-      (!!props.component && typeof props.component !== 'string')
-  );
-
-  const form = {
-    ...formikApi,
-    ...formikConfig,
-    ...formikState,
-  };
-
-  if (props.render) {
-    return props.render({ field, form, meta });
+  if (isFunction(children)) {
+    return children(field);
   }
-
-  if (isFunction(props.children)) {
-    return props.children({ field, form, meta });
-  }
-
-  if (props.as && typeof props.as !== 'string') {
-    const { render, component, as, children, ...fieldAsProps } = props;
-    return React.createElement(as, { ...fieldAsProps, ...field }, children);
-  }
-
-  if (props.component && typeof props.component !== 'string') {
-    const { render, children, as, component, ...componentProps } = props;
-
-    // We don't pass `meta` for backwards compat
-    return React.createElement(
-      component,
-      { field, ...componentProps, form },
-      children
-    );
-  }
-
-  const {
-    innerRef,
-    validate,
-    parse,
-    format,
-    formatOnBlur,
-    name,
-    value,
-    as,
-    component,
-    render,
-    children,
-    ...htmlProps
-  } = props;
 
   return React.createElement(
-    props.as || props.component || 'input',
-    // field has FieldValue<> while HTML expects
-    { ref: props.innerRef, ...field, ...htmlProps },
+    useFieldProps.as ?? 'input',
+    { ref: innerRef, ...useFieldProps, ...field },
     children
   );
-}
+};
+
+Field.displayName = 'Field';

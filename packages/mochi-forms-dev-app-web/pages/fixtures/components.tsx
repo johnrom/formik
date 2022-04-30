@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   FieldComponentProps,
   FieldAsProps,
@@ -50,10 +50,10 @@ const ComponentsPage = () => (
       }}
     >
       <Form>
-        <Field name="name">{RenderComponent}</Field>
-        <Field name="name" render={RenderComponent} />
-        <Field name="name" component={ComponentComponent} />
-        <Field name="name" as={AsComponent} />
+        <LegacyField name="name">{RenderComponent}</LegacyField>
+        <LegacyField name="name" render={RenderComponent} />
+        <LegacyField name="name" component={ComponentComponent} />
+        <LegacyField name="name" as={AsComponent} />
         <button type="submit">Submit</button>
       </Form>
     </Formik>

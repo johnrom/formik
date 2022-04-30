@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   ErrorMessage,
   FieldArray,
@@ -36,7 +36,7 @@ const FieldArraysExample = () => (
                     <div className="row" key={index}>
                       <div className="col">
                         <label htmlFor={`friends.${index}.name`}>Name</label>
-                        <Field
+                        <LegacyField
                           name={`friends.${index}.name`}
                           placeholder="Jane Doe"
                           type="text"
@@ -49,7 +49,7 @@ const FieldArraysExample = () => (
                       </div>
                       <div className="col">
                         <label htmlFor={`friends.${index}.email`}>Email</label>
-                        <Field
+                        <LegacyField
                           name={`friends.${index}.email`}
                           placeholder="jane@acme.com"
                           type="email"

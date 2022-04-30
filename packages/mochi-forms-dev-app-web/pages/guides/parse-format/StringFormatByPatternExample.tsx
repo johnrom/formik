@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 import formatString from 'format-string-by-pattern';
 import { sleep } from '../helpers';
 
@@ -31,7 +31,7 @@ const FormatStringByPatternExample = () => {
               <div key={mask.name}>
                 <label>
                   {mask.name}
-                  <Field
+                  <LegacyField
                     name={mask.name}
                     parse={formatString(mask.parse)}
                     placeholder={mask.parse}

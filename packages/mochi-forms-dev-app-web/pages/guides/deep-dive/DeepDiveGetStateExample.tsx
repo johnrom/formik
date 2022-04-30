@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Field,
+  LegacyField,
   ErrorMessage,
   FormikConfig,
   FormikFormProps,
@@ -48,7 +48,7 @@ const DeepDiveGetStateExample = () => {
               // @snippet:end use-formik-hooks
             }
             <label htmlFor="email">Email</label>
-            <Field
+            <LegacyField
               id="email"
               name="email"
               placeholder="john@acme.com"

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   ErrorMessage,
   FormikErrors,
@@ -47,7 +47,7 @@ const AsyncValidationExample = () => (
     >
       <Form>
         <label htmlFor="username">Username</label>
-        <Field name="username" type="text" />
+        <LegacyField name="username" type="text" />
         <ErrorMessage name="username" />
         <button type="submit">Submit</button>
         <Debug />

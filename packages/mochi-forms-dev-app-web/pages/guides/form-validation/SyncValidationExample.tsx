@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   ErrorMessage,
   FormikErrors,
@@ -37,12 +37,12 @@ const SyncValidationExample = () => (
     >
       <Form>
         <label htmlFor="email">Email</label>
-        <Field name="email" placeholder="john@acme.com" type="email" />
+        <LegacyField name="email" placeholder="john@acme.com" type="email" />
         <div className="field-error">
           <ErrorMessage name="email" />
         </div>
         <label htmlFor="password">Password</label>
-        <Field name="password" type="password" />
+        <LegacyField name="password" type="password" />
         <button type="submit">Sign In</button>
         <Debug />
       </Form>

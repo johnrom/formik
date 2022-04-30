@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form, Field } from '@mochi-forms/react';
+import { Formik, Form, LegacyField } from '@mochi-forms/react';
 
 // Here is an example of a form with an editable list.
 // Next to each input are buttons for insert and remove.
@@ -30,7 +30,7 @@ export const FriendList = () => (
                 {values.friends && values.friends.length > 0 ? (
                   values.friends.map((_friend, index) => (
                     <div key={index}>
-                      <Field name={`friends.${index}`} />
+                      <LegacyField name={`friends.${index}`} />
                       <button
                         type="button"
                         // remove a friend from the list
@@ -66,7 +66,7 @@ export const FriendList = () => (
                 {values.friends && values.friends.length > 0 ? (
                   values.friends.map((_friend, index) => (
                     <div key={index}>
-                      <Field name={`friends.${index}`} />
+                      <LegacyField name={`friends.${index}`} />
                       <button
                         type="button"
                         // remove a friend from the list

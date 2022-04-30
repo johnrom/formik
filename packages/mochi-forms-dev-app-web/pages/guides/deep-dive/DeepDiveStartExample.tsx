@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 
 interface FormValues {
   email: string;
@@ -21,7 +21,7 @@ const BasicExample = () => {
         <Form>
           <div>
             <label htmlFor="email">Email</label>
-            <Field
+            <LegacyField
               id="email"
               name="email"
               placeholder="john@acme.com"

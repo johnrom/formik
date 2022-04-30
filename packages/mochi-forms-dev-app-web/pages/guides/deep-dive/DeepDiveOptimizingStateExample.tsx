@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Field,
+  LegacyField,
   ErrorMessage,
   FormikFormProps,
   FormikProvider,
@@ -95,7 +95,7 @@ const TutorialOptimizingStateExample = () => {
           }
           <div>
             <label htmlFor="email">Email</label>
-            <Field
+            <LegacyField
               id="email"
               name="email"
               placeholder="john@acme.com"

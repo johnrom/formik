@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   ErrorMessage,
   useFormikContext,
@@ -26,7 +26,7 @@ const FieldLevelValidationExample = () => (
       <Form>
         <label htmlFor="username">Username</label>
         <div>
-          <Field
+          <LegacyField
             name="username"
             validate={isRequired('This field is required')}
             type="text"
@@ -36,7 +36,7 @@ const FieldLevelValidationExample = () => (
         </div>
         <br />
         <div>
-          <Field
+          <LegacyField
             name="email"
             validate={isRequired('This field is required')}
             type="text"

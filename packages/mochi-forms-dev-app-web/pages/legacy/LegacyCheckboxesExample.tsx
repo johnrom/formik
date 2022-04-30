@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 import { sleep } from '../../helpers/example-helpers';
 
 const CheckboxesExample = () => (
@@ -22,7 +22,7 @@ const CheckboxesExample = () => (
             on the <Field/> is omitted
           */}
           <label>
-            <Field type="checkbox" name="toggle" />
+            <LegacyField type="checkbox" name="toggle" />
             {`${values.toggle}`}
           </label>
 
@@ -35,15 +35,15 @@ const CheckboxesExample = () => (
           <div id="checkbox-group">Checked</div>
           <div role="group" aria-labelledby="checkbox-group">
             <label>
-              <Field type="checkbox" name="checked" value="One" />
+              <LegacyField type="checkbox" name="checked" value="One" />
               One
             </label>
             <label>
-              <Field type="checkbox" name="checked" value="Two" />
+              <LegacyField type="checkbox" name="checked" value="Two" />
               Two
             </label>
             <label>
-              <Field type="checkbox" name="checked" value="Three" />
+              <LegacyField type="checkbox" name="checked" value="Three" />
               Three
             </label>
           </div>

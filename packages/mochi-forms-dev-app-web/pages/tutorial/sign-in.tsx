@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   ErrorMessage,
-  Field,
+  LegacyField,
   Form,
   FormikProvider,
   FormikState,
@@ -105,7 +105,11 @@ const SignInPage = () => {
           </div>
 
           <div>
-            <Field name="password" placeholder="Password" type="password" />
+            <LegacyField
+              name="password"
+              placeholder="Password"
+              type="password"
+            />
             <ErrorMessage name="password" component="p" />
           </div>
 

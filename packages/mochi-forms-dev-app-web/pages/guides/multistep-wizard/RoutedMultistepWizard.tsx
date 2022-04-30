@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import {
   Formik,
-  Field,
+  LegacyField,
   ErrorMessage,
   FormikConfig,
   FormikHelpers,
@@ -162,7 +162,7 @@ const RoutedMultistepWizardExample = () => (
             <Wizard.Page>
               <div>
                 <label>First Name</label>
-                <Field
+                <LegacyField
                   name="firstName"
                   component="input"
                   type="text"
@@ -177,7 +177,7 @@ const RoutedMultistepWizardExample = () => (
               </div>
               <div>
                 <label>Last Name</label>
-                <Field
+                <LegacyField
                   name="lastName"
                   component="input"
                   type="text"
@@ -205,7 +205,7 @@ const RoutedMultistepWizardExample = () => (
             >
               <div>
                 <label>Email</label>
-                <Field
+                <LegacyField
                   name="email"
                   component="input"
                   type="email"
@@ -219,12 +219,12 @@ const RoutedMultistepWizardExample = () => (
               </div>
               <div>
                 <label>Favorite Color</label>
-                <Field name="favoriteColor" component="select">
+                <LegacyField name="favoriteColor" component="select">
                   <option value="">Select a Color</option>
                   <option value="#ff0000">❤️ Red</option>
                   <option value="#00ff00">💚 Green</option>
                   <option value="#0000ff">💙 Blue</option>
-                </Field>
+                </LegacyField>
                 <ErrorMessage
                   name="favoriteColor"
                   component="div"

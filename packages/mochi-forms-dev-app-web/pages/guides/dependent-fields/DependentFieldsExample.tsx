@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   useField,
   useFormikState,
@@ -68,11 +68,11 @@ function DependentFieldsExample() {
           <Form>
             <label>
               textA
-              <Field name="textA" />
+              <LegacyField name="textA" />
             </label>
             <label>
               textB
-              <Field name="textB" />
+              <LegacyField name="textB" />
             </label>
             <label>
               textC

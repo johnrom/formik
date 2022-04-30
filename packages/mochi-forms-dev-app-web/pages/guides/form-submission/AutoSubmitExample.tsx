@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Form,
-  Field,
+  LegacyField,
   useFormik,
   FormikSubmitHandler,
   FormikProvider,
@@ -43,7 +43,7 @@ export const AutoSubmitExample = () => {
       <p>Please enter the 6 digit code sent to your device</p>
       <FormikProvider value={formik}>
         <Form>
-          <Field name="token" type="tel" validate={validateToken} />
+          <LegacyField name="token" type="tel" validate={validateToken} />
         </Form>
       </FormikProvider>
     </div>

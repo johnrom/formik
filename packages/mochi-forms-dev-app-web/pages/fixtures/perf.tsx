@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
 
 let renderCount = 0;
@@ -49,32 +49,32 @@ const PerfPage = () => (
       }}
     >
       <Form>
-        <Field name="firstName" placeholder="Jane" />
+        <LegacyField name="firstName" placeholder="Jane" />
         <ErrorMessage name="firstName" component="p" />
 
-        <Field name="lastName" placeholder="Doe" />
-        <Field name="lastName2" placeholder="Doe" />
-        <Field name="lastName3" placeholder="Doe" />
-        <Field name="lastName4" placeholder="Doe" />
-        <Field name="lastName5" placeholder="Doe" />
-        <Field name="lastName6" placeholder="Doe" />
-        <Field name="lastName7" placeholder="Doe" />
-        <Field name="lastName8" placeholder="Doe" />
-        <Field name="lastName9" placeholder="Doe" />
-        <Field name="lastName10" placeholder="Doe" />
-        <Field name="lastName11" placeholder="Doe" />
-        <Field name="lastName12" placeholder="Doe" />
-        <Field name="lastName13" placeholder="Doe" />
-        <Field name="lastName14" placeholder="Doe" />
-        <Field name="lastName15" placeholder="Doe" />
-        <Field name="lastName16" placeholder="Doe" />
-        <Field name="lastName17" placeholder="Doe" />
-        <Field name="lastName18" placeholder="Doe" />
-        <Field name="lastName19" placeholder="Doe" />
-        <Field name="lastName20" placeholder="Doe" />
+        <LegacyField name="lastName" placeholder="Doe" />
+        <LegacyField name="lastName2" placeholder="Doe" />
+        <LegacyField name="lastName3" placeholder="Doe" />
+        <LegacyField name="lastName4" placeholder="Doe" />
+        <LegacyField name="lastName5" placeholder="Doe" />
+        <LegacyField name="lastName6" placeholder="Doe" />
+        <LegacyField name="lastName7" placeholder="Doe" />
+        <LegacyField name="lastName8" placeholder="Doe" />
+        <LegacyField name="lastName9" placeholder="Doe" />
+        <LegacyField name="lastName10" placeholder="Doe" />
+        <LegacyField name="lastName11" placeholder="Doe" />
+        <LegacyField name="lastName12" placeholder="Doe" />
+        <LegacyField name="lastName13" placeholder="Doe" />
+        <LegacyField name="lastName14" placeholder="Doe" />
+        <LegacyField name="lastName15" placeholder="Doe" />
+        <LegacyField name="lastName16" placeholder="Doe" />
+        <LegacyField name="lastName17" placeholder="Doe" />
+        <LegacyField name="lastName18" placeholder="Doe" />
+        <LegacyField name="lastName19" placeholder="Doe" />
+        <LegacyField name="lastName20" placeholder="Doe" />
         <ErrorMessage name="lastName" component="p" />
 
-        <Field
+        <LegacyField
           id="email"
           name="email"
           placeholder="jane@acme.com"
@@ -83,33 +83,33 @@ const PerfPage = () => (
         <ErrorMessage name="email" component="p" />
 
         <label>
-          <Field type="checkbox" name="toggle" />
+          <LegacyField type="checkbox" name="toggle" />
           <span style={{ marginLeft: 3 }}>Toggle</span>
         </label>
 
         <div id="checkbox-group">Checkbox Group </div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <Field type="checkbox" name="checked" value="One" />
+            <LegacyField type="checkbox" name="checked" value="One" />
             One
           </label>
           <label>
-            <Field type="checkbox" name="checked" value="Two" />
+            <LegacyField type="checkbox" name="checked" value="Two" />
             Two
           </label>
           <label>
-            <Field type="checkbox" name="checked" value="Three" />
+            <LegacyField type="checkbox" name="checked" value="Three" />
             Three
           </label>
         </div>
         <div id="my-radio-group">Picked</div>
         <div role="group" aria-labelledby="my-radio-group">
           <label>
-            <Field type="radio" name="picked" value="One" />
+            <LegacyField type="radio" name="picked" value="One" />
             One
           </label>
           <label>
-            <Field type="radio" name="picked" value="Two" />
+            <LegacyField type="radio" name="picked" value="Two" />
             Two
           </label>
         </div>

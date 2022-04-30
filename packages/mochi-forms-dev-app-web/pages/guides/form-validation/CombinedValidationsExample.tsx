@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
 import { Debug } from '../helpers/Debug';
 import { sleep } from '../helpers';
@@ -42,7 +42,7 @@ const CombinedValidationsExample = () => (
       <Form>
         <label htmlFor="username">Username</label>
         <div>
-          <Field
+          <LegacyField
             name="username"
             validate={isRequired('This field is required')}
             type="text"
@@ -52,7 +52,7 @@ const CombinedValidationsExample = () => (
         </div>
         <br />
         <div>
-          <Field
+          <LegacyField
             name="email"
             validate={isRequired('This field is required')}
             type="text"
@@ -62,7 +62,7 @@ const CombinedValidationsExample = () => (
         </div>
         <br />
         <div>
-          <Field
+          <LegacyField
             name="zip"
             validate={isRequired('This field is required')}
             type="text"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 import { sleep } from '../../../helpers/example-helpers';
 
 const AsyncSubmissionExample = () => (
@@ -19,13 +19,13 @@ const AsyncSubmissionExample = () => (
       {({ isSubmitting }) => (
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" placeholder="Jane" />
+          <LegacyField name="firstName" placeholder="Jane" />
 
           <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" />
+          <LegacyField name="lastName" placeholder="Doe" />
 
           <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="jane@acme.com" type="email" />
+          <LegacyField name="email" placeholder="jane@acme.com" type="email" />
 
           <button type="submit" disabled={isSubmitting}>
             Submit

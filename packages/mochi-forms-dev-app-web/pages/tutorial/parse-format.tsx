@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from '@mochi-forms/react';
+import { Formik, LegacyField, Form } from '@mochi-forms/react';
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
@@ -18,7 +18,7 @@ const ParseFormatPage = () => {
         {({ values }) => (
           <Form>
             <label htmlFor="username">Username</label>
-            <Field
+            <LegacyField
               id="username"
               name="username"
               parse={value =>

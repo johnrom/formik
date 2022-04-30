@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Formik,
-  Field,
+  LegacyField,
   Form,
   ErrorMessage,
   FieldAttributes,
@@ -18,7 +18,7 @@ interface FieldsetProps extends FieldAttributes<any, any> {
 const Fieldset = ({ name, label, ...rest }: FieldsetProps) => (
   <React.Fragment>
     <label htmlFor={name}>{label}</label>
-    <Field id={name} name={name} {...rest} />
+    <LegacyField id={name} name={name} {...rest} />
     <ErrorMessage name={name} />
   </React.Fragment>
 );

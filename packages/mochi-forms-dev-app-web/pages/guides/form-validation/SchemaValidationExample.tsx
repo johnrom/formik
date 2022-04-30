@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from '@mochi-forms/react';
+import { Formik, LegacyField, Form, ErrorMessage } from '@mochi-forms/react';
 import * as Yup from 'yup';
 import { Debug } from '../helpers/Debug';
 
@@ -37,7 +37,7 @@ const SchemaValidationExample = () => (
       render={({ errors, touched }) => (
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" placeholder="Jane" type="text" />
+          <LegacyField name="firstName" placeholder="Jane" type="text" />
 
           <ErrorMessage
             name="firstName"
@@ -46,7 +46,7 @@ const SchemaValidationExample = () => (
           />
 
           <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" type="text" />
+          <LegacyField name="lastName" placeholder="Doe" type="text" />
           <ErrorMessage
             name="lastName"
             component="div"
@@ -54,7 +54,7 @@ const SchemaValidationExample = () => (
           />
 
           <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="jane@acme.com" type="email" />
+          <LegacyField name="email" placeholder="jane@acme.com" type="email" />
           <ErrorMessage name="email" component="div" className="field-error" />
 
           <button type="submit">Submit</button>

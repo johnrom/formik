@@ -9,7 +9,7 @@ import {
   RouteComponentProps,
 } from 'react-router-dom';
 import {
-  Field,
+  LegacyField,
   ErrorMessage,
   withFormik,
   FormikErrors,
@@ -23,7 +23,7 @@ const Page1 = (props: RouteComponentProps<any>) => (
   <Fragment>
     <div>
       <label>First Name</label>
-      <Field
+      <LegacyField
         name="firstName"
         component="input"
         type="text"
@@ -34,7 +34,7 @@ const Page1 = (props: RouteComponentProps<any>) => (
     </div>
     <div>
       <label>Last Name</label>
-      <Field
+      <LegacyField
         name="lastName"
         component="input"
         type="text"
@@ -53,17 +53,22 @@ const Page2 = (props: RouteComponentProps<any>) => (
   <Fragment>
     <div>
       <label>Email</label>
-      <Field name="email" component="input" type="email" placeholder="Email" />
+      <LegacyField
+        name="email"
+        component="input"
+        type="email"
+        placeholder="Email"
+      />
       <ErrorMessage name="email" component="div" className="field-error" />
     </div>
     <div>
       <label>Favorite Color</label>
-      <Field name="favoriteColor" component="select">
+      <LegacyField name="favoriteColor" component="select">
         <option value="">Select a Color</option>
         <option value="#ff0000">❤️ Red</option>
         <option value="#00ff00">💚 Green</option>
         <option value="#0000ff">💙 Blue</option>
-      </Field>
+      </LegacyField>
       <ErrorMessage
         name="favoriteColor"
         component="div"

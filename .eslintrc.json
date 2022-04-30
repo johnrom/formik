@@ -28,7 +28,8 @@
     "@typescript-eslint/no-empty-function": 0,
     "@typescript-eslint/no-unnecessary-type-constraint": 0,
     "react/no-children-prop": 0,
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "prefer-const": 1
   },
   "ignorePatterns": ["**/dist/*"]
 }
