@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormController } from '../FormController';
 import {
   FormikErrors,
   FormHelpers,
@@ -9,6 +8,7 @@ import {
 import { isFunction } from '../utils';
 import { FormikBag, FormikProps, FormikSharedConfig } from './legacy-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { Formik } from './Formik';
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -142,7 +142,7 @@ export function withFormik<
       render() {
         const { children, ...props } = this.props as any;
         return (
-          <FormController
+          <Formik
             {...props}
             {...config}
             validate={config.validate && this.validate}

@@ -1,4 +1,4 @@
-import invariant from 'invariant';
+import invariant from 'tiny-warning';
 import { isFunction } from 'lodash';
 import React from 'react';
 import { useFormController } from '../FormController';

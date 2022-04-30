@@ -1,4 +1,4 @@
-import invariant from 'invariant';
+import invariant from 'tiny-warning';
 import * as React from 'react';
 import { FormApi, FormikValues } from './types';
 

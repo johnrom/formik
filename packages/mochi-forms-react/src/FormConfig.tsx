@@ -1,4 +1,4 @@
-import invariant from 'invariant';
+import invariant from 'tiny-warning';
 import React from 'react';
 import { FormSharedConfig, FormikValues } from './types';
 
