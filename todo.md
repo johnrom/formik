@@ -10,3 +10,37 @@
 - Simplify the API to just use `as`, and to be very flexible.
 - Correctly use `ref` instead of `innerRef`.
 - Fix or remove lodash
+- ChangeHandlerValue cannot be inferred even though its type will be correctly validated
+  ```tsx
+  <Field name="strVal" parse={/* event is `unknown` */ event => ''} />
+  ```
+- Add a double-checked effect for when values have been updated, like:
+
+  ```ts
+  export const MyField = ({ name }: { name: string }) => {
+    const { setFieldValue } = useFormApi();
+    const { value } = useFieldMeta(name);
+
+    useEffect(() => {
+      if (value === '') {
+        setFieldValue('one');
+      }
+    }, [value]);
+
+    // create an easy way to check whether this condition is still true
+    // so one part of the app doesn't override another part of the app
+    useEffect(() => {
+      // this is really unwieldy:
+      // if (value !== getIn(getState().value, name)) {
+      //   return
+      // }
+      // maybe all the `use` hooks can return a `get` hook?
+      // useState => getState (already exists)
+      // useFieldMeta, getFieldMeta = (name) => selectFieldMetaFromState(name)(getState())
+      // this would also help when validating, to make sure the value is still current
+      if (value === '') {
+        setFieldValue('two');
+      }
+    }, [value]);
+  };
+  ```

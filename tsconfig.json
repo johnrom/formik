@@ -5,8 +5,6 @@
   "files": [],
   "include": ["types"],
   "references": [
-    { "path": "./packages/mochi-forms-dev-app-native" },
-    { "path": "./packages/mochi-forms-dev-app-web" },
     { "path": "./packages/mochi-forms-docs-website" },
     { "path": "./packages/mochi-forms-react" },
     { "path": "./packages/mochi-forms-react-native" }

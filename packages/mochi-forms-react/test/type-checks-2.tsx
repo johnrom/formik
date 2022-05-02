@@ -5,9 +5,12 @@ import {
   FieldAsComponentProps,
   FieldAsProps,
   FieldAsValueProps,
+  FieldCompatibleAsProps,
   FieldCompatibleComponent,
+  FieldCompatibleComponentMatchingValue,
   FieldConfigAsProp,
   FieldConfigNameProp,
+  FieldConfigProps,
   FieldConfigPropsByName,
   FieldConfigValueProps,
   FieldInputProps,
@@ -16,32 +19,116 @@ import {
 } from '../src';
 
 interface FormValues {
-  hello: string;
-  count: number;
+  strVal: string;
+  numVal: number;
+  strOrNumVal: string | number;
 }
 
-const NumberValuedField = <Values,>(
+const NumberValuedField = (
   _props: FieldAsProps<
-    Values,
+    FormValues,
     number,
     number,
     React.ChangeEvent<HTMLInputElement>
   >
 ) => null;
 
-let fieldConfigNameProp:
-  | FieldConfigNameProp<FormValues, keyof FormValues>
+/**
+ * FieldConfigNameProp tests
+ */
+let misconfiguredFieldConfigNameProp: FieldConfigNameProp<
+  FormValues,
+  // @ts-expect-error path doesn't exist in FormValues
+  'nonexistent'
+>;
+const fieldConfigNameProp: FieldConfigNameProp<FormValues, 'strVal'> = {
+  name: 'strVal',
+};
+// @ts-expect-error numVal doesn't match strVal
+fieldConfigNameProp.name = 'numVal';
+// @ts-expect-error strOrNumVal doesn't match strVal
+fieldConfigNameProp.name = 'strOrNumVal';
+// @ts-expect-error nonexistent doesn't exist in path
+fieldConfigNameProp.name = 'nonexistent';
+
+/**
+ * FieldCompatibleAsProps tests
+ *
+ * multiple value types should match any value type
+ */
+const fieldCompatibleAsProps_strOrNumVal: FieldCompatibleAsProps<
+  FormValues,
+  string | number
+> = {
+  name: 'strOrNumVal',
+};
+// a FormValue which accepts string | number is compatible with a FieldMatchingValue<string> and a FieldMatchingValue<number>
+fieldCompatibleAsProps_strOrNumVal.name = 'strVal';
+fieldCompatibleAsProps_strOrNumVal.name = 'numVal';
+
+/**
+ * string-only FormValues are more restrictive
+ */
+const fieldCompatibleAsProps_strVal: FieldCompatibleAsProps<
+  FormValues,
+  string
+> = {
+  name: 'strVal',
+};
+// @ts-expect-error a FormValue which only accepts strings is not compatible with a FieldMatchingValue<string | number>
+fieldCompatibleAsProps_strVal.name = 'strOrNumVal';
+// @ts-expect-error numVal is not assignable to strVal
+fieldCompatibleAsProps_strVal.name = 'numVal';
+// @ts-expect-error nonexistent doesn't exist
+fieldCompatibleAsProps_strVal.name = 'nonexistent';
+
+/**
+ * FieldCompatibleComponent tests
+ */
+let fieldCompatibleComponent: FieldCompatibleComponent;
+fieldCompatibleComponent = 'input';
+fieldCompatibleComponent = 'a';
+fieldCompatibleComponent = (
+  _props: FieldAsProps<FormValues, string, string, string>
+) => null;
+fieldCompatibleComponent = (_props: FieldAsComponentProps<any, 'input'>) =>
+  null;
+fieldCompatibleComponent = (_props: { value: boolean }) => null;
+// @ts-expect-error onChange must be a callback
+fieldCompatibleComponent = (props: { value: boolean; onChange: boolean }) =>
+  null;
+
+/**
+ * FieldAsComponent tests
+ */
+let fieldAsComponent:
+  | FieldAsComponent<FormValues, string, string, string>
   | undefined;
-fieldConfigNameProp = {
-  name: 'hello',
-};
-fieldConfigNameProp = {
-  name: 'count',
-};
-fieldConfigNameProp = {
-  // @ts-expect-error name should match PathOf<FormValues>
-  name: 'bad',
-};
+fieldAsComponent = (_props: FieldAsProps<FormValues, string, string, string>) =>
+  null;
+// component doesn't need to match signature, just be compatible
+fieldAsComponent = () => null;
+// @ts-expect-error value should be string
+fieldAsComponent = (props: { value: number }) => null;
+// @ts-expect-error name prop should match FormValues string path
+fieldAsComponent = (props: { name: 'numVal' }) => null;
+// @ts-expect-error onChange should accept a string
+fieldAsComponent = (props: {
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}) => null;
+// @ts-expect-error onBlur accept a focus event
+fieldAsComponent = (props: {
+  onBlur: React.ChangeEventHandler<HTMLInputElement>;
+}) => null;
+
+let fieldCompatibleComponentMatchingValue: FieldCompatibleComponentMatchingValue<
+  FormValues,
+  string
+> = 'input';
+// @ts-expect-error FieldAsProps doesn't match value string
+fieldCompatibleComponentMatchingValue = (
+  _props: FieldAsProps<FormValues, number, any, any>
+) => null;
 
 let fieldConfigAsProp: FieldConfigAsProp<'input'> = {};
 fieldConfigAsProp = {
@@ -52,7 +139,48 @@ fieldConfigAsProp = {
   as: 'a',
 };
 
-let fieldConfigProps: FieldConfigValueProps<string, string, string> | undefined;
+let _stringFieldConfigAsProp: FieldConfigPropsByName<
+  FormValues,
+  'strVal',
+  FieldCompatibleComponentMatchingValue<FormValues, string>
+> = {
+  name: 'strVal',
+  as: 'input',
+};
+
+let _numberMatchedFieldConfigAsProp: FieldConfigPropsByName<
+  FormValues,
+  'numVal',
+  FieldCompatibleComponentMatchingValue<FormValues, number>
+> = {
+  name: 'numVal',
+  as: NumberValuedField,
+};
+
+_numberMatchedFieldConfigAsProp = {
+  // @ts-expect-error name should be count
+  name: 'strVal',
+  as: NumberValuedField,
+};
+
+_stringFieldConfigAsProp = {
+  name: 'strVal',
+  // @ts-expect-error NumberValuedField doesn't match value of name 'strVal'
+  as: NumberValuedField,
+};
+
+const _numberMismatchedFieldConfigAsProp: FieldConfigPropsByName<
+  FormValues,
+  'strVal',
+  FieldCompatibleComponentMatchingValue<FormValues, number>
+> = {
+  name: 'strVal',
+  as: 'input',
+};
+// @ts-expect-error number field does not match input
+_numberMismatchedFieldConfigAsProp.as = NumberValuedField;
+
+let fieldConfigProps: FieldConfigProps<string, string, string> | undefined;
 fieldConfigProps = {
   validate: (_value: string) => {},
   parse: (value: string) => value,
@@ -76,13 +204,13 @@ fieldConfigProps = {
 let fieldAsProps: FieldAsProps<FormValues, string, string, string> | undefined;
 fieldAsProps = {
   value: '',
-  name: 'hello',
+  name: 'strVal',
   onChange: (_value: string) => {},
   onBlur: _event => {},
 };
 fieldAsProps = {
   // @ts-expect-error name should match a value with string
-  name: 'count',
+  name: 'numVal',
   // @ts-expect-error value should be string
   value: 0,
   // @ts-expect-error onChange value should be a string
@@ -91,49 +219,9 @@ fieldAsProps = {
   onBlur: (event: boolean) => {},
 };
 
-/**
- * FieldCompatibleComponent tests
- */
-let fieldCompatibleComponent: FieldCompatibleComponent;
-
-fieldCompatibleComponent = 'input';
-fieldCompatibleComponent = 'a';
-fieldCompatibleComponent = (
-  _props: FieldAsProps<FormValues, string, string, string>
-) => null;
-fieldCompatibleComponent = (_props: FieldAsComponentProps<any, any, 'input'>) =>
-  null;
-fieldCompatibleComponent = (_props: { value: boolean }) => null;
-// @ts-expect-error onChange must be a callback
-fieldCompatibleComponent = (props: { value: boolean; onChange: boolean }) =>
-  null;
-
-/**
- * FieldAsComponent tests
- */
-let fieldAsComponent:
-  | FieldAsComponent<FormValues, string, string, string>
-  | undefined;
-fieldAsComponent = (_props: FieldAsProps<FormValues, string, string, string>) =>
-  null;
-// component doesn't need to match signature, just be compatible
-fieldAsComponent = () => null;
-// @ts-expect-error value should be string
-fieldAsComponent = (props: { value: number }) => null;
-// @ts-expect-error name prop should match FormValues string path
-fieldAsComponent = (props: { name: 'count' }) => null;
-// @ts-expect-error onChange should accept a string
-fieldAsComponent = (props: {
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}) => null;
-// @ts-expect-error onBlur accept a focus event
-fieldAsComponent = (props: {
-  onBlur: React.ChangeEventHandler<HTMLInputElement>;
-}) => null;
-
 type InputProps = React.ComponentProps<'input'>;
 type HelloNameProps = {
-  name: 'hello';
+  name: 'strVal';
 };
 
 let fieldNameProps: InputProps & HelloNameProps extends FieldConfigNameProp<
@@ -189,15 +277,24 @@ let FormValueTypedFieldComponent: FieldComponent<FormValues>;
 
 export const UsingTypedFieldComponent = () => (
   <>
+    <FormValueTypedFieldComponent name="strVal" />
+    <FormValueTypedFieldComponent name="numVal" />
+    <FormValueTypedFieldComponent name="strVal" as="input" />
+    <FormValueTypedFieldComponent name="numVal" as="input" />
     <FormValueTypedFieldComponent
-      name="hello"
+      name="strVal"
+      // @ts-expect-error NumberValuedField doesn't match string value from path `hello`
+      as={NumberValuedField}
+    />
+    <FormValueTypedFieldComponent
+      name="strVal"
       validate={(_value: string) => {}}
       parse={(_event: React.ChangeEvent<HTMLInputElement>) => ''}
       format={_value => ''}
       value=""
     />
     <FormValueTypedFieldComponent
-      name="count"
+      name="numVal"
       as={NumberValuedField}
       validate={(_value: number) => {}}
       parse={(_event: React.ChangeEvent<HTMLInputElement>) => 0}
@@ -205,16 +302,18 @@ export const UsingTypedFieldComponent = () => (
       value={0}
     />
     <FormValueTypedFieldComponent
-      name="hello"
-      // @ts-expect-error Values should be resolved here and be required to be PathMatchingValue<number>
+      name="strVal"
+      // @ts-expect-error NumberValuedField doesn't match string value from path `hello`
       as={NumberValuedField}
-      validate={(_value: string) => {}}
-      parse={(_event: React.ChangeEvent<HTMLInputElement>) => ''}
+      // @ts-expect-error value should be string
+      validate={(_value: number) => {}}
+      // @ts-expect-error event should be HTMLInputElement
+      parse={(event: React.ChangeEvent<HTMLAnchorElement>) => ''}
       format={_value => 0}
       value={0}
     />
     <FormValueTypedFieldComponent
-      name="hello"
+      name="strVal"
       // @ts-expect-error value should be string
       validate={(_value: number) => {}}
       // @ts-expect-error event should be HTMLAnchorElement
@@ -225,7 +324,7 @@ export const UsingTypedFieldComponent = () => (
       value={{}}
     />
     <FormValueTypedFieldComponent
-      name="count"
+      name="numVal"
       as={NumberValuedField}
       // @ts-expect-error value doesn't match number
       validate={(_value: string) => {}}
@@ -243,15 +342,15 @@ export const UsingTypedFieldComponent = () => (
 );
 
 let fieldAsComponentProps: FieldAsComponentProps<FormValues, 'input'> = {
-  name: 'hello',
+  name: 'strVal',
 };
 
 const hello = () => {
   return (
     <>
-      <Field<FormValues, string, 'input'> name="hello" as="input"></Field>
+      <Field<FormValues, string, 'input'> name="strVal" as="input"></Field>
       <Field<FormValues, string, 'input'>
-        name="hello"
+        name="strVal"
         // @ts-expect-error a doesn't match input
         as="a"
       />
@@ -262,13 +361,13 @@ const hello = () => {
       />
       <Field<FormValues, string, 'input'>
         // @ts-expect-error Count doesn't match string
-        name="count"
+        name="numVal"
         as="input"
       >
         <p>hello</p>
       </Field>
       <Field<FormValues>
-        name="count"
+        name="numVal"
         format={value => {}}
         parse={value => value}
         as="input"
@@ -280,7 +379,7 @@ const hello = () => {
         number | '',
         React.FunctionComponent<FieldInputProps<FormValues, number | ''>>
       >
-        name="count"
+        name="numVal"
         format={value => {}}
         parse={value => 0 || ''}
         as={NumberField}
