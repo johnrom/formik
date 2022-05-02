@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { isFunction } from './utils';
 import invariant from 'tiny-warning';
-import { PathMatchingValue } from './helpers/path-helpers';
+import {
+  PathMatchingValue,
+  PathOf,
+  ValueMatchingPath,
+} from './helpers/path-helpers';
 import { useFieldProps } from './FieldProps';
 import { FieldMetaProps, useFieldMeta } from './FieldMeta';
 import { FieldHelperProps, useFieldHelpers } from './FieldHelpers';
@@ -15,37 +19,43 @@ import {
   SingleValue,
 } from './types';
 
-export type FieldCompatibleComponent = React.ElementType<
-  FieldAsProps<any, any, any, any>
->;
+export interface FieldConfigNameProp<Values, Name extends PathOf<Values>> {
+  name: Name;
+}
 
-export type FieldAsComponent<Values, Value, FormattedValue, OnChangeValue> =
-  React.ElementType<FieldAsProps<Values, Value, FormattedValue, OnChangeValue>>;
+export interface FieldConfigAsProp<FieldAs extends FieldCompatibleComponent> {
+  as?: FieldAs;
+}
 
-/**
- * These props configure how the field works.
- */
-export type FieldConfigProps<Values, Value, FormattedValue, OnChangeValue> = {
-  /**
-   * Field name
-   */
-  name: PathMatchingValue<Value, Values>;
-
+export interface FieldConfigValueProps<
+  FormValue,
+  FormattedValue,
+  OnChangeValue
+> {
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidator<SingleValue<Value>>;
+  validate?: FieldValidator<SingleValue<FormValue>>;
 
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: ParseFn<SingleValue<Value>, OnChangeValue>;
+  parse?: ParseFn<SingleValue<FormValue>, OnChangeValue>;
 
   /**
    * Function to transform value passed to input
    */
-  format?: FormatFn<SingleValue<Value>, FormattedValue>;
+  format?: FormatFn<SingleValue<FormValue>, FormattedValue>;
 
+  /** checkbox value to match against current value */
+  value?: FormattedValue;
+}
+
+/**
+ * These props configure how the field works.
+ */
+export interface FieldConfigProps<FormValue, FormattedValue, OnChangeValue>
+  extends FieldConfigValueProps<FormValue, FormattedValue, OnChangeValue> {
   /**
    * Wait until blur event before formatting input value?
    * @default false
@@ -54,18 +64,70 @@ export type FieldConfigProps<Values, Value, FormattedValue, OnChangeValue> = {
 
   /** checkbox value to match against current value */
   value?: FormattedValue;
-};
+}
 
-export interface FieldAsProps<Values, Value, FormattedValue, OnChangeValue> {
+export type FieldConfigPropsByName<
+  Values,
+  Name extends PathOf<Values>,
+  AsField extends FieldCompatibleComponent
+> = FieldConfigNameProp<Values, Name> &
+  FieldConfigAsProp<AsField> &
+  (Required<React.ComponentProps<AsField>> extends FieldAsValueProps<
+    infer FormattedValue,
+    infer OnChangeValue
+  >
+    ? FieldConfigProps<
+        ValueMatchingPath<Values, Name>,
+        FormattedValue,
+        OnChangeValue
+      >
+    : {});
+
+/**
+ * Todo: Need to define a way to define AsFields which must match a given value.
+ * This way `setFieldValue` within a predefined field could work.
+ */
+export interface FieldAsPropsByValue<Values, Value> {
+  /**
+   * Field name
+   */
+  name: PathMatchingValue<Value, Values>;
+}
+
+export interface FieldAsValueProps<FormattedValue, OnChangeValue> {
   /** Value of the field */
   value: FormattedValue;
-  /** Name of the field */
-  name: PathMatchingValue<Value, Values>;
   /** Change event handler */
   onChange: FieldOnChangeProp<OnChangeValue>;
+}
+
+export interface FieldAsProps<Values, Value, FormattedValue, OnChangeValue>
+  extends FieldAsValueProps<FormattedValue, OnChangeValue> {
+  /** Name of the field */
+  name: PathMatchingValue<Value, Values>;
   /** Blur event handler */
   onBlur: FieldOnBlurProp;
 }
+
+export type FieldCompatibleComponent = React.ElementType<
+  FieldAsProps<any, any, any, any>
+>;
+
+export type FieldAsComponent<Values, Value, FormattedValue, OnChangeValue> =
+  React.ElementType<FieldAsProps<Values, Value, FormattedValue, OnChangeValue>>;
+
+/** Field input value, name, and event handlers */
+export type FieldAsComponentProps<
+  Values,
+  FieldAs extends FieldCompatibleComponent
+> = React.ComponentProps<FieldAs> extends FieldAsProps<
+  Values,
+  infer Value,
+  infer FormattedValue,
+  infer OnChangeValue
+>
+  ? FieldAsProps<Values, Value, FormattedValue, OnChangeValue>
+  : never;
 
 export type UseFieldProps<
   Values,
@@ -84,20 +146,6 @@ export type UseFieldProps<
       > & {
         as?: FieldAs;
       }
-  : never;
-
-/** Field input value, name, and event handlers */
-export type FieldAsComponentProps<
-  Values,
-  Value,
-  FieldAs extends FieldCompatibleComponent
-> = FieldAs extends FieldAsComponent<
-  Values,
-  Value,
-  infer FormattedValue,
-  infer OnChangeValue
->
-  ? FieldAsProps<Values, Value, FormattedValue, OnChangeValue>
   : never;
 
 export function useField<
