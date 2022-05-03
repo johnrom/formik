@@ -39,35 +39,18 @@ fieldAsComponentCompatibleProps.onBlur = 0;
 /**
  * FieldCompatibleComponent tests
  */
-let fieldAsCompatibleComponent: FieldAsCompatibleComponent;
-fieldAsCompatibleComponent = 'input';
-fieldAsCompatibleComponent = 'a';
-fieldAsCompatibleComponent = NumberValuedAsComponent;
-fieldAsCompatibleComponent = (
+let _fieldAsCompatibleComponent: FieldAsCompatibleComponent;
+_fieldAsCompatibleComponent = 'input';
+_fieldAsCompatibleComponent = 'a';
+_fieldAsCompatibleComponent = NumberValuedAsComponent;
+_fieldAsCompatibleComponent = (
   _props: FieldAsComponentRequiredProps<string, string>
 ) => null;
-fieldAsCompatibleComponent = (_props: {
+_fieldAsCompatibleComponent = (_props: {
   value: boolean;
   onChange: (_event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => null;
-fieldAsCompatibleComponent = () => null;
-// @ts-expect-error onChange must be a callback if it exists
-fieldAsCompatibleComponent = (props: { value: boolean; onChange: boolean }) =>
-  null;
-// @ts-expect-error onChange must return void
-fieldAsCompatibleComponent = (props: { value: boolean; onChange: () => 0 }) =>
-  null;
-// @ts-expect-error onBlur must be a callback if it exists
-fieldAsCompatibleComponent = (props: { value: boolean; onBlur: boolean }) =>
-  null;
-// @ts-expect-error onBlur should match a FocusEvent
-fieldAsCompatibleComponent = (props: {
-  value: boolean;
-  onBlur: (value: string) => {};
-}) => null;
-// @ts-expect-error onBlur must return void
-fieldAsCompatibleComponent = (props: { value: boolean; onBlur: () => 0 }) =>
-  null;
+_fieldAsCompatibleComponent = () => null;
 
 const fieldAsComponentValueProps: FieldAsComponentValueProps<
   string,
@@ -101,13 +84,13 @@ const _fieldAsComponentValuePropsByComponent: FieldAsComponentValuePropsByCompon
     value: '',
     placeholder: 'hello',
   };
-// @ts-expect-error onChange should accept an Input change event
+// @ts-expect-error onChange should match input change event
 _fieldAsComponentValuePropsByComponent.onChange = (
   _event: React.ChangeEvent<HTMLAnchorElement>
 ) => {};
 // @ts-expect-error onChange should be a callback
 _fieldAsComponentValuePropsByComponent.onChange = '';
-// @ts-expect-error onBlur should accept an Input focus event
+// @ts-expect-error onBlur should match input focus event
 _fieldAsComponentValuePropsByComponent.onBlur = (
   _event: React.ChangeEvent<HTMLAnchorElement>
 ) => {};
@@ -118,19 +101,34 @@ _fieldAsComponentValuePropsByComponent.value = {};
 // @ts-expect-error <input palceholder={} /> does not accept an object
 _fieldAsComponentValuePropsByComponent.placeholder = {};
 
-let _fieldAsComponentValuepropsByComponent_custom: FieldAsComponentValuePropsByComponent<
+const _fieldAsComponentValuepropsByComponent_custom: FieldAsComponentValuePropsByComponent<
   typeof NumberValuedAsComponent
->;
+> = {
+  onChange: (_event: React.ChangeEvent<HTMLInputElement>) => {},
+  onBlur: () => {},
+  value: 0,
+  otherProp: 'hello',
+};
+// @ts-expect-error onChange should match input change event
+_fieldAsComponentValuepropsByComponent_custom.onChange = '';
+// @ts-expect-error onChange should match input change event
+_fieldAsComponentValuepropsByComponent_custom.onChange = (
+  _event: React.ChangeEvent<HTMLAnchorElement>
+) => {};
+// @ts-expect-error onChange should match input change event
+_fieldAsComponentValuepropsByComponent_custom.onBlur = '';
+// @ts-expect-error onChange should match input change event
+_fieldAsComponentValuepropsByComponent_custom.onBlur = (event: boolean) => {};
+// @ts-expect-error otherProp is required
+_fieldAsComponentValuepropsByComponent_custom.otherProp = undefined;
 
 /**
  * FieldAsComponent tests
  */
-let _fieldAsComponent:
-  | AnyFieldAsComponentMatchingValues<
-      string,
-      React.ChangeEvent<HTMLInputElement>
-    >
-  | undefined;
+let _fieldAsComponent: AnyFieldAsComponentMatchingValues<
+  string,
+  React.ChangeEvent<HTMLInputElement>
+>;
 _fieldAsComponent = (
   _props: FieldAsComponentRequiredProps<
     string,

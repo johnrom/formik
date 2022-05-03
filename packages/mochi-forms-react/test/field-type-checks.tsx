@@ -1,4 +1,4 @@
-import { FieldAsComponentProps } from '../src/types/field-as-component-types';
+import { FieldAsComponentRequiredProps } from '../src/types/field-as-component-types';
 import {
   FieldAsComponentCompatibleProps,
   FieldAsCompatibleComponent,

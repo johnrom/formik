@@ -7,15 +7,6 @@ import {
   ValueMatchingPath,
 } from '../src';
 
-let fieldConfigAsProp: FieldConfigAsProp<'input'> = {};
-fieldConfigAsProp = {
-  as: 'input',
-};
-fieldConfigAsProp = {
-  // @ts-expect-error as should match input
-  as: 'a',
-};
-
 let _stringFieldConfigAsProp: FieldConfigPropsByName<
   FormValues,
   'strVal',

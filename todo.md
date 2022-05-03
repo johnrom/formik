@@ -10,6 +10,9 @@
 - Simplify the API to just use `as`, and to be very flexible.
 - Correctly use `ref` instead of `innerRef`.
 - Fix or remove lodash
+- Decide what to do with formatOnBlur since it actually breaks type safety. Probably use an inner `Mask` component.
+- Maybe add event handlers to Form and Field like `onChange` which react to changes in Formik state
+- Document changes to defaultParseFn that will now only work for Input / Select components
 - ChangeHandlerValue cannot be inferred even though its type will be correctly validated
   ```tsx
   <Field name="strVal" parse={/* event is `unknown` */ event => ''} />

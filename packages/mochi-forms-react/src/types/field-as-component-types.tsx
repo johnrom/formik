@@ -25,8 +25,13 @@ export type FieldAsComponentCompatibleProps = FieldAsComponentRequiredProps<
   any
 >;
 
-export type FieldAsCompatibleComponent =
-  React.ElementType<FieldAsComponentCompatibleProps>;
+/**
+ * I thought I could force certain props to be present here.
+ * However, it doesn't seem to be an issue because we will enforce the correct props later.
+ *
+ * Keeping the type around in case I discover a way to force this.
+ */
+export type FieldAsCompatibleComponent = React.ElementType<any>;
 
 export interface FieldAsComponentValueProps<
   FormattedValue,
@@ -63,7 +68,7 @@ export type FieldAsComponentExtraProps<
 export type FieldAsComponentProps<
   FormattedValue,
   ChangeHandlerValue,
-  ExtraProps = {}
+  ExtraProps
 > = FieldAsComponentRequiredProps<FormattedValue, ChangeHandlerValue> &
   ExtraProps;
 

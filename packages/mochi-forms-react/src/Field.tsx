@@ -7,19 +7,21 @@ import { useFieldMeta } from './FieldMeta';
 import { useFieldHelpers } from './FieldHelpers';
 import { useFormApi } from './FormApi';
 import { FormikValues } from './types';
-import { FieldConfigPropsByName } from './types/field-config-types';
-import { FieldAsCompatibleComponent } from './types/field-as-component-types';
+import {
+  FieldConfigPropsByName,
+  FieldConfigPropsByValue,
+} from './types/field-config-types';
+import {
+  FieldAsCompatibleComponent,
+  FieldAsComponentProps,
+} from './types/field-as-component-types';
 
 // need to make sure this emits validate, etc
 export type UseFieldProps<
   Values extends FormikValues,
-  Name extends PathOf<Values>,
+  Value,
   AsComponent extends FieldAsCompatibleComponent
-> = FieldConfigPropsByName<Values, Name, AsComponent> &
-  Omit<
-    React.ComponentProps<AsComponent>,
-    keyof FieldConfigPropsByName<Values, Name, AsComponent>
-  >;
+> = FieldConfigPropsByValue<Values, Value, AsComponent>;
 
 export type FieldComponent<Values> = {
   <
@@ -38,12 +40,9 @@ export type FieldComponent<Values> = {
 
 export function useField<
   Values,
-  Name extends PathOf<Values>,
-  FieldAs extends FieldAsCompatibleComponentMatchingValue<
-    Values,
-    ValueMatchingPath<Values, Name>
-  >
->(props: UseFieldProps<Values, Name, FieldAs>) {
+  Value,
+  FieldAs extends FieldAsCompatibleComponent
+>(props: UseFieldProps<Values, Value, FieldAs>) {
   const formApi = useFormApi<Values>();
   const { registerField, unregisterField } = formApi;
   const { name: fieldName, validate: validateFn } = props;
@@ -87,7 +86,7 @@ type FieldChildRenderFn<
   Value,
   FieldAs extends FieldAsCompatibleComponent
 > = (
-  props: FieldComponentByValueProps<Values, Value, FieldAs>
+  props: FieldAsComponentProps<Values, Value, FieldAs>
 ) => React.ReactElement | null;
 
 export type FieldProps<

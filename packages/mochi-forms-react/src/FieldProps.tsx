@@ -4,17 +4,22 @@ import { FieldMetaProps } from './FieldMeta';
 import { useFormApi } from './FormApi';
 import { selectFieldOnChange } from './helpers/field-helpers';
 import { PathMatchingValue } from './helpers/path-helpers';
-import { FieldInputProps, SingleValue } from './types';
+import { FieldInputProps, FormikValues, SingleValue } from './types';
+import { FieldAsCompatibleComponent } from './types/field-as-component-types';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Value, Values>(
+export const useFieldProps = <
+  Values extends FormikValues,
+  Value,
+  AsField extends FieldAsCompatibleComponent
+>(
   nameOrOptions:
     | PathMatchingValue<Value, Values>
-    | UseFieldProps<Value, Values>,
+    | UseFieldProps<Values, Value, AsField>,
   fieldMeta: FieldMetaProps<Value>
 ): FieldInputProps<Value, Values> => {
   const { handleChange, handleBlur, setFieldValue, getState } =
@@ -34,7 +39,7 @@ export const useFieldProps = <Value, Values>(
     onBlur: handleBlur,
   };
 
-  if (isObject(nameOrOptions)) {
+  if (typeof nameOrOptions !== 'string') {
     const {
       type = 'text',
       value: valueProp, // value is special for checkboxes

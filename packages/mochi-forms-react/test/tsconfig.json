@@ -2,7 +2,8 @@
   "extends": "../../../tsconfig.test.json",
   "include": [".", "../src/types"],
   "compilerOptions": {
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "references": [{ "path": "../" }]
 }

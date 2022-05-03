@@ -9,7 +9,7 @@ export interface FormValues {
 export const NumberValuedAsComponent = (
   _props: FieldAsComponentProps<
     number,
-    React.ChangeEvent<HTMLInputElement>,
+    number,
     {
       otherProp: string;
     }
