@@ -1,6 +1,6 @@
 {
   "extends": "../../../tsconfig.test.json",
-  "include": ["."],
+  "include": [".", "../src/types"],
   "compilerOptions": {
     "noUnusedLocals": false
   },
