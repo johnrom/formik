@@ -10,10 +10,13 @@ import {
   FormEventConfig,
   FormHelpers,
   FormStateHelpers,
-  FormFieldHelpers,
   FormHandlers,
   FormComputedState,
   FieldRegistration,
+  TypedHelpers,
+  HandleSubmitFn,
+  HandleResetFn,
+  HandleBlurFn,
 } from '../types';
 import { FieldPassThroughConfig } from './LegacyField';
 
@@ -38,9 +41,36 @@ export type FormikComputedState = FormComputedState;
 
 export type FormikHelpers<Values> = FormHelpers<Values>;
 export type FormikStateHelpers<Values> = FormStateHelpers<Values>;
-export type FormikFieldHelpers<Values> = FormFieldHelpers<Values>;
+export type FormikFieldHelpers<Values> = TypedHelpers<Values>;
 export type FormikHandlers = FormHandlers;
 export type FormikRegistration<Values> = FieldRegistration<Values>;
+
+/**
+ * Event callback returned by `formik.handleChange`.
+ */
+export type HandleChangeEventFn = (
+  event: React.ChangeEvent<any> | string
+) => void;
+
+/**
+ * Type of `formik.handleChange`.
+ * May be an event callback, or accept a field name and return an event callback.
+ */
+export interface HandleChangeFn {
+  (event: React.ChangeEvent<unknown>): void;
+  // Must remain the same as HandleChangeEventFn
+  (name: string): HandleChangeEventFn;
+}
+
+/**
+ * Formik form event handlers
+ */
+export interface LegacyFormHandlers {
+  handleSubmit: HandleSubmitFn;
+  handleReset: HandleResetFn;
+  handleBlur: HandleBlurFn;
+  handleChange: HandleChangeFn;
+}
 
 /**
  * State, handlers, and helpers made available to form component or render prop

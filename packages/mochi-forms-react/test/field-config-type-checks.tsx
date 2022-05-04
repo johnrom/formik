@@ -1,6 +1,4 @@
 import React from 'react';
-import { LegacyFieldAsComponent } from '../src';
-import { FieldAsComponent } from '../src/types/field-as-component-types';
 import {
   ChangeEventHandlerResolvedValue,
   FieldConfigAsProp,

@@ -25,16 +25,8 @@ export interface FieldConfigNameProp<
   name: Name;
 }
 
-export interface AnyFieldConfigNameProp<Values extends FormikValues> {
-  name: PathOf<Values>;
-}
-
 export interface FieldConfigAsProp<FieldAs extends FieldAsCompatibleComponent> {
   as?: FieldAs;
-}
-
-export interface AnyFieldConfigAsProp {
-  as: FieldAsCompatibleComponent;
 }
 
 export interface FieldConfigValidateProp<FormValue> {

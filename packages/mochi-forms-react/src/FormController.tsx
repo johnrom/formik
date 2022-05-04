@@ -9,13 +9,10 @@ import {
   FormHelpers,
   HandleBlurFn,
   HandleBlurEventFn,
-  HandleChangeEventFn,
-  HandleChangeFn,
   FormSharedConfig,
   RegisterFieldFn,
   UnregisterFieldFn,
   ValidateFieldFn,
-  InputElements,
   FieldRegistry,
   FormikMessage,
   FormReducerState,
@@ -37,10 +34,8 @@ import invariant from 'tiny-warning';
 import { IsFormValidFn } from './helpers/form-helpers';
 import { useFormikSubscriptionsContainer } from './hooks/useFormikSubscriptionsContainer';
 import { useEventCallback } from './hooks/useEventCallback';
-import { useTypedField } from './Field.helpers';
-import { useTypedFieldArray } from './FieldArray.helpers';
-import { selectFieldOnChange } from './helpers/field-helpers';
 import { warnAboutMissingIdentifier } from './helpers/dev-helpers';
+import { useTypedHelpers } from './TypedHelpers';
 
 // State reducer
 function formReducer<Values>(
@@ -649,69 +644,6 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     }
   );
 
-  const executeChange = React.useCallback(
-    (
-      eventOrTextValue:
-        | string
-        | React.ChangeEvent<React.ElementRef<InputElements>>,
-      maybePath?: string
-    ) => {
-      // By default, assume that the first argument is a string. This allows us to use
-      // handleChange with React Native and React Native Web's onChangeText prop which
-      // provides just the value of the input.
-      let field = maybePath;
-
-      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
-      // so we handle like we would a normal HTML change event.
-      if (!isString(eventOrTextValue)) {
-        // If we can, persist the event
-        // @see https://reactjs.org/docs/events.html#event-pooling
-        //
-        // but first, check if someone might have faked this value
-        if (typeof eventOrTextValue.persist !== 'undefined') {
-          eventOrTextValue.persist();
-        }
-
-        const target = eventOrTextValue.target
-          ? eventOrTextValue.target
-          : eventOrTextValue.currentTarget;
-
-        const { name, id, outerHTML } = target;
-
-        field = maybePath ? maybePath : name ? name : id;
-
-        if (!field && __DEV__) {
-          warnAboutMissingIdentifier({
-            htmlContent: outerHTML,
-            documentationPath: 'warnings#handle-change-identifier-missing',
-            handlerName: 'handleChange',
-          });
-        }
-
-        selectFieldOnChange({ setFieldValue, getState })(eventOrTextValue);
-      } else if (field) {
-        selectFieldOnChange(
-          { setFieldValue, getState },
-          field
-        )(eventOrTextValue);
-      }
-    },
-    [setFieldValue]
-  );
-
-  const handleChange = useEventCallback(
-    (
-      eventOrPath: string | React.ChangeEvent<any>
-    ): HandleChangeEventFn | void => {
-      if (isString(eventOrPath)) {
-        return (event: string | React.ChangeEvent<any>) =>
-          executeChange(event, eventOrPath);
-      } else {
-        return executeChange(eventOrPath);
-      }
-    }
-  ) as HandleChangeFn;
-
   const setFieldTouched = useEventCallback(
     (field: string, touched: boolean = true, shouldValidate?: boolean) => {
       dispatch({
@@ -931,8 +863,7 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     resetForm();
   });
 
-  const TypedField = useTypedField<Values>();
-  const TypedFieldArray = useTypedFieldArray<Values>();
+  const typedHelpers = useTypedHelpers<Values>();
 
   return {
     // config
@@ -944,7 +875,6 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     validate: props.validate,
     // handlers
     handleBlur,
-    handleChange,
     handleReset,
     handleSubmit,
     // helpers
@@ -967,8 +897,7 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     getState,
     subscribe,
     useState,
-    TypedField,
-    TypedFieldArray,
+    ...typedHelpers,
   };
 }
 

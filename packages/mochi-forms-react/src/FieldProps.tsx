@@ -1,11 +1,23 @@
 import { isObject } from 'lodash';
-import { UseFieldPropsByName } from './Field';
+import { UseFieldPropsByValue } from './Field';
 import { FieldMetaProps } from './FieldMeta';
 import { useFormApi } from './FormApi';
 import { selectFieldOnChange } from './helpers/field-helpers';
-import { PathMatchingValue } from './helpers/path-helpers';
-import { FormikValues, SingleValue } from './types';
-import { FieldAsCompatibleComponent } from './types/field-as-component-types';
+import { FormikValues } from './types';
+import {
+  FieldAsCompatibleComponent,
+  FieldAsComponentPropsByComponent,
+} from './types/field-as-component-types';
+
+const useFieldPropsIsInput = <
+  Values extends FormikValues,
+  Value,
+  AsField extends FieldAsCompatibleComponent
+>(
+  props: UseFieldPropsByValue<Values, Value, AsField>
+): props is UseFieldPropsByValue<Values, Value, 'input'> => {
+  return props.as;
+};
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.
@@ -17,29 +29,31 @@ export const useFieldProps = <
   Value,
   AsField extends FieldAsCompatibleComponent
 >(
-  nameOrOptions:
-    | PathMatchingValue<Value, Values>
-    | UseFieldPropsByName<Values, Value, AsField>,
+  {
+    name,
+    validate,
+    parse,
+    format,
+    formatOnBlur,
+    as,
+    value,
+    ...restProps
+  }: UseFieldPropsByValue<Values, Value, AsField>,
   fieldMeta: FieldMetaProps<Value>
-): FieldInputProps<Value, Values> => {
-  const { handleChange, handleBlur, setFieldValue, getState } =
-    useFormApi<Values>();
-  const name = isObject(nameOrOptions) ? nameOrOptions.name : nameOrOptions;
+): FieldAsComponentPropsByComponent<AsField> => {
+  const { handleBlur, setFieldValue, getState } = useFormApi<Values>();
   const valueState = fieldMeta.value;
   const touchedState = fieldMeta.touched;
 
-  const field: FieldInputProps<Value, Values> = {
+  const field: FieldAsComponentPropsByComponent<AsField> = {
+    ...restProps,
     name,
-    // if this isn't a singular value, it should be parsed!
-    // however, this is a fallback
-    value: valueState as SingleValue<Value>,
-    // handleChange isn't a match for onChange for custom value types
-    // however, this is a fallback
-    onChange: handleChange as any,
+    value: format?.(fieldMeta.value) ?? fieldMeta.value,
     onBlur: handleBlur,
+    onChange: selectFieldOnChange({ setFieldValue, getState }, restProps),
   };
 
-  if (typeof nameOrOptions !== 'string') {
+  if (typeof props !== 'string') {
     const {
       type = 'text',
       value: valueProp, // value is special for checkboxes
@@ -47,7 +61,7 @@ export const useFieldProps = <
       multiple,
       format,
       formatOnBlur,
-    } = nameOrOptions;
+    } = props;
 
     if (type === 'checkbox') {
       if (valueProp === undefined) {
@@ -78,10 +92,7 @@ export const useFieldProps = <
       }
     }
 
-    field.onChange = selectFieldOnChange(
-      { setFieldValue, getState },
-      nameOrOptions
-    );
+    field.onChange = selectFieldOnChange({ setFieldValue, getState }, props);
   }
 
   return field;

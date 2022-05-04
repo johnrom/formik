@@ -13,7 +13,7 @@ import {
 } from './types/field-config-types';
 import {
   FieldAsCompatibleComponent,
-  FieldAsComponentValuePropsByComponent,
+  FieldAsComponentPropsByComponent,
 } from './types/field-as-component-types';
 
 export type UseFieldPropsByValue<
@@ -35,7 +35,7 @@ export type UseFieldReturnValue<
   Value,
   FieldAs extends FieldAsCompatibleComponent
 > = [
-  FieldAsComponentValuePropsByComponent<FieldAs>,
+  FieldAsComponentPropsByComponent<FieldAs>,
   FieldMetaProps<Value>,
   FieldHelperProps<Value>
 ];
@@ -86,7 +86,7 @@ export function useField<
 }
 
 type FieldChildRenderFn<FieldAs extends FieldAsCompatibleComponent> = (
-  props: FieldAsComponentValuePropsByComponent<FieldAs>
+  props: FieldAsComponentPropsByComponent<FieldAs>
 ) => React.ReactElement | null;
 
 export interface FieldOnlyProps<FieldAs extends FieldAsCompatibleComponent> {
@@ -132,7 +132,7 @@ export const Field = <
   );
 };
 
-export interface TypedUseFieldFn<Values> {
+export interface UseFieldFn<Values> {
   <
     Name extends PathOf<Values>,
     FieldAs extends FieldAsCompatibleComponent = 'input'
@@ -155,8 +155,3 @@ export interface FieldComponent<Values> {
   defaultProps?: Partial<any>;
   id?: string;
 }
-
-export const useTypedFieldBag = <Values,>() => ({
-  useField: useField as TypedUseFieldFn<Values>,
-  Field: Field as FieldComponent<Values>,
-});

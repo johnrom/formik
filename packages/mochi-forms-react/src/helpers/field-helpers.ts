@@ -1,4 +1,4 @@
-import { UseFieldProps } from '../Field';
+import { UseFieldPropsByName } from '../Field';
 import { FormApi, InputElements } from '../types';
 import { getIn, getValueFromEvent, isInputEvent, isObject } from '../utils';
 
@@ -18,7 +18,7 @@ export const selectFieldOnChange = <Value, Values>(
     setFieldValue,
     getState,
   }: Pick<FormApi<Values>, 'setFieldValue' | 'getState'>,
-  nameOrConfig?: string | UseFieldProps<Value, Values>
+  nameOrConfig?: string | UseFieldPropsByName<Value, Values>
 ) => {
   return (
     eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | unknown
@@ -28,7 +28,7 @@ export const selectFieldOnChange = <Value, Values>(
       name,
       parse: configParse,
       multiple,
-    }: UseFieldProps<Value, Values> = isObject(nameOrConfig)
+    }: UseFieldPropsByName<Value, Values> = isObject(nameOrConfig)
       ? nameOrConfig
       : isInputEvent(eventOrValue) && eventOrValue.target
       ? (eventOrValue.target as any)

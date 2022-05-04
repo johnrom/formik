@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTypedFieldBag } from '../src';
+import { createTypedHelpers } from '../src';
 import { FieldAsComponent } from '../src/types/field-as-component-types';
 import {
   FormValues,
@@ -7,7 +7,7 @@ import {
   NumberValuedClassComponent,
 } from './test-helpers';
 
-const typedBag = useTypedFieldBag<FormValues>();
+const typedBag = createTypedHelpers<FormValues>();
 
 typedBag.useField<'strVal'>({
   name: 'strVal',

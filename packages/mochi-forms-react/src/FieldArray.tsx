@@ -27,13 +27,18 @@ import { useFormConfig } from './FormConfig';
 import { FieldMetaProps, useFieldMeta } from './FieldMeta';
 
 type UpdateFieldArrayFn<Value> = (array: Value[] | boolean[]) => void;
+type UseFieldArrayReturnValue<Value, Values> = [
+  FieldMetaProps<Value[]>,
+  ArrayHelpers<Value>,
+  FormApi<Values>
+];
 
 export const useFieldArray = <
   Value extends any = any,
   Values extends FormikValues = any
 >(
   props: UseFieldArrayConfig<Value, Values>
-): [FieldMetaProps<Value[]>, ArrayHelpers<Value>, FormApi<Values>] => {
+): UseFieldArrayReturnValue<Value, Values> => {
   const formik = useFormApi<Values>();
   const { setFormikState } = formik;
   const fieldMeta = useFieldMeta<Value[]>(props.name);
@@ -342,3 +347,20 @@ export const FieldArray = <
       : null
     : null;
 };
+
+export interface UseFieldFieldArrayFn<Values extends FormikValues> {
+  <Value>(props: UseFieldArrayConfig<Value, Values>): UseFieldArrayReturnValue<
+    Value,
+    Values
+  >;
+}
+
+export interface FieldArrayComponent<Values> {
+  <Value>(props: FieldArrayConfig<Value, Values>): JSX.Element;
+
+  displayName?: string;
+  propTypes?: React.WeakValidationMap<any>;
+  contextTypes?: React.ValidationMap<any>;
+  defaultProps?: Partial<any>;
+  id?: string;
+}

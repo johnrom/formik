@@ -7,7 +7,7 @@ import {
   FieldAsComponentFormattedValue,
   FieldAsComponentRequiredProps,
   FieldAsComponentValueProps,
-  FieldAsComponentValuePropsByComponent,
+  FieldAsComponentPropsByComponent,
 } from '../src/types/field-as-component-types';
 import { NumberValuedAsFunctionComponentByProps } from './test-helpers';
 
@@ -77,7 +77,7 @@ _fieldAsComponentChangeHandlerValue = (
   _event: React.ChangeEvent<HTMLAnchorElement>
 ) => {};
 
-const _fieldAsComponentValuePropsByComponent: FieldAsComponentValuePropsByComponent<'input'> =
+const _fieldAsComponentValuePropsByComponent: FieldAsComponentPropsByComponent<'input'> =
   {
     onChange: (_event: React.ChangeEvent<HTMLInputElement>) => {},
     onBlur: () => {},
@@ -101,7 +101,7 @@ _fieldAsComponentValuePropsByComponent.value = {};
 // @ts-expect-error <input palceholder={} /> does not accept an object
 _fieldAsComponentValuePropsByComponent.placeholder = {};
 
-const _fieldAsComponentValuepropsByComponent_custom: FieldAsComponentValuePropsByComponent<
+const _fieldAsComponentValuepropsByComponent_custom: FieldAsComponentPropsByComponent<
   typeof NumberValuedAsFunctionComponentByProps
 > = {
   onChange: (_event: number) => {},

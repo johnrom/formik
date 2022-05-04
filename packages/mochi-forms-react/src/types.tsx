@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { TypedField } from './Field.types';
+import { FieldComponent } from './Field';
 import { TypedFieldArray } from './FieldArray.types';
 import {
   PathMatchingValue,
@@ -271,30 +271,12 @@ export type HandleBlurFn = {
 };
 
 /**
- * Event callback returned by `formik.handleChange`.
- */
-export type HandleChangeEventFn = (
-  event: React.ChangeEvent<any> | string
-) => void;
-
-/**
- * Type of `formik.handleChange`.
- * May be an event callback, or accept a field name and return an event callback.
- */
-export type HandleChangeFn = {
-  (event: React.ChangeEvent<any>): void;
-  // Must remain the same as HandleChangeEventFn
-  (name: string): HandleChangeEventFn;
-};
-
-/**
  * Formik form event handlers
  */
 export interface FormHandlers {
   handleSubmit: HandleSubmitFn;
   handleReset: HandleResetFn;
   handleBlur: HandleBlurFn;
-  handleChange: HandleChangeFn;
 }
 
 export type ValidateFn<Values extends FormikValues> = (
@@ -307,16 +289,16 @@ export interface FieldRegistration<Values> {
   registerField: RegisterFieldFn<Values>;
 }
 
-export interface FormFieldHelpers<Values> {
-  TypedField: TypedField<Values>;
-  TypedFieldArray: TypedFieldArray<Values>;
+export interface TypedHelpers<Values> {
+  Field: FieldComponent<Values>;
+  FieldArray: TypedFieldArray<Values>;
 }
 
 export type FormApi<Values extends FormikValues> = FormHelpers<Values> &
   FormStateHelpers<Values> &
   FormHandlers &
   FieldRegistration<Values> &
-  FormFieldHelpers<Values>;
+  TypedHelpers<Values>;
 
 export type FormValidator<Values extends FormikValues> = (
   values: Values

@@ -77,13 +77,13 @@ export type FieldAsComponent<FormattedValue, ChangeHandlerValue, ExtraProps> =
     FieldAsComponentProps<FormattedValue, ChangeHandlerValue, ExtraProps>
   >;
 
-export type FieldAsComponentValuePropsByComponent<
+export type FieldAsComponentPropsByComponent<
   FieldAs extends FieldAsCompatibleComponent
-> = FieldAsComponentRequiredProps<
+> = FieldAsComponentProps<
   FieldAsComponentFormattedValue<FieldAs>,
-  FieldAsComponentChangeHandlerValue<FieldAs>
-> &
-  FieldAsComponentExtraProps<FieldAs>;
+  FieldAsComponentChangeHandlerValue<FieldAs>,
+  FieldAsComponentExtraProps<FieldAs>
+>;
 
 /**
  * This is assignable to any type which requires a FieldAsComponent matching values.

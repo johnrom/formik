@@ -20,7 +20,7 @@ export const NumberValuedAsFunctionComponentByProps = (
   >
 ) => null;
 
-export const NumberValuedAsFunctionComponent: FieldAsComponent<
+export const NumberValuedAsFC: FieldAsComponent<
   number,
   number,
   { otherProp: string }

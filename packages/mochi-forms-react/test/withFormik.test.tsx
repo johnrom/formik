@@ -12,8 +12,6 @@ interface Values {
 const Form: React.FC<FormikProps<Values>> = ({
   values,
   handleSubmit,
-  handleChange,
-  handleBlur,
   touched,
   setStatus,
   status,
@@ -22,13 +20,7 @@ const Form: React.FC<FormikProps<Values>> = ({
 }) => {
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={values.name}
-        name="name"
-      />
+      <input type="text" value={values.name} name="name" />
       {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
       <button
@@ -113,8 +105,8 @@ describe('withFormik()', () => {
       getState: expect.any(Function),
       useState: expect.any(Function),
       subscribe: expect.any(Function),
-      TypedField: expect.any(Function),
-      TypedFieldArray: expect.any(Function),
+      Field: expect.any(Function),
+      FieldArray: expect.any(Function),
     });
   });
 
