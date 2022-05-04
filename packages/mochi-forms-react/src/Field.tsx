@@ -31,21 +31,6 @@ export type UseFieldPropsByName<
   FieldAs extends FieldAsCompatibleComponent
 > = FieldConfigPropsByName<Values, Name, FieldAs>;
 
-export type FieldComponent<Values> = {
-  <
-    Name extends PathOf<Values>,
-    AsField extends FieldAsCompatibleComponent = 'input'
-  >(
-    props: FieldConfigPropsByName<Values, Name, AsField>
-  ): JSX.Element;
-
-  displayName?: string;
-  propTypes?: React.WeakValidationMap<any>;
-  contextTypes?: React.ValidationMap<any>;
-  defaultProps?: Partial<any>;
-  id?: string;
-};
-
 export type UseFieldReturnValue<
   Value,
   FieldAs extends FieldAsCompatibleComponent
@@ -156,6 +141,22 @@ export interface TypedUseFieldFn<Values> {
   ): UseFieldReturnValue<ValueMatchingPath<Values, Name>, FieldAs>;
 }
 
+export interface FieldComponent<Values> {
+  <
+    Name extends PathOf<Values>,
+    AsField extends FieldAsCompatibleComponent = 'input'
+  >(
+    props: FieldConfigPropsByName<Values, Name, AsField>
+  ): JSX.Element;
+
+  displayName?: string;
+  propTypes?: React.WeakValidationMap<any>;
+  contextTypes?: React.ValidationMap<any>;
+  defaultProps?: Partial<any>;
+  id?: string;
+}
+
 export const useTypedFieldBag = <Values,>() => ({
   useField: useField as TypedUseFieldFn<Values>,
+  Field: Field as FieldComponent<Values>,
 });
