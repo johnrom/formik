@@ -9,7 +9,7 @@ import {
   FieldAsComponentValueProps,
   FieldAsComponentValuePropsByComponent,
 } from '../src/types/field-as-component-types';
-import { NumberValuedAsComponent } from './test-helpers';
+import { NumberValuedAsFunctionComponentByProps } from './test-helpers';
 
 const fieldAsComponentProps: FieldAsComponentRequiredProps<
   string,
@@ -42,7 +42,7 @@ fieldAsComponentCompatibleProps.onBlur = 0;
 let _fieldAsCompatibleComponent: FieldAsCompatibleComponent;
 _fieldAsCompatibleComponent = 'input';
 _fieldAsCompatibleComponent = 'a';
-_fieldAsCompatibleComponent = NumberValuedAsComponent;
+_fieldAsCompatibleComponent = NumberValuedAsFunctionComponentByProps;
 _fieldAsCompatibleComponent = (
   _props: FieldAsComponentRequiredProps<string, string>
 ) => null;
@@ -102,16 +102,20 @@ _fieldAsComponentValuePropsByComponent.value = {};
 _fieldAsComponentValuePropsByComponent.placeholder = {};
 
 const _fieldAsComponentValuepropsByComponent_custom: FieldAsComponentValuePropsByComponent<
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
-  onChange: (_event: React.ChangeEvent<HTMLInputElement>) => {},
+  onChange: (_event: number) => {},
   onBlur: () => {},
   value: 0,
   otherProp: 'hello',
 };
-// @ts-expect-error onChange should match input change event
+// @ts-expect-error onChange should match number
+_fieldAsComponentValuepropsByComponent_custom.onChange = (
+  _event: React.ChangeEvent<HTMLInputElement>
+) => {};
+// @ts-expect-error onChange should match number
 _fieldAsComponentValuepropsByComponent_custom.onChange = '';
-// @ts-expect-error onChange should match input change event
+// @ts-expect-error onChange should match number
 _fieldAsComponentValuepropsByComponent_custom.onChange = (
   _event: React.ChangeEvent<HTMLAnchorElement>
 ) => {};

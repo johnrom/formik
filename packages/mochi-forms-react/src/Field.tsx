@@ -3,8 +3,8 @@ import { isFunction } from './utils';
 import invariant from 'tiny-warning';
 import { PathOf, ValueMatchingPath } from './helpers/path-helpers';
 import { useFieldProps } from './FieldProps';
-import { useFieldMeta } from './FieldMeta';
-import { useFieldHelpers } from './FieldHelpers';
+import { FieldMetaProps, useFieldMeta } from './FieldMeta';
+import { FieldHelperProps, useFieldHelpers } from './FieldHelpers';
 import { useFormApi } from './FormApi';
 import { FormikValues } from './types';
 import {
@@ -13,15 +13,23 @@ import {
 } from './types/field-config-types';
 import {
   FieldAsCompatibleComponent,
-  FieldAsComponentProps,
+  FieldAsComponentValuePropsByComponent,
 } from './types/field-as-component-types';
 
-// need to make sure this emits validate, etc
-export type UseFieldProps<
+export type UseFieldPropsByValue<
   Values extends FormikValues,
   Value,
-  AsComponent extends FieldAsCompatibleComponent
-> = FieldConfigPropsByValue<Values, Value, AsComponent>;
+  FieldAs extends FieldAsCompatibleComponent
+> = Omit<
+  FieldPropsByValue<Values, Value, FieldAs>,
+  keyof FieldOnlyProps<FieldAs>
+>;
+
+export type UseFieldPropsByName<
+  Values extends FormikValues,
+  Name extends PathOf<Values>,
+  FieldAs extends FieldAsCompatibleComponent
+> = FieldConfigPropsByName<Values, Name, FieldAs>;
 
 export type FieldComponent<Values> = {
   <
@@ -38,11 +46,22 @@ export type FieldComponent<Values> = {
   id?: string;
 };
 
+export type UseFieldReturnValue<
+  Value,
+  FieldAs extends FieldAsCompatibleComponent
+> = [
+  FieldAsComponentValuePropsByComponent<FieldAs>,
+  FieldMetaProps<Value>,
+  FieldHelperProps<Value>
+];
+
 export function useField<
   Values,
   Value,
   FieldAs extends FieldAsCompatibleComponent
->(props: UseFieldProps<Values, Value, FieldAs>) {
+>(
+  props: UseFieldPropsByValue<Values, Value, FieldAs>
+): UseFieldReturnValue<Value, FieldAs> {
   const formApi = useFormApi<Values>();
   const { registerField, unregisterField } = formApi;
   const { name: fieldName, validate: validateFn } = props;
@@ -81,36 +100,30 @@ export function useField<
   ];
 }
 
-type FieldChildRenderFn<
-  Values,
-  Value,
-  FieldAs extends FieldAsCompatibleComponent
-> = (
-  props: FieldAsComponentProps<Values, Value, FieldAs>
+type FieldChildRenderFn<FieldAs extends FieldAsCompatibleComponent> = (
+  props: FieldAsComponentValuePropsByComponent<FieldAs>
 ) => React.ReactElement | null;
 
-export type FieldProps<
+export interface FieldOnlyProps<FieldAs extends FieldAsCompatibleComponent> {
+  /** Inner ref */
+  innerRef?: React.MutableRefObject<FieldAs>;
+  children: FieldChildRenderFn<FieldAs> | React.ReactNode | undefined;
+}
+export type FieldPropsByValue<
   Values,
   Value,
   FieldAs extends FieldAsCompatibleComponent
-> = UseFieldProps<Values, Value, FieldAs> & {
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-  children:
-    | FieldChildRenderFn<Values, Value, FieldAs>
-    | React.ReactNode
-    | undefined;
-};
+> = FieldConfigPropsByValue<Values, Value, FieldAs> & FieldOnlyProps<FieldAs>;
 
 export const Field = <
   Values,
   Value = any,
   FieldAs extends FieldAsCompatibleComponent = 'input'
 >({
-  children,
   innerRef,
+  children,
   ...useFieldProps
-}: FieldProps<Values, Value, FieldAs>) => {
+}: FieldPropsByValue<Values, Value, FieldAs>) => {
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
@@ -121,8 +134,7 @@ export const Field = <
     }, []);
   }
 
-  // todo: not sure why this isn't matching
-  const [field] = useField<Values, Value, FieldAs>(useFieldProps);
+  const [field] = useField(useFieldProps);
 
   if (isFunction(children)) {
     return children(field);
@@ -135,4 +147,15 @@ export const Field = <
   );
 };
 
-Field.displayName = 'Field';
+export interface TypedUseFieldFn<Values> {
+  <
+    Name extends PathOf<Values>,
+    FieldAs extends FieldAsCompatibleComponent = 'input'
+  >(
+    props: UseFieldPropsByName<Values, Name, FieldAs>
+  ): UseFieldReturnValue<ValueMatchingPath<Values, Name>, FieldAs>;
+}
+
+export const useTypedFieldBag = <Values,>() => ({
+  useField: useField as TypedUseFieldFn<Values>,
+});

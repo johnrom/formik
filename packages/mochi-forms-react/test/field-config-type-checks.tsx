@@ -1,4 +1,6 @@
 import React from 'react';
+import { LegacyFieldAsComponent } from '../src';
+import { FieldAsComponent } from '../src/types/field-as-component-types';
 import {
   ChangeEventHandlerResolvedValue,
   FieldConfigAsProp,
@@ -15,7 +17,10 @@ import {
   FieldConfigValueProps,
   FieldConfigWithoutExtraProps,
 } from '../src/types/field-config-types';
-import { FormValues, NumberValuedAsComponent } from './test-helpers';
+import {
+  FormValues,
+  NumberValuedAsFunctionComponentByProps,
+} from './test-helpers';
 
 /**
  * FieldConfigNameProp tests
@@ -45,10 +50,10 @@ _fieldConfigAsProp.as = 'a';
  * FieldConfigAsProp tests
  */
 const _fieldConfigAsProp_custom: FieldConfigAsProp<
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {};
 _fieldConfigAsProp_custom.as = undefined;
-_fieldConfigAsProp_custom.as = NumberValuedAsComponent;
+_fieldConfigAsProp_custom.as = NumberValuedAsFunctionComponentByProps;
 // @ts-expect-error a doesn't match input
 _fieldConfigAsProp_custom.as = 'a';
 
@@ -226,7 +231,7 @@ _fieldConfigWithoutExtraProps_requiresParse = {
 };
 
 let _fieldConfigExtraProps: FieldConfigExtraProps<
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
   otherProp: '',
 };
@@ -295,7 +300,7 @@ _fieldConfigPropsMatchingValue_inputNeedsParsing = {};
 
 let _fieldConfigPropsMatchingValue_requiresFormatParse: FieldConfigPropsMatchingValue<
   string,
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
   format: value => parseInt(value, 10),
   parse: value => value.toString(),
@@ -353,7 +358,7 @@ _fieldConfigPropsByValue_inputNeedsParsing = {
 let _fieldConfigPropsByValue_requiresFormatParse2: FieldConfigPropsByValue<
   FormValues,
   string,
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
   name: 'strVal',
   format: value => parseInt(value, 10),
@@ -400,7 +405,7 @@ _fieldConfigPropsMatchingName_inputNeedsParsing = {};
 let _fieldConfigPropsMatchingName_requiresFormatParse3: FieldConfigPropsMatchingName<
   FormValues,
   'strVal',
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
   format: value => parseInt(value, 10),
   parse: value => value.toString(),
@@ -458,7 +463,7 @@ _fieldConfigPropsByName_inputNeedsParsing = {
 let _fieldConfigPropsByName_requiresFormatParse4: FieldConfigPropsByName<
   FormValues,
   'strVal',
-  typeof NumberValuedAsComponent
+  typeof NumberValuedAsFunctionComponentByProps
 > = {
   name: 'strVal',
   format: value => parseInt(value, 10),

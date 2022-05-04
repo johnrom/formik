@@ -72,6 +72,11 @@ export type FieldAsComponentProps<
 > = FieldAsComponentRequiredProps<FormattedValue, ChangeHandlerValue> &
   ExtraProps;
 
+export type FieldAsComponent<FormattedValue, ChangeHandlerValue, ExtraProps> =
+  React.ComponentType<
+    FieldAsComponentProps<FormattedValue, ChangeHandlerValue, ExtraProps>
+  >;
+
 export type FieldAsComponentValuePropsByComponent<
   FieldAs extends FieldAsCompatibleComponent
 > = FieldAsComponentRequiredProps<

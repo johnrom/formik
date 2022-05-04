@@ -1,10 +1,10 @@
 import { isObject } from 'lodash';
-import { UseFieldProps } from './Field';
+import { UseFieldPropsByName } from './Field';
 import { FieldMetaProps } from './FieldMeta';
 import { useFormApi } from './FormApi';
 import { selectFieldOnChange } from './helpers/field-helpers';
 import { PathMatchingValue } from './helpers/path-helpers';
-import { FieldInputProps, FormikValues, SingleValue } from './types';
+import { FormikValues, SingleValue } from './types';
 import { FieldAsCompatibleComponent } from './types/field-as-component-types';
 
 /**
@@ -19,7 +19,7 @@ export const useFieldProps = <
 >(
   nameOrOptions:
     | PathMatchingValue<Value, Values>
-    | UseFieldProps<Values, Value, AsField>,
+    | UseFieldPropsByName<Values, Value, AsField>,
   fieldMeta: FieldMetaProps<Value>
 ): FieldInputProps<Value, Values> => {
   const { handleChange, handleBlur, setFieldValue, getState } =

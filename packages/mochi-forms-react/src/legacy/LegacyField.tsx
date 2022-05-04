@@ -374,7 +374,7 @@ export abstract class FieldAsClass<Value> extends React.Component<
  */
 export type FieldAttributes<Value, Values> = FieldConfig<Value, Values>;
 
-export type FieldAsComponent<Value, Values> = any extends Values
+export type LegacyFieldAsComponent<Value, Values> = any extends Values
   ? React.ComponentType<any>
   : React.ComponentType<FieldAsProps<Value, Values>>;
 

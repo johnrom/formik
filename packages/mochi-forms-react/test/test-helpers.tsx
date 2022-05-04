@@ -1,4 +1,8 @@
-import { FieldAsComponentProps } from '../src/types/field-as-component-types';
+import React from 'react';
+import {
+  FieldAsComponent,
+  FieldAsComponentProps,
+} from '../src/types/field-as-component-types';
 
 export interface FormValues {
   strVal: string;
@@ -6,7 +10,7 @@ export interface FormValues {
   strOrNumVal: string | number;
 }
 
-export const NumberValuedAsComponent = (
+export const NumberValuedAsFunctionComponentByProps = (
   _props: FieldAsComponentProps<
     number,
     number,
@@ -15,3 +19,25 @@ export const NumberValuedAsComponent = (
     }
   >
 ) => null;
+
+export const NumberValuedAsFunctionComponent: FieldAsComponent<
+  number,
+  number,
+  { otherProp: string }
+> = (
+  _props: FieldAsComponentProps<
+    number,
+    number,
+    {
+      otherProp: string;
+    }
+  >
+) => null;
+
+export class NumberValuedClassComponent extends React.Component<
+  FieldAsComponentProps<number, number, { otherProp: string }>
+> {
+  render() {
+    return null;
+  }
+}

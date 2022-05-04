@@ -48,24 +48,6 @@ const _numberMismatchedFieldConfigAsProp: FieldConfigPropsByName<
 // @ts-expect-error number field does not match input
 _numberMismatchedFieldConfigAsProp.as = NumberValuedField;
 
-let fieldConfigProps: FieldConfigProps<string, string, string> | undefined;
-fieldConfigProps = {
-  validate: (_value: string) => {},
-  parse: (value: string) => value,
-  format: (value: string) => value,
-  value: '',
-};
-fieldConfigProps = {
-  // @ts-expect-error name should match FieldValidator<string>
-  validate: (value: number) => {},
-  // @ts-expect-error name should match ParseFn<string, string>
-  parse: (value: number) => value,
-  // @ts-expect-error name should match FormatFn<string, string>
-  format: (value: number) => value,
-  // @ts-expect-error value should be a string
-  value: 0,
-};
-
 /**
  * FieldAsProps tests
  */
