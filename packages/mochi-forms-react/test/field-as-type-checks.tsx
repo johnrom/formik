@@ -5,19 +5,35 @@ import {
   FieldAsComponentChangeHandlerValue,
   FieldAsComponentCompatibleProps,
   FieldAsComponentFormattedValue,
-  FieldAsComponentRequiredProps,
+  FieldAsComponentOnlyProps,
   FieldAsComponentValueProps,
   FieldAsComponentPropsByComponent,
 } from '../src/types/field-as-component-types';
-import { NumberValuedAsFunctionComponentByProps } from './test-helpers';
+import {
+  anyPropsFc,
+  badNameFC,
+  badOnChangeFC,
+  noPropsFc,
+  NumberValuedAsFC,
+  NumberValuedAsFunctionComponentByProps,
+  optionalNameFC,
+  optionalOnChangeFC,
+  optionalOtherPropFC,
+  optionalValidateFC,
+  optionalWithOtherPropFC,
+  requiredNameFC,
+  requiredOnChangeFC,
+  requiredOtherPropFC,
+  requiredValidateFC,
+  requiredWithOtherPropFC,
+} from './test-helpers';
 
-const fieldAsComponentProps: FieldAsComponentRequiredProps<
+const fieldAsComponentProps: FieldAsComponentValueProps<
   string,
   React.ChangeEvent<HTMLInputElement>
 > = {
   value: '',
   onChange: (_value: React.ChangeEvent<HTMLInputElement>) => {},
-  onBlur: () => {},
 };
 // @ts-expect-error number is not assignable to string
 fieldAsComponentProps.value = 0;
@@ -27,28 +43,90 @@ fieldAsComponentProps.onChange = (value: number) => {};
 fieldAsComponentProps.onBlur = undefined;
 
 const fieldAsComponentCompatibleProps: FieldAsComponentCompatibleProps = {
+  name: '',
   value: '' || 0 || {} || [],
   onChange: (_value: string | number | object | string[]) => {},
   onBlur: () => {},
 };
+// @ts-expect-error name must be a string
+fieldAsComponentCompatibleProps.name = 0;
 // @ts-expect-error onChange must be a callback
 fieldAsComponentCompatibleProps.onChange = 0;
 // @ts-expect-error onBlur must be a callback
 fieldAsComponentCompatibleProps.onBlur = 0;
 
+const _fieldAsCompatibleComponent_noProps: FieldAsCompatibleComponent<
+  typeof noPropsFc
+> = noPropsFc;
+const _fieldAsCompatibleComponent_anyProps: FieldAsCompatibleComponent<
+  typeof anyPropsFc
+> = anyPropsFc;
+const _fieldAsCompatibleComponent_optionalName: FieldAsCompatibleComponent<
+  typeof optionalNameFC
+> = optionalNameFC;
+const _fieldAsCompatibleComponent_requiredName: FieldAsCompatibleComponent<
+  typeof requiredNameFC
+> = requiredNameFC;
+const _fieldAsCompatibleComponent_optionalOnChange: FieldAsCompatibleComponent<
+  typeof optionalOnChangeFC
+> = optionalOnChangeFC;
+const _fieldAsCompatibleComponent_requiredOnChange: FieldAsCompatibleComponent<
+  typeof requiredOnChangeFC
+> = requiredOnChangeFC;
+const _fieldAsCompatibleComponent_optionalWithOtherProp: FieldAsCompatibleComponent<
+  typeof optionalWithOtherPropFC
+> = optionalWithOtherPropFC;
+const _fieldAsCompatibleComponent_requiredWithOtherProp: FieldAsCompatibleComponent<
+  typeof requiredWithOtherPropFC
+> = requiredWithOtherPropFC;
+const _fieldAsCompatibleComponent_optionalValidate: FieldAsCompatibleComponent<
+  typeof optionalValidateFC
+> = optionalValidateFC;
+const _fieldAsCompatibleComponent_input: FieldAsCompatibleComponent<'input'> =
+  'input';
+const _fieldAsCompatibleComponent_NumberValuedAsFC: FieldAsCompatibleComponent<
+  typeof NumberValuedAsFC
+> = NumberValuedAsFC;
+// @ts-expect-error name is not compatible
+const _fieldAsCompatibleComponent_badNameFC: FieldAsCompatibleComponent<
+  typeof badNameFC
+> = badNameFC;
+// @ts-expect-error onChange is not compatible
+const _fieldAsCompatibleComponent_badOnChangeFC: FieldAsCompatibleComponent<
+  typeof badOnChangeFC
+> = badOnChangeFC;
+// @ts-expect-error validate is excluded
+const _fieldAsCompatibleComponent_badValidateFC: FieldAsCompatibleComponent<
+  typeof requiredValidateFC
+> = requiredValidateFC;
+
+// Components with no overlapping properties are currently not compatible
+const _fieldAsCompatibleComponent_optionalOtherProp: FieldAsCompatibleComponent<
+  typeof optionalOtherPropFC
+> = optionalOtherPropFC;
+const _fieldAsCompatibleComponent_requiredOtherProp: FieldAsCompatibleComponent<
+  typeof requiredOtherPropFC
+> = requiredOtherPropFC;
+
 /**
  * FieldCompatibleComponent tests
  */
-let _fieldAsCompatibleComponent: FieldAsCompatibleComponent;
+let _fieldAsCompatibleComponent: FieldAsCompatibleComponent<any>;
 _fieldAsCompatibleComponent = 'input';
 _fieldAsCompatibleComponent = 'a';
 _fieldAsCompatibleComponent = NumberValuedAsFunctionComponentByProps;
-_fieldAsCompatibleComponent = (
-  _props: FieldAsComponentRequiredProps<string, string>
-) => null;
+_fieldAsCompatibleComponent = (_props: FieldAsComponentOnlyProps<string>) =>
+  null;
 _fieldAsCompatibleComponent = (_props: {
   value: boolean;
   onChange: (_event: React.ChangeEvent<HTMLInputElement>) => void;
+}) => null;
+_fieldAsCompatibleComponent = (_props: {
+  validate: boolean;
+  parse: boolean;
+  format: boolean;
+  formatOnBlur: boolean;
+  as: boolean;
 }) => null;
 _fieldAsCompatibleComponent = () => null;
 
@@ -134,10 +212,7 @@ let _fieldAsComponent: AnyFieldAsComponentMatchingValues<
   React.ChangeEvent<HTMLInputElement>
 >;
 _fieldAsComponent = (
-  _props: FieldAsComponentRequiredProps<
-    string,
-    React.ChangeEvent<HTMLInputElement>
-  >
+  _props: FieldAsComponentOnlyProps<React.ChangeEvent<HTMLInputElement>>
 ) => null;
 // component doesn't need to match signature, just be compatible
 _fieldAsComponent = () => null;

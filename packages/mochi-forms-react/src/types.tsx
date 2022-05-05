@@ -271,12 +271,30 @@ export type HandleBlurFn = {
 };
 
 /**
+ * Event callback returned by `formik.handleChange`.
+ */
+export type HandleChangeEventFn = (
+  event: React.ChangeEvent<any> | string
+) => void;
+
+/**
+ * Type of `formik.handleChange`.
+ * May be an event callback, or accept a field name and return an event callback.
+ */
+export type HandleChangeFn = {
+  (event: React.ChangeEvent<any>): void;
+  // Must remain the same as HandleChangeEventFn
+  (name: string): HandleChangeEventFn;
+};
+
+/**
  * Formik form event handlers
  */
 export interface FormHandlers {
   handleSubmit: HandleSubmitFn;
   handleReset: HandleResetFn;
   handleBlur: HandleBlurFn;
+  handleChange: HandleChangeFn;
 }
 
 export type ValidateFn<Values extends FormikValues> = (

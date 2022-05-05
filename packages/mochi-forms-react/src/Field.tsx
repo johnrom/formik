@@ -12,28 +12,27 @@ import {
   FieldConfigPropsByValue,
 } from './types/field-config-types';
 import {
-  FieldAsCompatibleComponent,
+  AnyFieldAsCompatibleComponent,
+  FieldAsComponentPassThroughPropsByComponent,
   FieldAsComponentPropsByComponent,
 } from './types/field-as-component-types';
 
-export type UseFieldPropsByValue<
+export type UseFieldConfigByValue<
   Values extends FormikValues,
   Value,
-  FieldAs extends FieldAsCompatibleComponent
-> = Omit<
-  FieldPropsByValue<Values, Value, FieldAs>,
-  keyof FieldOnlyProps<FieldAs>
->;
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = FieldAsComponentPassThroughPropsByComponent<FieldAs> &
+  FieldConfigPropsByValue<Values, Value, FieldAs>;
 
 export type UseFieldPropsByName<
   Values extends FormikValues,
   Name extends PathOf<Values>,
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigPropsByName<Values, Name, FieldAs>;
 
 export type UseFieldReturnValue<
   Value,
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = [
   FieldAsComponentPropsByComponent<FieldAs>,
   FieldMetaProps<Value>,
@@ -43,28 +42,28 @@ export type UseFieldReturnValue<
 export function useField<
   Values,
   Value,
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 >(
-  props: UseFieldPropsByValue<Values, Value, FieldAs>
+  props: UseFieldConfigByValue<Values, Value, FieldAs>
 ): UseFieldReturnValue<Value, FieldAs> {
   const formApi = useFormApi<Values>();
   const { registerField, unregisterField } = formApi;
-  const { name: fieldName, validate: validateFn } = props;
+  const { name, validate } = props;
 
-  const fieldMeta = useFieldMeta<Value>(fieldName);
+  const fieldMeta = useFieldMeta<Value>(name);
 
   React.useEffect(() => {
-    if (fieldName) {
-      registerField(fieldName, {
-        validate: validateFn,
+    if (name) {
+      registerField(name, {
+        validate,
       });
     }
     return () => {
-      if (fieldName) {
-        unregisterField(fieldName);
+      if (name) {
+        unregisterField(name);
       }
     };
-  }, [registerField, unregisterField, fieldName, validateFn]);
+  }, [registerField, unregisterField, name, validate]);
 
   if (__DEV__) {
     invariant(
@@ -74,22 +73,18 @@ export function useField<
   }
 
   invariant(
-    fieldName,
+    name,
     'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
   );
 
-  return [
-    useFieldProps(props, fieldMeta),
-    fieldMeta,
-    useFieldHelpers(fieldName),
-  ];
+  return [useFieldProps(props, fieldMeta), fieldMeta, useFieldHelpers(name)];
 }
 
-type FieldChildRenderFn<FieldAs extends FieldAsCompatibleComponent> = (
+type FieldChildRenderFn<FieldAs extends AnyFieldAsCompatibleComponent> = (
   props: FieldAsComponentPropsByComponent<FieldAs>
 ) => React.ReactElement | null;
 
-export interface FieldOnlyProps<FieldAs extends FieldAsCompatibleComponent> {
+export interface FieldOnlyProps<FieldAs extends AnyFieldAsCompatibleComponent> {
   /** Inner ref */
   innerRef?: React.MutableRefObject<FieldAs>;
   children: FieldChildRenderFn<FieldAs> | React.ReactNode | undefined;
@@ -97,45 +92,53 @@ export interface FieldOnlyProps<FieldAs extends FieldAsCompatibleComponent> {
 export type FieldPropsByValue<
   Values,
   Value,
-  FieldAs extends FieldAsCompatibleComponent
-> = FieldConfigPropsByValue<Values, Value, FieldAs> & FieldOnlyProps<FieldAs>;
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = UseFieldConfigByValue<Values, Value, FieldAs> & FieldOnlyProps<FieldAs>;
 
 export const Field = <
   Values,
-  Value = any,
-  FieldAs extends FieldAsCompatibleComponent = 'input'
+  Value,
+  FieldAs extends AnyFieldAsCompatibleComponent = 'input'
 >({
-  innerRef,
-  children,
-  ...useFieldProps
+  props,
 }: FieldPropsByValue<Values, Value, FieldAs>) => {
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
-        !(useFieldProps.as && children && isFunction(children)),
+        !(props.as && props.children && isFunction(props.children)),
         'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
       );
     }, []);
   }
 
-  const [field] = useField(useFieldProps);
+  const { innerRef, children, ...useFieldConfig } = props;
 
-  if (isFunction(children)) {
-    return children(field);
+  /**
+   * todo: It works if I pass props itself for some reason,
+   * even though innerRef and children are not assignable to props.
+   *
+   * However, it doesn't work if I omit those props.
+   */
+  const [field] = useField<Values, Value, FieldAs>(
+    useFieldConfig as UseFieldConfigByValue<Values, Value, FieldAs>
+  );
+
+  if (isFunction(props.children)) {
+    return props.children(field);
   }
 
   return React.createElement(
-    useFieldProps.as ?? 'input',
-    { ref: innerRef, ...useFieldProps, ...field },
-    children
+    props.as ?? 'input',
+    { ref: props.innerRef, ...useFieldProps, ...field },
+    props.children
   );
 };
 
 export interface UseFieldFn<Values> {
   <
     Name extends PathOf<Values>,
-    FieldAs extends FieldAsCompatibleComponent = 'input'
+    FieldAs extends AnyFieldAsCompatibleComponent = 'input'
   >(
     props: UseFieldPropsByName<Values, Name, FieldAs>
   ): UseFieldReturnValue<ValueMatchingPath<Values, Name>, FieldAs>;
@@ -144,7 +147,7 @@ export interface UseFieldFn<Values> {
 export interface FieldComponent<Values> {
   <
     Name extends PathOf<Values>,
-    AsField extends FieldAsCompatibleComponent = 'input'
+    AsField extends AnyFieldAsCompatibleComponent = 'input'
   >(
     props: FieldConfigPropsByName<Values, Name, AsField>
   ): JSX.Element;

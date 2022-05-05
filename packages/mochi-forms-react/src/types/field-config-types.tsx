@@ -4,7 +4,6 @@ import {
   PathOf,
   ValueMatchingPath,
 } from '../helpers/path-helpers';
-import { NoInfer } from '../helpers/type-helpers';
 import {
   FieldValidator,
   FormatFn,
@@ -13,8 +12,8 @@ import {
   SingleValue,
 } from '../types';
 import {
-  FieldAsCompatibleComponent,
-  FieldAsComponentRequiredProps,
+  AnyFieldAsCompatibleComponent,
+  FieldAsComponentPassThroughPropsByComponent,
   FieldAsComponentValueProps,
 } from './field-as-component-types';
 
@@ -25,7 +24,9 @@ export interface FieldConfigNameProp<
   name: Name;
 }
 
-export interface FieldConfigAsProp<FieldAs extends FieldAsCompatibleComponent> {
+export interface FieldConfigAsProp<
+  FieldAs extends AnyFieldAsCompatibleComponent
+> {
   as?: FieldAs;
 }
 
@@ -80,71 +81,38 @@ export type FieldConfigValueProps<
   > &
   FieldConfigFormatProp<FormValue, FormattedValue>;
 
-export interface FieldPassThroughFormattedValueProp<FormattedValue> {
-  /** checkbox value to match against current value */
-  value?: FormattedValue;
-}
-
 export type FieldConfigWithoutExtraProps<
   FormValue,
-  FormattedValue,
-  ChangeHandlerValue
-> = FieldConfigValueProps<FormValue, FormattedValue, ChangeHandlerValue> &
-  FieldPassThroughFormattedValueProp<FormattedValue> & {
-    formatOnBlur?: boolean;
-  };
-
-export type FieldConfigExtraProps<FieldAs extends FieldAsCompatibleComponent> =
-  Omit<
-    React.ComponentProps<FieldAs>,
-    | keyof FieldAsComponentRequiredProps<any, any>
-    | keyof FieldConfigWithoutExtraProps<any, any, any>
-  >;
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = [Required<React.ComponentProps<FieldAs>>] extends [
+  FieldAsComponentValueProps<infer FormattedValue, infer ChangeHandlerValue>
+]
+  ? FieldConfigAsProp<FieldAs> &
+      FieldConfigValueProps<FormValue, FormattedValue, ChangeHandlerValue> & {
+        formatOnBlur?: boolean;
+      }
+  : never;
 
 /**
  * These props configure how the field works.
  */
 export type FieldConfigProps<
   FormValue,
-  FormattedValue,
-  ChangeHandlerValue,
-  ExtraProps
-> = FieldConfigWithoutExtraProps<
-  FormValue,
-  FormattedValue,
-  ChangeHandlerValue
-> &
-  ExtraProps;
-
-export type FieldConfigPropsMatchingValue<
-  Value,
-  FieldAs extends FieldAsCompatibleComponent
-> = Required<React.ComponentProps<FieldAs>> extends FieldAsComponentValueProps<
-  infer FormattedValue,
-  infer ChangeHandlerValue
->
-  ? FieldConfigWithoutExtraProps<Value, FormattedValue, ChangeHandlerValue> &
-      FieldConfigExtraProps<FieldAs>
-  : never;
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = FieldConfigWithoutExtraProps<FormValue, FieldAs> &
+  FieldAsComponentPassThroughPropsByComponent<FieldAs>;
 
 export type FieldConfigPropsByValue<
   Values extends FormikValues,
   Value,
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigNameProp<Values, PathMatchingValue<Value, Values>> &
-  FieldConfigAsProp<FieldAs> &
-  FieldConfigPropsMatchingValue<Value, FieldAs>;
-
-export type FieldConfigPropsMatchingName<
-  Values extends FormikValues,
-  Name extends PathOf<Values>,
-  FieldAs extends FieldAsCompatibleComponent
-> = FieldConfigPropsMatchingValue<ValueMatchingPath<Values, Name>, FieldAs>;
+  FieldConfigProps<Value, FieldAs>;
 
 export type FieldConfigPropsByName<
   Values extends FormikValues,
   Name extends PathOf<Values>,
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigNameProp<Values, Name> &
   FieldConfigAsProp<FieldAs> &
-  FieldConfigPropsMatchingName<Values, NoInfer<Name>, NoInfer<FieldAs>>;
+  FieldConfigProps<ValueMatchingPath<Values, Name>, FieldAs>;

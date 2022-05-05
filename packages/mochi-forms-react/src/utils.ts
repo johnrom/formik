@@ -40,11 +40,11 @@ export const isPromise = (value: any): value is Promise<any> =>
 /** @private is the given object/value a type of synthetic event? */
 export const isInputEvent = (
   value: any
-): value is React.SyntheticEvent<React.ElementRef<InputElements>> =>
+): value is React.ChangeEvent<React.ElementRef<InputElements>> =>
   value &&
   isObject(value) &&
   isObject(
-    (value as React.SyntheticEvent<React.ElementRef<InputElements>>).target
+    (value as React.ChangeEvent<React.ElementRef<InputElements>>).target
   );
 
 /** @private Are we in RN? */

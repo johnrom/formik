@@ -2,21 +2,19 @@ import React from 'react';
 import {
   ChangeEventHandlerResolvedValue,
   FieldConfigAsProp,
-  FieldConfigExtraProps,
   FieldConfigFormatProp,
   FieldConfigNameProp,
   FieldConfigParseProp,
   FieldConfigProps,
   FieldConfigPropsByName,
   FieldConfigPropsByValue,
-  FieldConfigPropsMatchingName,
-  FieldConfigPropsMatchingValue,
   FieldConfigValidateProp,
   FieldConfigValueProps,
   FieldConfigWithoutExtraProps,
 } from '../src/types/field-config-types';
 import {
   FormValues,
+  NumberValuedAsFC,
   NumberValuedAsFunctionComponentByProps,
 } from './test-helpers';
 
@@ -185,137 +183,91 @@ _fieldConfigValueProps_requiringFormat = {
 
 let _fieldConfigWithoutExtraProps: FieldConfigWithoutExtraProps<
   string,
-  string,
-  string
-> = {};
+  'input'
+  > = {};
 _fieldConfigWithoutExtraProps = {
   validate: (value: string) => '',
   format: value => value,
   parse: value => value,
-  value: '',
   formatOnBlur: true,
 };
 _fieldConfigWithoutExtraProps = {
   // @ts-expect-error value should be string
   validate: (value: number) => '',
-  // @ts-expect-error format should return string
-  format: value => 0,
+  // @ts-expect-error format should match formatted value of input
+  format: value => {},
   // @ts-expect-error parse should return string
   parse: value => 0,
-  // @ts-expect-error value should be string
-  value: 0,
   // @ts-expect-error formatOnBlur should be boolean
   formatOnBlur: 0,
 };
+_fieldConfigWithoutExtraProps = {
+  // @ts-expect-error value doesn't exist on FieldConfigWithoutExtraProps
+  value: {},
+}
 
 // @ts-expect-error requires format
 let _fieldConfigWithoutExtraProps_requiresFormat: FieldConfigWithoutExtraProps<
   string | number,
-  string,
-  string
+  typeof NumberValuedAsFC
 > = {};
 _fieldConfigWithoutExtraProps_requiresFormat = {
-  format: value => value.toString(),
+  format: value => typeof value === 'string' ? parseInt(value, 10) : value,
 };
 
 // @ts-expect-error requires parse
 let _fieldConfigWithoutExtraProps_requiresParse: FieldConfigWithoutExtraProps<
-  string,
-  string,
-  string | number
+  number,
+  'input'
 > = {};
 _fieldConfigWithoutExtraProps_requiresParse = {
-  parse: value => value.toString(),
-};
-
-let _fieldConfigExtraProps: FieldConfigExtraProps<
-  typeof NumberValuedAsFunctionComponentByProps
-> = {
-  otherProp: '',
-};
-_fieldConfigExtraProps = {
-  // @ts-expect-error otherProp is required
-  otherProp: undefined,
-};
-// @ts-expect-error otherProp is required
-_fieldConfigExtraProps = {};
-_fieldConfigExtraProps = {
-  // @ts-expect-error otherProp should be string
-  otherProp: 0,
+  parse: value => parseInt(value, 10),
 };
 
 /**
  * FieldConfigProps tests
  */
-let fieldConfigProps:
-  | FieldConfigProps<string, string, string, { otherProp: string }>
-  | undefined;
-fieldConfigProps = {
+let fieldConfigProps_input: FieldConfigProps<string, 'input'> = {
   validate: (_value: string) => {},
   parse: (value: string) => value,
   format: (value: string) => value,
   value: '',
-  otherProp: '',
 };
-const { otherProp: otherProps, ...fieldConfigPropsWithoutOtherProps } =
-  fieldConfigProps;
-// @ts-expect-error otherProp is required
-fieldConfigProps = fieldConfigPropsWithoutOtherProps;
-fieldConfigProps = {
+fieldConfigProps_input = {
+  ...fieldConfigProps_input,
+  // @ts-expect-error otherProp does not exist on input
+  otherProp: 0,
+}
+fieldConfigProps_input = {
   // @ts-expect-error name should match FieldValidator<string>
   validate: (value: number) => {},
   // @ts-expect-error name should match ParseFn<string, string>
   parse: (value: number) => value,
   // @ts-expect-error name should match FormatFn<string, string>
   format: (value: number) => value,
-  // @ts-expect-error value should be a string
+  // @ts-expect-error value should match `input`
+  value: {},
+};
+
+let fieldConfigProps_numberValuedAsFc: FieldConfigProps<string, typeof NumberValuedAsFC> = {
+  validate: (_value: string) => {},
+  parse: (value: number) => value.toString(),
+  format: (value: string) => parseInt(value, 10),
   value: 0,
-  // @ts-expect-error otherProp should be a string
-  otherProp: 0,
-};
-
-/**
- * FieldConfigPropsMatchingValue tests
- */
-let _fieldConfigPropsMatchingValue: FieldConfigPropsMatchingValue<
-  string,
-  'input'
-> = {};
-_fieldConfigPropsMatchingValue = { parse: value => value };
-// @ts-expect-error input.target.value resolves to string
-_fieldConfigPropsMatchingValue = { parse: (value: number) => 0 };
-// @ts-expect-error should parse string
-_fieldConfigPropsMatchingValue = { parse: value => 0 };
-let _fieldConfigPropsMatchingValue_inputNeedsParsing: FieldConfigPropsMatchingValue<
-  number,
-  'input'
-> = {
-  parse: value => parseInt(value, 10),
-};
-
-// @ts-expect-error the resolved value of input is a string. we need to parse that to a number.
-_fieldConfigPropsMatchingValue_inputNeedsParsing = {};
-
-let _fieldConfigPropsMatchingValue_requiresFormatParse: FieldConfigPropsMatchingValue<
-  string,
-  typeof NumberValuedAsFunctionComponentByProps
-> = {
-  format: value => parseInt(value, 10),
-  parse: value => value.toString(),
   otherProp: '',
 };
-const { parse: _parse1, ...propsWithoutParse1 } =
-  _fieldConfigPropsMatchingValue_requiresFormatParse;
-const { format: _format1, ...propsWithoutFormat1 } =
-  _fieldConfigPropsMatchingValue_requiresFormatParse;
-const { otherProp: _otherProp1, ...propsWithoutOtherProp1 } =
-  _fieldConfigPropsMatchingValue_requiresFormatParse;
-// @ts-expect-error needs parse
-_fieldConfigPropsMatchingValue_requiresFormatParse = propsWithoutParse1;
-// @ts-expect-error needs format
-_fieldConfigPropsMatchingValue_requiresFormatParse = propsWithoutFormat1;
-// @ts-expect-error needs otherProp
-_fieldConfigPropsMatchingValue_requiresFormatParse = propsWithoutOtherProp1;
+fieldConfigProps_numberValuedAsFc = {
+  // @ts-expect-error name should match FieldValidator<string>
+  validate: (value: number) => {},
+  // @ts-expect-error name should match ParseFn<string, string>
+  parse: (value: number) => value,
+  // @ts-expect-error name should match FormatFn<string, string>
+  format: (value: number) => value,
+  // @ts-expect-error value should be a number
+  value: '',
+  // @ts-expect-error otherProp is not a string
+  otherProp: 0,
+};
 
 /**
  * FieldConfigPropsByValue tests
@@ -375,52 +327,6 @@ _fieldConfigPropsByValue_requiresFormatParse2 = propsWithoutParse2;
 _fieldConfigPropsByValue_requiresFormatParse2 = propsWithoutFormat2;
 // @ts-expect-error needs otherProp
 _fieldConfigPropsByValue_requiresFormatParse2 = propsWithoutOtherProp2;
-
-/**
- * FieldConfigPropsMatchingName tests
- */
-let _fieldConfigPropsMatchingName: FieldConfigPropsMatchingName<
-  FormValues,
-  'strVal',
-  'input'
-> = {};
-_fieldConfigPropsMatchingName = { parse: value => value };
-// @ts-expect-error input.target.value resolves to string
-_fieldConfigPropsMatchingName = { parse: (value: number) => 0 };
-// @ts-expect-error should parse string
-_fieldConfigPropsMatchingName = { parse: value => 0 };
-let _fieldConfigPropsMatchingName_inputNeedsParsing: FieldConfigPropsMatchingName<
-  FormValues,
-  'numVal',
-  'input'
-> = {
-  parse: value => parseInt(value, 10),
-};
-
-// @ts-expect-error the resolved value of input is a string. we need to parse that to a number.
-_fieldConfigPropsMatchingName_inputNeedsParsing = {};
-
-let _fieldConfigPropsMatchingName_requiresFormatParse3: FieldConfigPropsMatchingName<
-  FormValues,
-  'strVal',
-  typeof NumberValuedAsFunctionComponentByProps
-> = {
-  format: value => parseInt(value, 10),
-  parse: value => value.toString(),
-  otherProp: '',
-};
-const { parse: _parse3, ...propsWithoutParse3 } =
-  _fieldConfigPropsMatchingName_requiresFormatParse3;
-const { format: _format3, ...propsWithoutFormat3 } =
-  _fieldConfigPropsMatchingName_requiresFormatParse3;
-const { otherProp: _otherProp3, ...propsWithoutOtherProp3 } =
-  _fieldConfigPropsMatchingName_requiresFormatParse3;
-// @ts-expect-error needs parse
-_fieldConfigPropsMatchingName_requiresFormatParse3 = propsWithoutParse3;
-// @ts-expect-error needs format
-_fieldConfigPropsMatchingName_requiresFormatParse3 = propsWithoutFormat3;
-// @ts-expect-error needs otherProp
-_fieldConfigPropsMatchingName_requiresFormatParse3 = propsWithoutOtherProp3;
 
 /**
  * FieldConfigPropsByName tests

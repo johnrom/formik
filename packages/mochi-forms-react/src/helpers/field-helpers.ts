@@ -1,77 +1,61 @@
-import { UseFieldPropsByName } from '../Field';
-import { FormApi, InputElements } from '../types';
-import { getIn, getValueFromEvent, isInputEvent, isObject } from '../utils';
+import { FormApi, GetStateFn, InputElements } from '../types';
+import { getIn, getValueFromEvent, isInputEvent } from '../utils';
+import { PathLikeValue, PathOf } from './path-helpers';
 
-export const defaultParseFn = (value: unknown, _name: string) => value;
+export const noopParseFn = (value: unknown) => value;
 
-export const numberParseFn = (value: any, _name: string) => {
+export const numberParseFn = (value: any) => {
   const parsed = parseFloat(value);
 
   return isNaN(parsed) ? '' : parsed;
 };
 
-export const defaultFormatFn = (value: unknown, _name: string) =>
-  value === undefined ? '' : value;
+export const defaultEventParser = <Values>(
+  event: React.ChangeEvent<React.ElementRef<InputElements>>,
+  name: PathOf<Values>,
+  getState: GetStateFn<Values>
+) => {
+  const type = event.target.type;
+  let value = getValueFromEvent(event);
+
+  if (event.target instanceof HTMLInputElement) {
+    if (/number|range/.test(type)) {
+      value = numberParseFn(value);
+    } else if (
+      /checkbox/.test(type) &&
+      event.target instanceof HTMLInputElement
+    ) {
+      value = getValueForCheckbox(
+        getIn(getState().values, name),
+        event.target.checked,
+        value
+      );
+    }
+  } else if (
+    event.target instanceof HTMLSelectElement &&
+    event.target.multiple
+  ) {
+    value = getSelectedValues(event.target.options);
+  }
+
+  return value;
+};
 
 export const selectFieldOnChange = <Value, Values>(
   {
     setFieldValue,
     getState,
   }: Pick<FormApi<Values>, 'setFieldValue' | 'getState'>,
-  nameOrConfig?: string | UseFieldPropsByName<Value, Values>
+  name: PathLikeValue<Value, Values>
 ) => {
   return (
-    eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | unknown
+    eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | Value
   ) => {
-    const {
-      type,
-      name,
-      parse: configParse,
-      multiple,
-    }: UseFieldPropsByName<Value, Values> = isObject(nameOrConfig)
-      ? nameOrConfig
-      : isInputEvent(eventOrValue) && eventOrValue.target
-      ? (eventOrValue.target as any)
-      : { name: nameOrConfig! };
-
-    if (isInputEvent(eventOrValue)) {
-      if (eventOrValue.persist) {
-        eventOrValue.persist();
-      }
-    }
-
-    const value = isInputEvent(eventOrValue)
-      ? getValueFromEvent(eventOrValue)
-      : eventOrValue;
-
-    const defaultParse =
-      type && /number|range/.test(type)
-        ? numberParseFn
-        : // radios and checkboxes don't have a default parser
-        // the default parser won't work for grouped fields
-        type && !/radio|checkbox/.test(type)
-        ? defaultParseFn
-        : undefined;
-
-    const parse = configParse ?? defaultParse;
-    const parsedValue = parse ? parse(value, name) : value;
-
     setFieldValue(
       name,
-      type &&
-        /checkbox/.test(type) &&
-        isInputEvent(eventOrValue) &&
-        eventOrValue.target instanceof HTMLInputElement
-        ? getValueForCheckbox(
-            getIn(getState().values, name!),
-            eventOrValue.target.checked,
-            parsedValue
-          )
-        : multiple &&
-          isInputEvent(eventOrValue) &&
-          eventOrValue.target instanceof HTMLSelectElement // <select multiple>
-        ? getSelectedValues(eventOrValue.target.options)
-        : parsedValue
+      isInputEvent(eventOrValue)
+        ? defaultEventParser(eventOrValue, name, getState)
+        : eventOrValue
     );
   };
 };

@@ -1,29 +1,84 @@
+import React from 'react';
+import {
+  ComponentMaybeAcceptingProps,
+  ComponentNeverRequiringProps,
+} from '../helpers/type-helpers';
 import { FieldOnBlurProp, FieldOnChangeProp } from '../types';
 
 /**
- * A limited API exposed to `<Field as={}>` which maps values back to `FormState`.
- *
- * `FieldAsComponent` is limited to 'dumb' components which do not know anything about `Form` state.
- *
- * They especially do not assume to know the type of the value in `FormState`.
+ * A FieldAsComponent may required a name prop, but it doesn't have to.
  */
-export interface FieldAsComponentRequiredProps<
-  FormattedValue,
-  ChangeHandlerValue
-> extends FieldAsComponentValueProps<FormattedValue, ChangeHandlerValue> {
-  /** Blur event handler */
-  onBlur: FieldOnBlurProp;
+export interface FieldAsComponentNameProp {
+  name?: string;
 }
+
+export interface FieldAsComponentValueProp<FormattedValue> {
+  /** Formatted value that the `FieldAsComponent` receives */
+  value?: FormattedValue;
+}
+
+export interface FieldAsComponentOnChangeProp<ChangeHandlerValue> {
+  /** Change event handler */
+  onChange?: FieldOnChangeProp<ChangeHandlerValue>;
+}
+
+export interface FieldAsComponentOnBlurProp {
+  /** Blur event handler */
+  onBlur?: FieldOnBlurProp;
+}
+
+export interface FieldAsComponentValueProps<FormattedValue, ChangeHandlerValue>
+  extends FieldAsComponentValueProp<FormattedValue>,
+    FieldAsComponentOnChangeProp<ChangeHandlerValue> {}
+
+export interface FieldAsComponentOnlyProps<ChangeHandlerValue>
+  extends FieldAsComponentNameProp,
+    FieldAsComponentOnChangeProp<ChangeHandlerValue>,
+    FieldAsComponentOnBlurProp {}
+
+export type FieldAsComponentPassThroughProps<FormattedValue, ExtraProps> =
+  FieldAsComponentValueProp<FormattedValue> & ExtraProps;
+
+export type FieldAsCompatibleNamePropByComponent<
+  FieldAs extends React.ElementType<any>
+> = React.ComponentProps<FieldAs> extends Partial<FieldAsComponentNameProp>
+  ? FieldAs
+  : FieldAsComponentNameProp extends Partial<React.ComponentProps<FieldAs>>
+  ? FieldAs
+  : never;
+
+/**
+ * A FieldAsComponent may never require these props, because they are FieldConfig-only props and will be removed
+ */
+export type FieldAsCompatibleExcludedProps = {
+  validate: undefined;
+  parse: undefined;
+  format: undefined;
+  formatOnBlur: undefined;
+  as: undefined;
+};
 
 /**
  * A component is compatible with `<Field as={}>` if it accepts the `FieldAsComponentProps` API.
  *
  * We'll infer the values it accepts to build `FieldConfigProps`.
  */
-export type FieldAsComponentCompatibleProps = FieldAsComponentRequiredProps<
-  any,
-  any
->;
+export type FieldAsComponentCompatibleProps = FieldAsComponentNameProp &
+  FieldAsComponentOnBlurProp &
+  FieldAsComponentValueProps<any, any>;
+
+/**
+ * This is a quick and dirty check to make sure it's a component.
+ */
+export type AnyFieldAsCompatibleComponent = React.ElementType<any>;
+
+/**
+ * This is the real check to resolve the correct type of a FieldAsCompatibleComponent.
+ */
+export type FieldAsCompatibleComponent<
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = ComponentMaybeAcceptingProps<FieldAs, FieldAsComponentCompatibleProps> &
+  ComponentNeverRequiringProps<FieldAs, keyof FieldAsCompatibleExcludedProps>;
 
 /**
  * I thought I could force certain props to be present here.
@@ -31,20 +86,12 @@ export type FieldAsComponentCompatibleProps = FieldAsComponentRequiredProps<
  *
  * Keeping the type around in case I discover a way to force this.
  */
-export type FieldAsCompatibleComponent = React.ElementType<any>;
-
-export interface FieldAsComponentValueProps<
-  FormattedValue,
-  ChangeHandlerValue
-> {
-  /** Value of the field */
-  value: FormattedValue;
-  /** Change event handler */
-  onChange: FieldOnChangeProp<ChangeHandlerValue>;
-}
+export type FieldAsCompatibleComponentByComponent<
+  FieldAs extends React.ElementType<any> = React.ElementType<any>
+> = FieldAsCompatibleNamePropByComponent<FieldAs>;
 
 export type FieldAsComponentFormattedValue<
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = Required<React.ComponentProps<FieldAs>> extends FieldAsComponentValueProps<
   infer FormattedValue,
   infer _ChangeHandlerValue
@@ -53,7 +100,7 @@ export type FieldAsComponentFormattedValue<
   : never;
 
 export type FieldAsComponentChangeHandlerValue<
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = Required<React.ComponentProps<FieldAs>> extends FieldAsComponentValueProps<
   infer _FormattedValue,
   infer ChangeHandlerValue
@@ -62,28 +109,36 @@ export type FieldAsComponentChangeHandlerValue<
   : never;
 
 export type FieldAsComponentExtraProps<
-  FieldAs extends FieldAsCompatibleComponent
+  FieldAs extends AnyFieldAsCompatibleComponent
 > = Omit<React.ComponentProps<FieldAs>, keyof FieldAsComponentCompatibleProps>;
 
 export type FieldAsComponentProps<
   FormattedValue,
   ChangeHandlerValue,
   ExtraProps
-> = FieldAsComponentRequiredProps<FormattedValue, ChangeHandlerValue> &
-  ExtraProps;
+> = FieldAsComponentOnlyProps<ChangeHandlerValue> &
+  FieldAsComponentPassThroughProps<FormattedValue, ExtraProps>;
 
 export type FieldAsComponent<FormattedValue, ChangeHandlerValue, ExtraProps> =
   React.ComponentType<
     FieldAsComponentProps<FormattedValue, ChangeHandlerValue, ExtraProps>
   >;
 
-export type FieldAsComponentPropsByComponent<
-  FieldAs extends FieldAsCompatibleComponent
-> = FieldAsComponentProps<
+export type FieldAsComponentOnlyPropsByComponent<
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = FieldAsComponentOnlyProps<FieldAsComponentChangeHandlerValue<FieldAs>>;
+
+export type FieldAsComponentPassThroughPropsByComponent<
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = FieldAsComponentPassThroughProps<
   FieldAsComponentFormattedValue<FieldAs>,
-  FieldAsComponentChangeHandlerValue<FieldAs>,
   FieldAsComponentExtraProps<FieldAs>
 >;
+
+export type FieldAsComponentPropsByComponent<
+  FieldAs extends AnyFieldAsCompatibleComponent
+> = FieldAsComponentPassThroughPropsByComponent<FieldAs> &
+  FieldAsComponentOnlyPropsByComponent<FieldAs>;
 
 /**
  * This is assignable to any type which requires a FieldAsComponent matching values.
@@ -93,5 +148,5 @@ export type AnyFieldAsComponentMatchingValues<
   FormattedValue,
   ChangeHandlerValue
 > = React.ElementType<
-  FieldAsComponentRequiredProps<FormattedValue, ChangeHandlerValue>
+  FieldAsComponentValueProps<FormattedValue, ChangeHandlerValue>
 >;
