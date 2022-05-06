@@ -6,12 +6,15 @@ import {
   PathMatchingValue,
   PathOf,
   PathLikeValue,
+  ValueMatchingPath,
 } from './helpers/path-helpers';
 
-export type ParseFn<Value, OnChangeValue = unknown> = (
+export type ParseFn<Values, FormValue, OnChangeValue = unknown> = (
   value: OnChangeValue,
-  name: string
-) => Value;
+  name: PathMatchingValue<Values, FormValue>,
+  getState: GetStateFn<Values>
+) => FormValue;
+
 export type FormatFn<Value, FormattedValue = any> = (
   value: Value,
   name: string
@@ -136,7 +139,7 @@ export type FormikSubscribeFn = (
 
 export type RegisterFieldFn<Values> = <Value>(
   name: PathMatchingValue<Value, Values>,
-  args: { validate?: FieldValidator<SingleValue<Value>> }
+  args: { validate?: FieldValidator<Value> }
 ) => void;
 
 export type UnregisterFieldFn<Values> = <Path extends PathOf<Values>>(
@@ -270,31 +273,41 @@ export type HandleBlurFn = {
   (event: React.FocusEvent<any>): void;
 };
 
+export type EventByValue<Value> = React.ChangeEvent<{
+  id?: string;
+  name?: string;
+  outerHTML: string;
+  value: Value;
+}>;
+export type EventOrValue<Value> = Value | EventByValue<Value>;
+
 /**
  * Event callback returned by `formik.handleChange`.
  */
-export type HandleChangeEventFn = (
-  event: React.ChangeEvent<any> | string
-) => void;
+export type HandleChangeEventFn<Value> = (event: EventOrValue<Value>) => void;
 
 /**
  * Type of `formik.handleChange`.
  * May be an event callback, or accept a field name and return an event callback.
  */
-export type HandleChangeFn = {
-  (event: React.ChangeEvent<any>): void;
-  // Must remain the same as HandleChangeEventFn
-  (name: string): HandleChangeEventFn;
+export type HandleChangeFn<Values> = {
+  <Name extends PathOf<Values>>(name: Name): HandleChangeEventFn<
+    ValueMatchingPath<Values, Name>
+  >;
+  <Value>(
+    name: PathMatchingValue<Value, Values>,
+    value: EventOrValue<Value>
+  ): void;
 };
 
 /**
  * Formik form event handlers
  */
-export interface FormHandlers {
+export interface FormHandlers<Values> {
   handleSubmit: HandleSubmitFn;
   handleReset: HandleResetFn;
   handleBlur: HandleBlurFn;
-  handleChange: HandleChangeFn;
+  handleChange: HandleChangeFn<Values>;
 }
 
 export type ValidateFn<Values extends FormikValues> = (
@@ -314,7 +327,7 @@ export interface TypedHelpers<Values> {
 
 export type FormApi<Values extends FormikValues> = FormHelpers<Values> &
   FormStateHelpers<Values> &
-  FormHandlers &
+  FormHandlers<Values> &
   FieldRegistration<Values> &
   TypedHelpers<Values>;
 

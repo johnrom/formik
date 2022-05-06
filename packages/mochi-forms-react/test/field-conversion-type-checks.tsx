@@ -59,29 +59,29 @@ const fieldAsComponentPropsByComponent_abstract: FieldAsComponentPropsByComponen
   };
 
 /**
- * I can't figure out how to make these types match up.
+ * todo: I can't figure out how to make these types match up.
+ * 
+ * const fieldAsComponentMapping_generic = <
+ *   FieldAs extends AnyFieldAsCompatibleComponent
+ * >(
+ *   fieldAs: FieldAs
+ * ): FieldAsComponentPropsByComponent<typeof fieldAs> => {
+ *   return {} as Omit<
+ *     UseFieldConfigByValue<FormValues, string, typeof fieldAs>,
+ *     keyof FieldConfigPropsByValue<FormValues, string, FieldAs>
+ *   > &
+ *     Pick<FieldAsComponentPropsByComponent<FieldAs>, 'onChange' | 'onBlur'>;
+ * };
+ * 
+ * const fieldAsComponentMapping_anyFieldAsCompatibleComponent = (
+ *   fieldAs: AnyFieldAsCompatibleComponent
+ * ): FieldAsComponentPropsByComponent<typeof fieldAs> => {
+ *   const fieldConfig: UseFieldConfigByValue<FormValues, string, typeof fieldAs> =
+ *     {};
+ *   return {
+ *     ...({} as UseFieldConfigByValue<FormValues, string, typeof fieldAs>),
+ *     onBlur: () => {},
+ *     onChange: () => {},
+ *   };
+ * };
  */
-
-const fieldAsComponentMapping_generic = <
-  FieldAs extends AnyFieldAsCompatibleComponent
->(
-  fieldAs: FieldAs
-): FieldAsComponentPropsByComponent<typeof fieldAs> => {
-  return {} as Omit<
-    UseFieldConfigByValue<FormValues, string, typeof fieldAs>,
-    keyof FieldConfigPropsByValue<FormValues, string, FieldAs>
-  > &
-    Pick<FieldAsComponentPropsByComponent<FieldAs>, 'onChange' | 'onBlur'>;
-};
-
-const fieldAsComponentMapping_anyFieldAsCompatibleComponent = (
-  fieldAs: AnyFieldAsCompatibleComponent
-): FieldAsComponentPropsByComponent<typeof fieldAs> => {
-  const fieldConfig: UseFieldConfigByValue<FormValues, string, typeof fieldAs> =
-    {};
-  return {
-    ...({} as UseFieldConfigByValue<FormValues, string, typeof fieldAs>),
-    onBlur: () => {},
-    onChange: () => {},
-  };
-};

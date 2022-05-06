@@ -13,7 +13,7 @@
 - Decide what to do with formatOnBlur since it actually breaks type safety. Probably use an inner `Mask` component.
 - Maybe add event handlers to Form and Field like `onChange` which react to changes in Formik state
 - Document changes to defaultParseFn that will now only work for Input / Select components
-- Removed global handleChange - provide a migration path forward for dynamically providing handlers
+- GetValueFromEvent shouldn't break types to use React Native. Devs should instead explicitly map React Native fields to Values.
 - ChangeHandlerValue cannot be inferred even though its type will be correctly validated
   ```tsx
   <Field name="strVal" parse={/* event is `unknown` */ event => ''} />

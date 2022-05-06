@@ -10,9 +10,7 @@ export function useEventCallback<CallbackFn>(
   fn: CallbackFn extends (...args: infer Args) => infer Return
     ? EventCallbackFn<Args, Return>
     : never
-): CallbackFn extends (...args: infer Args) => infer Return
-  ? EventCallbackFn<Args, Return>
-  : never;
+): CallbackFn extends (...args: any[]) => any ? CallbackFn : never;
 // Typed using Args and Return
 // This is how Typescript will infer the callback's value
 export function useEventCallback<Args extends unknown[], Return>(

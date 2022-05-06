@@ -31,7 +31,7 @@ export interface FieldConfigAsProp<
 }
 
 export interface FieldConfigValidateProp<FormValue> {
-  validate?: FieldValidator<SingleValue<FormValue>>;
+  validate?: FieldValidator<FormValue>;
 }
 
 export type ChangeEventHandlerResolvedValue<ChangeHandlerValue> = [
@@ -46,49 +46,61 @@ export type ChangeEventHandlerResolvedValue<ChangeHandlerValue> = [
  * If ChangeHandlerValue cannot be assigned to FormValue,
  * parse is required.
  */
-export type FieldConfigParseProp<FormValue, ChangeHandlerValue> = [
-  ChangeHandlerValue
-] extends [FormValue]
+export type FieldConfigParseProp<
+  Values,
+  FormValue,
+  ChangeHandlerValue,
+  ResolvedChangeHandlerValue
+> = [ResolvedChangeHandlerValue] extends [FormValue]
   ? {
-      parse?: ParseFn<SingleValue<FormValue>, ChangeHandlerValue>;
+      parse?: ParseFn<Values, FormValue, ChangeHandlerValue>;
     }
   : {
-      parse: ParseFn<SingleValue<FormValue>, ChangeHandlerValue>;
+      parse: ParseFn<Values, FormValue, ChangeHandlerValue>;
     };
 
 /**
- * If ChangeHandlerValue cannot be assigned to FormValue,
- * parse is required.
+ * If FormValue cannot be assigned to FormattedValue,
+ * format is required.
  */
 export type FieldConfigFormatProp<FormValue, FormattedValue> = [
   FormValue
 ] extends [FormattedValue]
   ? {
-      format?: FormatFn<SingleValue<FormValue>, FormattedValue>;
+      format?: FormatFn<FormValue, FormattedValue>;
     }
   : {
-      format: FormatFn<SingleValue<FormValue>, FormattedValue>;
+      format: FormatFn<FormValue, FormattedValue>;
     };
 
 export type FieldConfigValueProps<
+  Values,
   FormValue,
   FormattedValue,
   ChangeHandlerValue
 > = FieldConfigValidateProp<FormValue> &
   FieldConfigParseProp<
+    Values,
     FormValue,
+    ChangeHandlerValue,
     ChangeEventHandlerResolvedValue<ChangeHandlerValue>
   > &
   FieldConfigFormatProp<FormValue, FormattedValue>;
 
 export type FieldConfigWithoutExtraProps<
+  Values,
   FormValue,
   FieldAs extends AnyFieldAsCompatibleComponent
 > = [Required<React.ComponentProps<FieldAs>>] extends [
   FieldAsComponentValueProps<infer FormattedValue, infer ChangeHandlerValue>
 ]
   ? FieldConfigAsProp<FieldAs> &
-      FieldConfigValueProps<FormValue, FormattedValue, ChangeHandlerValue> & {
+      FieldConfigValueProps<
+        Values,
+        FormValue,
+        FormattedValue,
+        ChangeHandlerValue
+      > & {
         formatOnBlur?: boolean;
       }
   : never;
@@ -97,9 +109,10 @@ export type FieldConfigWithoutExtraProps<
  * These props configure how the field works.
  */
 export type FieldConfigProps<
+  Values,
   FormValue,
   FieldAs extends AnyFieldAsCompatibleComponent
-> = FieldConfigWithoutExtraProps<FormValue, FieldAs> &
+> = FieldConfigWithoutExtraProps<Values, FormValue, FieldAs> &
   FieldAsComponentPassThroughPropsByComponent<FieldAs>;
 
 export type FieldConfigPropsByValue<
@@ -107,7 +120,7 @@ export type FieldConfigPropsByValue<
   Value,
   FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigNameProp<Values, PathMatchingValue<Value, Values>> &
-  FieldConfigProps<Value, FieldAs>;
+  FieldConfigProps<Values, Value, FieldAs>;
 
 export type FieldConfigPropsByName<
   Values extends FormikValues,
@@ -115,4 +128,4 @@ export type FieldConfigPropsByName<
   FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigNameProp<Values, Name> &
   FieldConfigAsProp<FieldAs> &
-  FieldConfigProps<ValueMatchingPath<Values, Name>, FieldAs>;
+  FieldConfigProps<Values, ValueMatchingPath<Values, Name>, FieldAs>;

@@ -43,7 +43,8 @@ typedBag.useField({
 typedBag.useField({
   name: 'numVal',
   as: 'input',
-  parse: (value: string) => parseInt(value, 10),
+  parse: (event: React.ChangeEvent<HTMLInputElement>) =>
+    parseInt(event.target.value, 10),
   format: (value: number) => value.toString(),
 });
 typedBag.useField({
@@ -91,6 +92,12 @@ typedBag.useField({
   as: NumberValuedClassComponent,
   otherProp: '',
 });
+// @ts-expect-error string | number must be formatted to number
+typedBag.useField({
+  name: 'strOrNumVal',
+  as: NumberValuedClassComponent,
+  otherProp: '',
+});
 
 export const UsingTypedFieldComponent = () => (
   <>
@@ -130,7 +137,9 @@ export const UsingTypedFieldComponent = () => (
     <typedBag.Field
       name="numVal"
       as="input"
-      parse={(value: string) => parseInt(value, 10)}
+      parse={(event: React.ChangeEvent<HTMLInputElement>) =>
+        parseInt(event.target.value, 10)
+      }
       format={(value: number) => value.toString()}
     />
     <typedBag.Field name="numVal" as={NumberValuedAsFC} otherProp="" />
@@ -197,5 +206,7 @@ export const UsingTypedFieldComponent = () => (
       format={_value => ''}
       value={0}
     />
+    <typedBag.Field name="strOrNumVal" validate={(value: string | number) => { }} />
+    <typedBag.Field name="strOrNumVal" as={NumberValuedAsFC} format={value => typeof value === "string" ? parseInt(value, 10) : value} otherProp="" />
   </>
 );

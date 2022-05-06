@@ -1,6 +1,15 @@
-import { FormApi, GetStateFn, InputElements } from '../types';
-import { getIn, getValueFromEvent, isInputEvent } from '../utils';
-import { PathLikeValue, PathOf } from './path-helpers';
+import {
+  EventByValue,
+  EventOrValue,
+  FormApi,
+  GetStateFn,
+} from '../types';
+import { getIn, getValueFromEvent, eventOrValueIsEvent } from '../utils';
+import {
+  PathMatchingValue,
+  PathOf,
+  ValueMatchingPath,
+} from './path-helpers';
 
 export const noopParseFn = (value: unknown) => value;
 
@@ -10,15 +19,16 @@ export const numberParseFn = (value: any) => {
   return isNaN(parsed) ? '' : parsed;
 };
 
-export const defaultEventParser = <Values>(
-  event: React.ChangeEvent<React.ElementRef<InputElements>>,
+export const defaultEventParser = <Values, Value>(
+  event: EventByValue<Value>,
   name: PathOf<Values>,
   getState: GetStateFn<Values>
 ) => {
-  const type = event.target.type;
   let value = getValueFromEvent(event);
 
   if (event.target instanceof HTMLInputElement) {
+    const type = event.target.type;
+
     if (/number|range/.test(type)) {
       value = numberParseFn(value);
     } else if (
@@ -41,19 +51,20 @@ export const defaultEventParser = <Values>(
   return value;
 };
 
-export const selectFieldOnChange = <Value, Values>(
+export const selectFieldOnChange = <Values, Name extends PathOf<Values>>(
   {
     setFieldValue,
     getState,
   }: Pick<FormApi<Values>, 'setFieldValue' | 'getState'>,
-  name: PathLikeValue<Value, Values>
+  name: Name
 ) => {
-  return (
-    eventOrValue: React.ChangeEvent<React.ElementRef<InputElements>> | Value
+  return <Value extends ValueMatchingPath<Values, Name>>(
+    eventOrValue: EventOrValue<Value>
   ) => {
-    setFieldValue(
-      name,
-      isInputEvent(eventOrValue)
+    setFieldValue<Value>(
+      // todo: is it possible to infer this??
+      name as PathMatchingValue<Value, Values>,
+      eventOrValueIsEvent(eventOrValue)
         ? defaultEventParser(eventOrValue, name, getState)
         : eventOrValue
     );

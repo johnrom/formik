@@ -1,7 +1,7 @@
 import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
-import { InputElements } from './types';
+import { EventByValue, EventOrValue, InputElements } from './types';
 
 // Assertions
 
@@ -38,14 +38,10 @@ export const isPromise = (value: any): value is Promise<any> =>
   isObject(value) && isFunction((value as Promise<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
-export const isInputEvent = (
-  value: any
-): value is React.ChangeEvent<React.ElementRef<InputElements>> =>
-  value &&
-  isObject(value) &&
-  isObject(
-    (value as React.ChangeEvent<React.ElementRef<InputElements>>).target
-  );
+export const eventOrValueIsEvent = <Value>(
+  value: EventOrValue<Value>
+): value is EventByValue<Value> =>
+  value && isObject(value) && isObject((value as EventByValue<Value>).target);
 
 /** @private Are we in RN? */
 export const isReactNative =
@@ -205,7 +201,7 @@ export function setNestedObjectValues<T>(
   return response;
 }
 
-export const getValueFromEvent = (event: React.SyntheticEvent<any>) => {
+export const getValueFromEvent = <Value>(event: EventByValue<Value>) => {
   // React Native/Expo Web/maybe other render envs
   if (
     !isReactNative &&

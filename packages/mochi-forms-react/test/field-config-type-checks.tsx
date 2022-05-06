@@ -89,11 +89,14 @@ _changeEventHandlerPrimitiveValue = '';
 /**
  * FieldConfigParseProp tests
  */
-const _fieldConfigParseProp: FieldConfigParseProp<string, string> = {};
+const _fieldConfigParseProp: FieldConfigParseProp<FormValues, string, React.ChangeEvent<HTMLInputElement>, string> = {};
 _fieldConfigParseProp.parse = undefined;
-_fieldConfigParseProp.parse = value => value;
+_fieldConfigParseProp.parse = event => event.target.value;
 // @ts-expect-error zero does not match
 _fieldConfigParseProp.parse = value => 0;
+// @ts-expect-error parse arg should not resolve to event.target.value, 
+// even though parse isn't necessary when event.target.value is assignable to FormValue
+_fieldConfigParseProp.parse = event => event;
 
 // @ts-expect-error FormattedValue doesn't accept number
 const _fieldConfigParseProp_whenRequired: FieldConfigParseProp<
@@ -126,7 +129,7 @@ _fieldConfigFormatProp.format = value => 0;
 /**
  * FieldConfigValueProps tests
  */
-const _fieldConfigValueProps: FieldConfigValueProps<string, string, string> =
+const _fieldConfigValueProps: FieldConfigValueProps<FormValues, string, string, string> =
   {};
 _fieldConfigValueProps.parse = value => value;
 _fieldConfigValueProps.format = value => value;
@@ -144,6 +147,7 @@ _fieldConfigValueProps.validate = _value => 0;
 _fieldConfigValueProps.validate = _value => Promise.resolve(0);
 
 const _fieldConfigValueProps_inputOptionalParse: FieldConfigValueProps<
+  FormValues,
   string,
   string,
   React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -151,6 +155,7 @@ const _fieldConfigValueProps_inputOptionalParse: FieldConfigValueProps<
 
 // @ts-expect-error requires parse because FormattedValue is not assignable to FormValue
 let _fieldConfigValueProps_requiringParse: FieldConfigValueProps<
+  FormValues,
   string,
   string,
   number
@@ -169,6 +174,7 @@ _fieldConfigValueProps_requiringParse = {
 
 // @ts-expect-error requires format because FormValue is not assignable to FormattedValue
 let _fieldConfigValueProps_requiringFormat: FieldConfigValueProps<
+  FormValues,
   string | number,
   string,
   string | number
@@ -182,13 +188,14 @@ _fieldConfigValueProps_requiringFormat = {
 };
 
 let _fieldConfigWithoutExtraProps: FieldConfigWithoutExtraProps<
+  FormValues,
   string,
   'input'
-  > = {};
+> = {};
 _fieldConfigWithoutExtraProps = {
   validate: (value: string) => '',
   format: value => value,
-  parse: value => value,
+  parse: event => event.target.value,
   formatOnBlur: true,
 };
 _fieldConfigWithoutExtraProps = {
@@ -204,32 +211,38 @@ _fieldConfigWithoutExtraProps = {
 _fieldConfigWithoutExtraProps = {
   // @ts-expect-error value doesn't exist on FieldConfigWithoutExtraProps
   value: {},
-}
+};
 
 // @ts-expect-error requires format
 let _fieldConfigWithoutExtraProps_requiresFormat: FieldConfigWithoutExtraProps<
+  FormValues,
   string | number,
   typeof NumberValuedAsFC
 > = {};
 _fieldConfigWithoutExtraProps_requiresFormat = {
-  format: value => typeof value === 'string' ? parseInt(value, 10) : value,
+  format: value => (typeof value === 'string' ? parseInt(value, 10) : value),
 };
 
 // @ts-expect-error requires parse
 let _fieldConfigWithoutExtraProps_requiresParse: FieldConfigWithoutExtraProps<
+  FormValues,
   number,
   'input'
 > = {};
 _fieldConfigWithoutExtraProps_requiresParse = {
-  parse: value => parseInt(value, 10),
+  parse: event => parseInt(event.target.value, 10),
 };
 
 /**
  * FieldConfigProps tests
  */
-let fieldConfigProps_input: FieldConfigProps<string, 'input'> = {
+let fieldConfigProps_input: FieldConfigProps<
+  FormValues,
+  string,
+  'input'
+> = {
   validate: (_value: string) => {},
-  parse: (value: string) => value,
+  parse: (event: React.ChangeEvent<HTMLInputElement>) => event.target.value,
   format: (value: string) => value,
   value: '',
 };
@@ -237,7 +250,7 @@ fieldConfigProps_input = {
   ...fieldConfigProps_input,
   // @ts-expect-error otherProp does not exist on input
   otherProp: 0,
-}
+};
 fieldConfigProps_input = {
   // @ts-expect-error name should match FieldValidator<string>
   validate: (value: number) => {},
@@ -249,7 +262,11 @@ fieldConfigProps_input = {
   value: {},
 };
 
-let fieldConfigProps_numberValuedAsFc: FieldConfigProps<string, typeof NumberValuedAsFC> = {
+let fieldConfigProps_numberValuedAsFc: FieldConfigProps<
+  FormValues,
+  string,
+  typeof NumberValuedAsFC
+> = {
   validate: (_value: string) => {},
   parse: (value: number) => value.toString(),
   format: (value: string) => parseInt(value, 10),
@@ -280,7 +297,10 @@ let _fieldConfigPropsByValue: FieldConfigPropsByValue<
   name: 'strVal',
   onAnimationEnd: () => {},
 };
-_fieldConfigPropsByValue = { name: 'strVal', parse: value => value };
+_fieldConfigPropsByValue = {
+  name: 'strVal',
+  parse: event => event.target.value,
+};
 _fieldConfigPropsByValue = {
   name: 'strVal',
   // @ts-expect-error input.target.value resolves to string
@@ -297,7 +317,7 @@ let _fieldConfigPropsByValue_inputNeedsParsing: FieldConfigPropsByValue<
   'input'
 > = {
   name: 'numVal',
-  parse: value => parseInt(value, 10),
+  parse: event => parseInt(event.target.value, 10),
 };
 
 // @ts-expect-error the resolved value of input is a string. we need to parse that to a number.
@@ -339,7 +359,7 @@ let _fieldConfigPropsByName: FieldConfigPropsByName<
   name: 'strVal',
   onAnimationEnd: () => {},
 };
-_fieldConfigPropsByName = { name: 'strVal', parse: value => value };
+_fieldConfigPropsByName = { name: 'strVal', parse: event => event.target.value };
 _fieldConfigPropsByName = {
   name: 'strVal',
   // @ts-expect-error input.target.value resolves to string
@@ -356,7 +376,7 @@ let _fieldConfigPropsByName_inputNeedsParsing: FieldConfigPropsByName<
   'input'
 > = {
   name: 'numVal',
-  parse: value => parseInt(value, 10),
+  parse: event => parseInt(event.target.value, 10),
 };
 
 // @ts-expect-error the resolved value of input is a string. we need to parse that to a number.
