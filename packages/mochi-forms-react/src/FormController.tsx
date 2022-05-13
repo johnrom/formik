@@ -9,13 +9,11 @@ import {
   FormHelpers,
   HandleBlurFn,
   HandleBlurEventFn,
-  HandleChangeEventFn,
   HandleChangeFn,
   FormSharedConfig,
   RegisterFieldFn,
   UnregisterFieldFn,
   ValidateFieldFn,
-  InputElements,
   FieldRegistry,
   FormikMessage,
   FormReducerState,
@@ -23,7 +21,6 @@ import {
   FormEventConfig,
   FormInitialConfig,
   EventOrValue,
-  EventByValue,
 } from './types';
 import {
   isFunction,
@@ -33,7 +30,6 @@ import {
   getActiveElement,
   getIn,
   setNestedObjectValues,
-  eventOrValueIsEvent,
 } from './utils';
 import { FormProvider } from './FormContext';
 import invariant from 'tiny-warning';
@@ -43,11 +39,8 @@ import { useEventCallback } from './hooks/useEventCallback';
 import { selectFieldOnChange } from './helpers/field-helpers';
 import { warnAboutMissingIdentifier } from './helpers/dev-helpers';
 import { useTypedHelpers } from './TypedHelpers';
-import {
-  PathMatchingValue,
-  PathOf,
-  ValueMatchingPath,
-} from './helpers/path-helpers';
+import { PathMatchingValue } from './helpers/path-helpers';
+import { GetFieldMetaFn, getFieldMetaSelectorByName } from './FieldMeta';
 
 // State reducer
 function formReducer<Values>(
@@ -151,8 +144,8 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     };
   }, []);
 
-  const emptyErrors: FormikErrors<unknown> = {};
-  const emptyTouched: FormikTouched<unknown> = {};
+  const emptyErrors: FormikErrors<any> = {};
+  const emptyTouched: FormikTouched<any> = {};
 
   const isFormValid = React.useCallback<IsFormValidFn<Values>>(errors => {
     return errors && Object.keys(errors).length === 0;
@@ -656,25 +649,6 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     }
   );
 
-  const handleChange = useEventCallback<HandleChangeFn<Values>>(
-    <Value,>(
-      name: PathMatchingValue<Value, Values>,
-      eventOrValue: EventOrValue<Value>
-    ) => {
-      const changeHandler = selectFieldOnChange(
-        { setFieldValue, getState },
-        name
-      );
-
-      if (!eventOrValue) {
-        return (innerEventOrValue: EventOrValue<Value>) =>
-          changeHandler(innerEventOrValue);
-      }
-
-      return changeHandler(eventOrValue);
-    }
-  );
-
   const setFieldTouched = useEventCallback(
     (field: string, touched: boolean = true, shouldValidate?: boolean) => {
       dispatch({
@@ -691,44 +665,6 @@ export function useFormController<Values extends FormikValues = FormikValues>(
         : Promise.resolve();
     }
   );
-
-  const executeBlur = React.useCallback(
-    (e: any, path?: string) => {
-      if (e.persist) {
-        e.persist();
-      }
-      const { name, id, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
-
-      if (!field && __DEV__) {
-        warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
-          documentationPath: 'warnings#handle-blur-identifier-missing',
-          handlerName: 'handleBlur',
-        });
-      }
-
-      setFieldTouched(field, true);
-    },
-    [setFieldTouched]
-  );
-
-  /**
-   * TypeScript doesn't currently allow you to infer overloads from a Type.
-   *
-   * Instead, we make sure this function returns any possibility of HandleBlurFn,
-   * and then cast it.
-   */
-  const handleBlur = useEventCallback(
-    (eventOrPath: string | React.FocusEvent<any>): HandleBlurEventFn | void => {
-      if (isString(eventOrPath)) {
-        return (event: React.FocusEvent<any>) =>
-          executeBlur(event, eventOrPath);
-      } else {
-        return executeBlur(eventOrPath);
-      }
-    }
-  ) as HandleBlurFn;
 
   const setFormikState = React.useCallback(
     (
@@ -786,7 +722,10 @@ export function useFormController<Values extends FormikValues = FormikValues>(
           // cleanup of isSubmitting on behalf of the consumer.
           let promiseOrUndefined;
           try {
-            promiseOrUndefined = executeSubmit();
+            promiseOrUndefined = props.onSubmit(
+              getState().values,
+              imperativeMethods
+            );
             // Bail if it's sync, consumer is responsible for cleaning up
             // via setSubmitting(false)
             if (promiseOrUndefined === undefined) {
@@ -823,6 +762,85 @@ export function useFormController<Values extends FormikValues = FormikValues>(
       }
     );
   });
+
+  const getFieldMeta = useEventCallback<GetFieldMetaFn<Values>>(name => {
+    return getFieldMetaSelectorByName<Values, typeof name>(name)(getState());
+  });
+
+  const imperativeMethods: FormHelpers<Values> = {
+    getState,
+    getFieldMeta,
+    resetForm,
+    validateForm: validateFormWithHighPriority,
+    validateField,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    setFormikState,
+    submitForm,
+  };
+
+  const handleChange = useEventCallback<HandleChangeFn<Values>>(
+    <Value,>(
+      name: PathMatchingValue<Value, Values>,
+      eventOrValue: EventOrValue<Value>
+    ) => {
+      const changeHandler = selectFieldOnChange<Values, Value>(
+        imperativeMethods,
+        name
+      );
+
+      if (!eventOrValue) {
+        return (innerEventOrValue: EventOrValue<Value>) =>
+          changeHandler(innerEventOrValue);
+      }
+
+      return changeHandler(eventOrValue);
+    }
+  );
+
+  const executeBlur = React.useCallback(
+    (e: any, path?: string) => {
+      if (e.persist) {
+        e.persist();
+      }
+      const { name, id, outerHTML } = e.target;
+      const field = path ? path : name ? name : id;
+
+      if (!field && __DEV__) {
+        warnAboutMissingIdentifier({
+          htmlContent: outerHTML,
+          documentationPath: 'warnings#handle-blur-identifier-missing',
+          handlerName: 'handleBlur',
+        });
+      }
+
+      setFieldTouched(field, true);
+    },
+    [setFieldTouched]
+  );
+
+  /**
+   * TypeScript doesn't currently allow you to infer overloads from a Type.
+   *
+   * Instead, we make sure this function returns any possibility of HandleBlurFn,
+   * and then cast it.
+   */
+  const handleBlur = useEventCallback(
+    (eventOrPath: string | React.FocusEvent<any>): HandleBlurEventFn | void => {
+      if (isString(eventOrPath)) {
+        return (event: React.FocusEvent<any>) =>
+          executeBlur(event, eventOrPath);
+      } else {
+        return executeBlur(eventOrPath);
+      }
+    }
+  ) as HandleBlurFn;
 
   const handleSubmit = useEventCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
@@ -862,26 +880,6 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     }
   );
 
-  const imperativeMethods: FormHelpers<Values> = {
-    resetForm,
-    validateForm: validateFormWithHighPriority,
-    validateField,
-    setErrors,
-    setFieldError,
-    setFieldTouched,
-    setFieldValue,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    setFormikState,
-    submitForm,
-  };
-
-  const executeSubmit = useEventCallback(() => {
-    return props.onSubmit(getState().values, imperativeMethods);
-  });
-
   const handleReset = useEventCallback((e: any) => {
     if (e && e.preventDefault && isFunction(e.preventDefault)) {
       e.preventDefault();
@@ -910,6 +908,7 @@ export function useFormController<Values extends FormikValues = FormikValues>(
     handleReset,
     handleSubmit,
     // helpers
+    getFieldMeta,
     resetForm,
     setErrors,
     setFormikState,

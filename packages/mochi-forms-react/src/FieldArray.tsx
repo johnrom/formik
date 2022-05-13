@@ -348,7 +348,7 @@ export const FieldArray = <
     : null;
 };
 
-export interface UseFieldFieldArrayFn<Values extends FormikValues> {
+export interface UseFieldArrayFn<Values extends FormikValues> {
   <Value>(props: UseFieldArrayConfig<Value, Values>): UseFieldArrayReturnValue<
     Value,
     Values

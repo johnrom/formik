@@ -4,6 +4,7 @@ import {
   ComponentNeverRequiringProps,
 } from '../helpers/type-helpers';
 import { FieldOnBlurProp, FieldOnChangeProp } from '../types';
+import { ChangeEventHandlerEvent } from './field-config-types';
 
 /**
  * A FieldAsComponent may required a name prop, but it doesn't have to.
@@ -92,19 +93,17 @@ export type FieldAsCompatibleComponentByComponent<
 
 export type FieldAsComponentFormattedValue<
   FieldAs extends AnyFieldAsCompatibleComponent
-> = Required<React.ComponentProps<FieldAs>> extends FieldAsComponentValueProps<
-  infer FormattedValue,
-  infer _ChangeHandlerValue
->
+> = [React.ComponentProps<FieldAs>] extends [
+  FieldAsComponentValueProps<infer FormattedValue, infer _ChangeHandlerValue>
+]
   ? FormattedValue
   : never;
 
 export type FieldAsComponentChangeHandlerValue<
   FieldAs extends AnyFieldAsCompatibleComponent
-> = Required<React.ComponentProps<FieldAs>> extends FieldAsComponentValueProps<
-  infer _FormattedValue,
-  infer ChangeHandlerValue
->
+> = [React.ComponentProps<FieldAs>] extends [
+  FieldAsComponentValueProps<infer _FormattedValue, infer ChangeHandlerValue>
+]
   ? ChangeHandlerValue
   : never;
 
@@ -126,7 +125,9 @@ export type FieldAsComponent<FormattedValue, ChangeHandlerValue, ExtraProps> =
 
 export type FieldAsComponentOnlyPropsByComponent<
   FieldAs extends AnyFieldAsCompatibleComponent
-> = FieldAsComponentOnlyProps<FieldAsComponentChangeHandlerValue<FieldAs>>;
+> = FieldAsComponentOnlyProps<
+  ChangeEventHandlerEvent<React.ComponentProps<FieldAs>['onChange']>
+>;
 
 export type FieldAsComponentPassThroughPropsByComponent<
   FieldAs extends AnyFieldAsCompatibleComponent

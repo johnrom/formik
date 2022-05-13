@@ -1,9 +1,5 @@
 import { UseFieldConfigByValue } from '../src';
-import {
-  AnyFieldAsCompatibleComponent,
-  FieldAsCompatibleExcludedProps,
-  FieldAsComponentPropsByComponent,
-} from '../src/types/field-as-component-types';
+import { FieldAsComponentPropsByComponent } from '../src/types/field-as-component-types';
 import { FormValues, NumberValuedAsFC } from './test-helpers';
 
 const fieldAsComponentMapping_inputToNumberFc = (
@@ -60,7 +56,7 @@ const fieldAsComponentPropsByComponent_abstract: FieldAsComponentPropsByComponen
 
 /**
  * todo: I can't figure out how to make these types match up.
- * 
+ *
  * const fieldAsComponentMapping_generic = <
  *   FieldAs extends AnyFieldAsCompatibleComponent
  * >(
@@ -72,7 +68,7 @@ const fieldAsComponentPropsByComponent_abstract: FieldAsComponentPropsByComponen
  *   > &
  *     Pick<FieldAsComponentPropsByComponent<FieldAs>, 'onChange' | 'onBlur'>;
  * };
- * 
+ *
  * const fieldAsComponentMapping_anyFieldAsCompatibleComponent = (
  *   fieldAs: AnyFieldAsCompatibleComponent
  * ): FieldAsComponentPropsByComponent<typeof fieldAs> => {

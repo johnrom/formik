@@ -4,17 +4,10 @@ import {
   PathOf,
   ValueMatchingPath,
 } from '../helpers/path-helpers';
-import {
-  FieldValidator,
-  FormatFn,
-  FormikValues,
-  ParseFn,
-  SingleValue,
-} from '../types';
+import { FieldValidator, FormatFn, FormikValues, ParseFn } from '../types';
 import {
   AnyFieldAsCompatibleComponent,
   FieldAsComponentPassThroughPropsByComponent,
-  FieldAsComponentValueProps,
 } from './field-as-component-types';
 
 export interface FieldConfigNameProp<
@@ -47,7 +40,7 @@ export type ChangeEventHandlerResolvedValue<ChangeHandlerValue> = [
  * parse is required.
  */
 export type FieldConfigParseProp<
-  Values,
+  Values extends FormikValues,
   FormValue,
   ChangeHandlerValue,
   ResolvedChangeHandlerValue
@@ -74,7 +67,7 @@ export type FieldConfigFormatProp<FormValue, FormattedValue> = [
     };
 
 export type FieldConfigValueProps<
-  Values,
+  Values extends FormikValues,
   FormValue,
   FormattedValue,
   ChangeHandlerValue
@@ -87,29 +80,28 @@ export type FieldConfigValueProps<
   > &
   FieldConfigFormatProp<FormValue, FormattedValue>;
 
+export type ChangeEventHandlerEvent<ChangeEventHandler> =
+  ChangeEventHandler extends (event: infer ChangeEventHandlerValue) => void
+    ? ChangeEventHandlerValue
+    : never;
+
 export type FieldConfigWithoutExtraProps<
-  Values,
+  Values extends FormikValues,
   FormValue,
   FieldAs extends AnyFieldAsCompatibleComponent
-> = [Required<React.ComponentProps<FieldAs>>] extends [
-  FieldAsComponentValueProps<infer FormattedValue, infer ChangeHandlerValue>
-]
-  ? FieldConfigAsProp<FieldAs> &
-      FieldConfigValueProps<
-        Values,
-        FormValue,
-        FormattedValue,
-        ChangeHandlerValue
-      > & {
-        formatOnBlur?: boolean;
-      }
-  : never;
+> = FieldConfigAsProp<FieldAs> &
+  FieldConfigValueProps<
+    Values,
+    FormValue,
+    React.ComponentProps<FieldAs>['value'],
+    ChangeEventHandlerEvent<React.ComponentProps<FieldAs>['onChange']>
+  >;
 
 /**
  * These props configure how the field works.
  */
 export type FieldConfigProps<
-  Values,
+  Values extends FormikValues,
   FormValue,
   FieldAs extends AnyFieldAsCompatibleComponent
 > = FieldConfigWithoutExtraProps<Values, FormValue, FieldAs> &

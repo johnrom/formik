@@ -87,7 +87,7 @@ type FieldChildRenderFn<FieldAs extends AnyFieldAsCompatibleComponent> = (
 export interface FieldOnlyProps<FieldAs extends AnyFieldAsCompatibleComponent> {
   /** Inner ref */
   innerRef?: React.MutableRefObject<FieldAs>;
-  children: FieldChildRenderFn<FieldAs> | React.ReactNode | undefined;
+  children?: FieldChildRenderFn<FieldAs> | React.ReactNode;
 }
 export type FieldPropsByValue<
   Values,

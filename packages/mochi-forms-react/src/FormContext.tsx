@@ -17,12 +17,9 @@ export const FormProvider = <Values,>(
    * possibly undefined properties are passed here.
    */
   const {
-    // handlers
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
     // helpers
+    getState,
+    getFieldMeta,
     resetForm,
     setErrors,
     setFormikState,
@@ -39,9 +36,13 @@ export const FormProvider = <Values,>(
     unregisterField,
     registerField,
     // state helpers
-    getState,
     useState,
     subscribe,
+    // handlers
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
     // config
     validateOnChange,
     validateOnBlur,
@@ -50,11 +51,15 @@ export const FormProvider = <Values,>(
     validationSchema,
     validate,
     TypedField,
+    useTypedField,
     TypedFieldArray,
+    useTypedFieldArray,
   } = props.value;
 
-  const formApi = React.useMemo<NotOptional<FormApi<Values>>>(
+  const formApi = React.useMemo<FormApi<Values>>(
     () => ({
+      getState,
+      getFieldMeta,
       handleBlur,
       handleChange,
       handleReset,
@@ -74,13 +79,16 @@ export const FormProvider = <Values,>(
       validateField,
       unregisterField,
       registerField,
-      getState,
       useState,
       subscribe,
       TypedField,
+      useTypedField,
       TypedFieldArray,
+      useTypedFieldArray,
     }),
     [
+      getState,
+      getFieldMeta,
       handleBlur,
       handleChange,
       handleReset,
@@ -100,11 +108,12 @@ export const FormProvider = <Values,>(
       validateField,
       unregisterField,
       registerField,
-      getState,
       useState,
       subscribe,
       TypedField,
+      useTypedField,
       TypedFieldArray,
+      useTypedFieldArray,
     ]
   );
 
@@ -126,6 +135,7 @@ export const FormProvider = <Values,>(
       validate,
     ]
   );
+
   return (
     <FormApiContext.Provider value={formApi}>
       <FormConfigContext.Provider value={formConfig}>

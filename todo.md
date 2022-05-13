@@ -12,8 +12,10 @@
 - Fix or remove lodash
 - Decide what to do with formatOnBlur since it actually breaks type safety. Probably use an inner `Mask` component.
 - Maybe add event handlers to Form and Field like `onChange` which react to changes in Formik state
-- Document changes to defaultParseFn that will now only work for Input / Select components
+- Document changes to defaultParseFn that will now only work for input / select elements
 - GetValueFromEvent shouldn't break types to use React Native. Devs should instead explicitly map React Native fields to Values.
+- Determine how to handle non-boolean checkboxes which are unchecked and are not arrays. What happens when you uncheck a string value? Should we use defaultValue?
+- Allow errors to bubble through from onSubmit, probably configured like `catchErrors={false}`
 - ChangeHandlerValue cannot be inferred even though its type will be correctly validated
   ```tsx
   <Field name="strVal" parse={/* event is `unknown` */ event => ''} />

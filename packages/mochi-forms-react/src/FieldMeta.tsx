@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 import { useFormState } from './FormState';
-import { FormReducerState } from './types';
+import {
+  PathMatchingValue,
+  PathOf,
+  ValueMatchingPath,
+} from './helpers/path-helpers';
+import { FormikValues, FormReducerState } from './types';
 import { getIn, isShallowEqual } from './utils';
 
 /** Field metadata */
@@ -23,7 +28,7 @@ export interface FieldMetaProps<Value> {
  * Get FieldMetaProps from state.
  */
 export const getFieldMetaSelectorByName =
-  <Values,>(name: string) =>
+  <Values, Name extends PathOf<Values>>(name: Name) =>
   (
     state: Pick<
       FormReducerState<Values>,
@@ -34,7 +39,7 @@ export const getFieldMetaSelectorByName =
       | 'initialTouched'
       | 'initialErrors'
     >
-  ) => ({
+  ): FieldMetaProps<ValueMatchingPath<Values, Name>> => ({
     value: getIn(state.values, name),
     error: getIn(state.errors, name),
     touched: !!getIn(state.touched, name),
@@ -43,10 +48,16 @@ export const getFieldMetaSelectorByName =
     initialError: getIn(state.initialErrors, name),
   });
 
+export type GetFieldMetaFn<Values> = {
+  <Value>(name: PathMatchingValue<Value, Values>): FieldMetaProps<Value>;
+};
+
 /**
  * Get field state from `FormikState`.
  */
-export const useFieldMeta = <Value,>(name: string): FieldMetaProps<Value> => {
+export const useFieldMeta = <Values extends FormikValues, Value>(
+  name: PathMatchingValue<Value, Values>
+): FieldMetaProps<Value> => {
   const [fieldMeta] = useFormState<any, FieldMetaProps<Value>>(
     useMemo(() => getFieldMetaSelectorByName(name), [name]),
     isShallowEqual

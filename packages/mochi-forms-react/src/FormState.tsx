@@ -1,6 +1,7 @@
 import { Selector, Comparer } from 'use-optimized-selector';
 import { useFormApi } from './FormApi';
-import { FormApi, FormState } from './types';
+import { selectFullState } from './helpers/state-selectors';
+import { FormApi, FormikValues, FormState } from './types';
 
 /**
  * Use Formik State from within Render.
@@ -9,7 +10,10 @@ import { FormApi, FormState } from './types';
  * @param comparer an optional comparer, for checking whether previous and next selector results are equal
  * @param shouldSubscribe a bail-out for when the value doesn't need to be updated after the initial render. enables optional subscriptions for `render` props.
  */
-export const useFormState = <Values, Return = FormState<Values>>(
+export const useFormState = <
+  Values extends FormikValues,
+  Return = FormState<Values>
+>(
   selector: Selector<FormState<Values>, Return> = selectFullState as any,
   comparer?: Comparer<Return>,
   shouldSubscribe = true

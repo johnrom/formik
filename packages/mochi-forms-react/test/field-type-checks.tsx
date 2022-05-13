@@ -1,5 +1,5 @@
 import React from 'react';
-import { createTypedHelpers } from '../src';
+import { getTypedHelpers } from '../src';
 import { FieldAsComponent } from '../src/types/field-as-component-types';
 import {
   FormValues,
@@ -7,21 +7,21 @@ import {
   NumberValuedClassComponent,
 } from './test-helpers';
 
-const typedBag = createTypedHelpers<FormValues>();
+const typedBag = getTypedHelpers<FormValues>();
 
-typedBag.useField<'strVal'>({
+typedBag.useTypedField<'strVal'>({
   name: 'strVal',
 });
-typedBag.useField<'strVal'>({
+typedBag.useTypedField<'strVal'>({
   name: 'strVal',
   as: 'input',
 });
-typedBag.useField<'numVal', typeof NumberValuedAsFC>({
+typedBag.useTypedField<'numVal', typeof NumberValuedAsFC>({
   name: 'numVal',
   as: NumberValuedAsFC,
   otherProp: '',
 });
-typedBag.useField<
+typedBag.useTypedField<
   'numVal',
   FieldAsComponent<number, number, { otherProp: string }>
 >({
@@ -29,25 +29,25 @@ typedBag.useField<
   as: NumberValuedAsFC,
   otherProp: '',
 });
-typedBag.useField<'strVal', typeof NumberValuedAsFC>({
+typedBag.useTypedField<'strVal', typeof NumberValuedAsFC>({
   name: 'strVal',
   as: NumberValuedAsFC,
   otherProp: '',
   parse: value => value.toString(),
   format: value => parseInt(value, 10),
 });
-typedBag.useField({
+typedBag.useTypedField({
   name: 'strVal',
   as: 'input',
 });
-typedBag.useField({
+typedBag.useTypedField({
   name: 'numVal',
   as: 'input',
   parse: (event: React.ChangeEvent<HTMLInputElement>) =>
     parseInt(event.target.value, 10),
   format: (value: number) => value.toString(),
 });
-typedBag.useField({
+typedBag.useTypedField({
   name: 'numVal',
   as: NumberValuedAsFC,
   otherProp: '',
@@ -56,44 +56,44 @@ typedBag.useField({
 /**
  * Expected errors
  */
-typedBag.useField<'strVal'>({
+typedBag.useTypedField<'strVal'>({
   // @ts-expect-error numVal should be strVal
   name: 'numVal',
 });
-typedBag.useField<'strVal'>({
+typedBag.useTypedField<'strVal'>({
   name: 'strVal',
   // @ts-expect-error should be input
   as: NumberValuedAsFC,
 });
-typedBag.useField<'strVal', 'input'>({
+typedBag.useTypedField<'strVal', 'input'>({
   name: 'strVal',
   // @ts-expect-error should be input
   as: NumberValuedAsFC,
 });
 // @ts-expect-error missing otherProp
-typedBag.useField({
+typedBag.useTypedField({
   name: 'numVal',
   as: NumberValuedAsFC,
 });
 // @ts-expect-error missing otherProp
-typedBag.useField({
+typedBag.useTypedField({
   name: 'numVal',
   as: NumberValuedClassComponent,
 });
 // @ts-expect-error number must be parsed / formatted to string
-typedBag.useField<'strVal', typeof NumberValuedAsFC>({
+typedBag.useTypedField<'strVal', typeof NumberValuedAsFC>({
   name: 'strVal',
   as: NumberValuedAsFC,
   otherProp: '',
 });
 // @ts-expect-error number must be parsed / formatted to string
-typedBag.useField({
+typedBag.useTypedField({
   name: 'strVal',
   as: NumberValuedClassComponent,
   otherProp: '',
 });
 // @ts-expect-error string | number must be formatted to number
-typedBag.useField({
+typedBag.useTypedField({
   name: 'strOrNumVal',
   as: NumberValuedClassComponent,
   otherProp: '',
@@ -101,14 +101,14 @@ typedBag.useField({
 
 export const UsingTypedFieldComponent = () => (
   <>
-    <typedBag.Field<'strVal'> name="strVal" />
-    <typedBag.Field<'strVal'> name="strVal" as="input" />
-    <typedBag.Field<'numVal', typeof NumberValuedAsFC>
+    <typedBag.TypedField<'strVal'> name="strVal" />
+    <typedBag.TypedField<'strVal'> name="strVal" as="input" />
+    <typedBag.TypedField<'numVal', typeof NumberValuedAsFC>
       name="numVal"
       as={NumberValuedAsFC}
       otherProp=""
     />
-    <typedBag.Field<
+    <typedBag.TypedField<
       'numVal',
       FieldAsComponent<number, number, { otherProp: string }>
     >
@@ -116,7 +116,7 @@ export const UsingTypedFieldComponent = () => (
       as={NumberValuedAsFC}
       otherProp=""
     />
-    <typedBag.Field<
+    <typedBag.TypedField<
       'numVal',
       FieldAsComponent<number, number, { otherProp: string }>
     >
@@ -124,17 +124,17 @@ export const UsingTypedFieldComponent = () => (
       as={NumberValuedAsFC}
       otherProp=""
     />
-    <typedBag.Field<'strVal', typeof NumberValuedAsFC>
+    <typedBag.TypedField<'strVal', typeof NumberValuedAsFC>
       name="strVal"
       as={NumberValuedAsFC}
       parse={value => value.toString()}
       format={value => parseInt(value, 10)}
       otherProp=""
     />
-    <typedBag.Field name="strVal" />
-    <typedBag.Field name="strVal" as="input" />
-    <typedBag.Field name="numVal" as={NumberValuedAsFC} otherProp="" />
-    <typedBag.Field
+    <typedBag.TypedField name="strVal" />
+    <typedBag.TypedField name="strVal" as="input" />
+    <typedBag.TypedField name="numVal" as={NumberValuedAsFC} otherProp="" />
+    <typedBag.TypedField
       name="numVal"
       as="input"
       parse={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -142,37 +142,37 @@ export const UsingTypedFieldComponent = () => (
       }
       format={(value: number) => value.toString()}
     />
-    <typedBag.Field name="numVal" as={NumberValuedAsFC} otherProp="" />
+    <typedBag.TypedField name="numVal" as={NumberValuedAsFC} otherProp="" />
     {/**
      * Expected Errors
      */}
-    <typedBag.Field<'strVal'>
+    <typedBag.TypedField<'strVal'>
       // @ts-expect-error should match strVal
       name="numVal"
     />
-    <typedBag.Field<'strVal'>
+    <typedBag.TypedField<'strVal'>
       name="strVal"
       // @ts-expect-error should be input
       as={NumberValuedAsFC}
     />
-    <typedBag.Field<'strVal', 'input'>
+    <typedBag.TypedField<'strVal', 'input'>
       name="strVal"
       // @ts-expect-error should be input
       as={NumberValuedAsFC}
     />
     {/* @ts-expect-error missing otherProp */}
-    <typedBag.Field name="numVal" as={NumberValuedAsFC} />
+    <typedBag.TypedField name="numVal" as={NumberValuedAsFC} />
     {/* @ts-expect-error missing otherProp */}
-    <typedBag.Field name="numVal" as={NumberValuedClassComponent} />
+    <typedBag.TypedField name="numVal" as={NumberValuedClassComponent} />
     {/* @ts-expect-error number must be parsed / formatted to string */}
-    <typedBag.Field name="strVal" as={NumberValuedAsFC} otherProp="" />
+    <typedBag.TypedField name="strVal" as={NumberValuedAsFC} otherProp="" />
     {/* @ts-expect-error number must be parsed / formatted to string */}
-    <typedBag.Field
+    <typedBag.TypedField
       name="strVal"
       as={NumberValuedClassComponent}
       otherProp=""
     />
-    <typedBag.Field
+    <typedBag.TypedField
       name="strVal"
       // @ts-expect-error value should be string
       validate={(_value: number) => {}}
@@ -183,7 +183,7 @@ export const UsingTypedFieldComponent = () => (
       // @ts-expect-error value format should be compatible with HTMLInputElement.value
       value={{}}
     />
-    <typedBag.Field
+    <typedBag.TypedField
       name="strVal"
       as={NumberValuedAsFC}
       // @ts-expect-error value should be string
@@ -195,7 +195,7 @@ export const UsingTypedFieldComponent = () => (
       // @ts-expect-error FormattedValue should be number
       value={''}
     />
-    <typedBag.Field
+    <typedBag.TypedField
       name="strVal"
       as={NumberValuedAsFC}
       // @ts-expect-error validate should return a string | void
@@ -206,7 +206,29 @@ export const UsingTypedFieldComponent = () => (
       format={_value => ''}
       value={0}
     />
-    <typedBag.Field name="strOrNumVal" validate={(value: string | number) => { }} />
-    <typedBag.Field name="strOrNumVal" as={NumberValuedAsFC} format={value => typeof value === "string" ? parseInt(value, 10) : value} otherProp="" />
+    <typedBag.TypedField
+      name="strOrNumVal"
+      validate={(value: string | number) => {}}
+    />
+    <typedBag.TypedField
+      name="strOrNumVal"
+      as={NumberValuedAsFC}
+      format={(value: string | number) =>
+        typeof value === 'string' ? parseInt(value, 10) : value
+      }
+      otherProp=""
+    />
+    {/**
+     *
+     * todo: `format`'s `value` parameter should be inferred automatically, but it is `any` for some reason
+    <typedBag.TypedField
+      name="strOrNumVal"
+      as={NumberValuedAsFC}
+      format={value =>
+        typeof value === 'string' ? parseInt(value, 10) : value
+      }
+      otherProp=""
+    />
+    */}
   </>
 );

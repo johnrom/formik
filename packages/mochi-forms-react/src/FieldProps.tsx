@@ -5,12 +5,14 @@ import { useEventCallback } from './hooks/useEventCallback';
 import { FormikValues, EventOrValue } from './types';
 import {
   AnyFieldAsCompatibleComponent,
-  FieldAsComponentChangeHandlerValue,
   FieldAsComponentCompatibleProps,
   FieldAsComponentFormattedValue,
   FieldAsComponentPropsByComponent,
 } from './types/field-as-component-types';
-import { FieldConfigAsProp } from './types/field-config-types';
+import {
+  ChangeEventHandlerEvent,
+  FieldConfigAsProp,
+} from './types/field-config-types';
 
 const isFieldConfigMatchingInput = <Values, Value>(
   fieldConfig: FieldConfigAsProp<AnyFieldAsCompatibleComponent>
@@ -51,7 +53,8 @@ export const useFieldProps = <
   props: UseFieldConfigByValue<Values, Value, FieldAs>,
   fieldMeta: FieldMetaProps<Value>
 ): FieldAsComponentPropsByComponent<FieldAs> => {
-  const { handleChange, handleBlur, getState } = useFormApi<Values>();
+  const formApi = useFormApi<Values>();
+  const { handleChange, handleBlur } = formApi;
   const valueState = fieldMeta.value;
   const touchedState = fieldMeta.touched;
   /**
@@ -70,11 +73,13 @@ export const useFieldProps = <
     props;
 
   const onChange = useEventCallback(
-    (value: FieldAsComponentChangeHandlerValue<FieldAs>) => {
+    (
+      value: ChangeEventHandlerEvent<React.ComponentProps<FieldAs>['onChange']>
+    ) => {
       /**
        * todo: This should work, but I can't figure it out. Maybe TypeScript has broken down at this point.
        */
-      const parsedValue = (parse?.(value, props.name, getState) ??
+      const parsedValue = (parse?.(value, props.name, formApi) ??
         value) as EventOrValue<Value>;
 
       handleChange(props.name, parsedValue);

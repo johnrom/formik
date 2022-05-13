@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { useTypedHelpers } from "../src";
-import { FormValues, NumberValuedAsFC } from "./test-helpers";
+import { getTypedHelpers } from '../src';
+import { FormValues, NumberValuedAsFC } from './test-helpers';
 
 /**
- * Check that useField works
+ * Check that useTypedField works
  */
 const UseFieldAsInput = () => {
-  const typedHelpers = useTypedHelpers<FormValues>();
+  const typedHelpers = getTypedHelpers<FormValues>();
 
-  const [inputField] = typedHelpers.useField({
+  const [inputField] = typedHelpers.useTypedField({
     name: 'numVal',
-    parse: event => parseInt(event.target.value, 10)
+    parse: event => parseInt(event.target.value, 10),
   });
 
-  const [numberField] = typedHelpers.useField({
+  const [numberField] = typedHelpers.useTypedField({
     name: 'strVal',
     as: NumberValuedAsFC,
     parse: value => value.toLocaleString(),
@@ -21,12 +21,14 @@ const UseFieldAsInput = () => {
     otherProp: '',
   });
 
-  return <>
-    <input {...inputField} />
-    <NumberValuedAsFC {...numberField} />
-    { /* @ts-expect-error NumberValuedAsFC props aren't assignable to input props */ }
-    <input {...numberField} />
-    { /* @ts-expect-error input props aren't assignable to NumberValuedAsFC props */ }
-    <NumberValuedAsFC {...inputField} />
-  </>
-}
+  return (
+    <>
+      <input {...inputField} />
+      <NumberValuedAsFC {...numberField} />
+      {/* @ts-expect-error NumberValuedAsFC props aren't assignable to input props */}
+      <input {...numberField} />
+      {/* @ts-expect-error input props aren't assignable to NumberValuedAsFC props */}
+      <NumberValuedAsFC {...inputField} />
+    </>
+  );
+};
