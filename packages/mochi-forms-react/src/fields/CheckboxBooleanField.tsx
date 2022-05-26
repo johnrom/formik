@@ -17,11 +17,11 @@ import { FieldConfigPropsByValue } from '../types/field-config-types';
 export const CheckboxBooleanField = <Values,>(
   props: Omit<
     FieldConfigPropsByValue<Values, boolean, 'input'>,
-    'type' | 'value' | 'parse' | 'format' | 'as'
+    'type' | 'value' | 'as'
   >
 ) => {
   const { value: stateValue } = useFieldMeta<Values, boolean>(props.name);
-  const { name, ...fieldProps } = props;
+  const { name, parse, format, ...fieldProps } = props;
 
   return (
     <Field
@@ -29,8 +29,8 @@ export const CheckboxBooleanField = <Values,>(
       as="input"
       type="checkbox"
       checked={stateValue}
-      parse={parseCheckboxBooleanFromEvent}
-      format={formatUndefinedFn}
+      parse={parse ?? parseCheckboxBooleanFromEvent}
+      format={format ?? formatUndefinedFn}
       {...fieldProps}
     />
   );

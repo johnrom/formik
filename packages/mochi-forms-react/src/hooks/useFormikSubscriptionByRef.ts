@@ -35,7 +35,6 @@ export const useFormikSubscriptionByRef = <Values, Return = FormState<Values>>(
     setFormikApi(formik.current);
   }, []);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   selector = useOptimizedSelector(selector, comparer);
 
   const getCurrentValue = useCallback(

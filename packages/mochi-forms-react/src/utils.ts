@@ -1,7 +1,7 @@
 import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
-import { EventByValue, EventOrValue, InputElements } from './types';
+import { EventByValue, EventOrValue } from './types';
 
 // Assertions
 

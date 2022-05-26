@@ -3,6 +3,9 @@ import { FormikValues, ParseFn } from '../types';
 
 export const noopParseFn = (value: unknown) => value;
 
+export const noopFormatFn = <Value, FormattedValue>(value: Value) =>
+  value as unknown as FormattedValue;
+
 export const parseNumberOrStringFromInputEvent = (event: {
   target: HTMLInputElement;
 }) => {

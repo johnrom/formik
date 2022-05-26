@@ -18,7 +18,7 @@ export function ErrorMessage<Values = any>({
   name,
   ...rest
 }: ErrorMessageProps<Values>): JSX.Element | null {
-  const { touched, error } = useFieldMeta(name);
+  const { touched, error } = useFieldMeta<Values, any>(name);
 
   return !!touched && !!error
     ? render

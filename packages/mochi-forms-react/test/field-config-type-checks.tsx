@@ -92,8 +92,7 @@ _changeEventHandlerPrimitiveValue = '';
 const _fieldConfigParseProp: FieldConfigParseProp<
   FormValues,
   string,
-  React.ChangeEvent<HTMLInputElement>,
-  string
+  React.ChangeEvent<HTMLInputElement>
 > = {};
 _fieldConfigParseProp.parse = undefined;
 _fieldConfigParseProp.parse = event => event.target.value;

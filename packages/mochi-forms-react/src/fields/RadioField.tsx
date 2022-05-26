@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Field } from '../Field';
 import { useFieldMeta } from '../FieldMeta';
-import { parseRadioValueFromEvent } from '../helpers/parse-format-helpers';
+import {
+  noopFormatFn,
+  parseRadioValueFromEvent,
+} from '../helpers/parse-format-helpers';
+import { useEventCallback } from '../hooks/useEventCallback';
+import { ParseFn } from '../types';
 import { FieldConfigPropsByValue } from '../types/field-config-types';
 
 type RadioFieldProps<Value> = {
@@ -17,12 +22,30 @@ type RadioFieldProps<Value> = {
 export const RadioField = <Values, Value>(
   props: Omit<
     FieldConfigPropsByValue<Values, Value, 'input'>,
-    'type' | 'value' | 'parse' | 'as'
+    'type' | 'value' | 'as'
   > &
     RadioFieldProps<Value>
 ) => {
-  const { name, value: propsValue, format, ...fieldProps } = props;
+  const {
+    name,
+    value: propsValue,
+    format,
+    parse: propsParse,
+    ...fieldProps
+  } = props;
   const { value: stateValue } = useFieldMeta<Values, Value>(props.name);
+
+  const parse = useEventCallback<
+    ParseFn<Values, Value, React.ChangeEvent<HTMLInputElement>>
+  >((event, name, helpers) =>
+    propsParse
+      ? propsParse(event, name, helpers)
+      : parseRadioValueFromEvent<Values, Value>(propsValue)(
+          event,
+          name,
+          helpers
+        )
+  );
 
   return (
     <Field<Values, Value, 'input'>
@@ -31,14 +54,8 @@ export const RadioField = <Values, Value>(
       as="input"
       type="radio"
       checked={propsValue === stateValue}
-      parse={React.useMemo(
-        () => parseRadioValueFromEvent(propsValue),
-        [propsValue]
-      )}
-      format={React.useCallback(
-        () => (format ? format(propsValue, name) : (propsValue as any)),
-        [props.format, propsValue]
-      )}
+      parse={parse}
+      format={format ?? noopFormatFn}
     />
   );
 };

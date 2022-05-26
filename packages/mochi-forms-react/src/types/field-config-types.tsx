@@ -35,16 +35,11 @@ export type ChangeEventHandlerResolvedValue<ChangeHandlerValue> = [
     : ChangeHandlerValue
   : ChangeHandlerValue;
 
-/**
- * If ChangeHandlerValue cannot be assigned to FormValue,
- * parse is required.
- */
 export type FieldConfigParseProp<
   Values extends FormikValues,
   FormValue,
-  ChangeHandlerValue,
-  ResolvedChangeHandlerValue
-> = [ResolvedChangeHandlerValue] extends [FormValue]
+  ChangeHandlerValue
+> = [ChangeEventHandlerResolvedValue<ChangeHandlerValue>] extends [FormValue]
   ? {
       parse?: ParseFn<Values, FormValue, ChangeHandlerValue>;
     }
@@ -72,12 +67,7 @@ export type FieldConfigValueProps<
   FormattedValue,
   ChangeHandlerValue
 > = FieldConfigValidateProp<FormValue> &
-  FieldConfigParseProp<
-    Values,
-    FormValue,
-    ChangeHandlerValue,
-    ChangeEventHandlerResolvedValue<ChangeHandlerValue>
-  > &
+  FieldConfigParseProp<Values, FormValue, ChangeHandlerValue> &
   FieldConfigFormatProp<FormValue, FormattedValue>;
 
 export type ChangeEventHandlerEvent<ChangeEventHandler> =

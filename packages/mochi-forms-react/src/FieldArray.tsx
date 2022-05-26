@@ -41,7 +41,7 @@ export const useFieldArray = <
 ): UseFieldArrayReturnValue<Value, Values> => {
   const formik = useFormApi<Values>();
   const { setFormikState } = formik;
-  const fieldMeta = useFieldMeta<Value[]>(props.name);
+  const fieldMeta = useFieldMeta(props.name);
 
   const updateArrayField = useEventCallback(
     (

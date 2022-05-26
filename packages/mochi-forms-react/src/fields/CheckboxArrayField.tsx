@@ -1,58 +1,63 @@
 import * as React from 'react';
 import { Field } from '../Field';
 import { useFieldMeta } from '../FieldMeta';
-import { parseCheckboxArrayFromEvent } from '../helpers/parse-format-helpers';
+import {
+  noopFormatFn,
+  parseCheckboxArrayFromEvent,
+} from '../helpers/parse-format-helpers';
 import { PathMatchingValue } from '../helpers/path-helpers';
-import { FormatFn } from '../types';
-import { FieldConfigProps } from '../types/field-config-types';
+import { useEventCallback } from '../hooks/useEventCallback';
+import { FormatFn, FormikValues, ParseFn } from '../types';
+import {
+  FieldConfigFormatProp,
+  FieldConfigProps,
+} from '../types/field-config-types';
 
-type CheckboxArrayFieldProps<Values, Value> = {
+type CheckboxArrayFieldProps<Values extends FormikValues, Value> = {
   name: PathMatchingValue<Value[], Values>;
   value: Value;
-} & ([Value] extends [React.ComponentProps<'input'>['type']]
-  ? {
-      format?: FormatFn<Value, React.ComponentProps<'input'>['value']>;
-    }
-  : {
-      format: FormatFn<Value, React.ComponentProps<'input'>['value']>;
-    });
+} & FieldConfigFormatProp<Value, React.ComponentProps<'input'>['value']>;
 
+/**
+ * CheckboxArrayField is a special case where:
+ * - The `name` prop is `PathMatchingValue<Value[], Values>`,
+ * - The `value` prop is a single `Value`, and
+ * - The `format` prop converts a single `Value` to `typeof input.value`
+ */
 export const CheckboxArrayField = <Values, Value>(
   props: Omit<
     FieldConfigProps<Values, Value[], 'input'>,
-    'type' | 'value' | 'format' | 'parse' | 'as'
+    'type' | 'value' | 'format' | 'as'
   > &
     CheckboxArrayFieldProps<Values, Value>
 ) => {
   const { value: stateValue } = useFieldMeta<Values, Value[]>(props.name);
-  const { name, format, value: propsValue, ...fieldProps } = props;
-  const formattedValue =
-    props.format?.(props.value, props.name) ??
-    (props.value as unknown as Exclude<
-      React.ComponentProps<'input'>['value'],
-      undefined
-    >);
+  const { format, parse: propsParse, value: propsValue, ...fieldProps } = props;
+
+  const defaultParse = useEventCallback<
+    ParseFn<Values, Value[], React.ChangeEvent<HTMLInputElement>>
+  >((event, name, helpers) =>
+    parseCheckboxArrayFromEvent<Values, Value>(props.value)(
+      event,
+      name,
+      helpers
+    )
+  );
+
+  const singleValueFormatter = React.useCallback<
+    FormatFn<Value[], React.ComponentProps<'input'>['value']>
+  >(
+    () => (format ? format(propsValue, props.name) : noopFormatFn(propsValue)),
+    [propsValue, format]
+  );
 
   return (
     <Field
-      name={props.name}
       as="input"
       type="checkbox"
       checked={propsValue in stateValue}
-      parse={React.useMemo(
-        () => parseCheckboxArrayFromEvent<Values, Value>(props.value),
-        [props.value]
-      )}
-      format={React.useCallback(
-        () =>
-          props.format?.(props.value, props.name) ??
-          (props.value as unknown as Exclude<
-            React.ComponentProps<'input'>['value'],
-            undefined
-          >),
-        [props.value, props.name]
-      )}
-      value={formattedValue}
+      parse={propsParse ?? defaultParse}
+      format={singleValueFormatter}
       {...fieldProps}
     />
   );

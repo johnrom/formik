@@ -16,28 +16,30 @@ export type PathOf<Values> = object extends Values
  *
  * `ValueMatchingPath<Values, "name.first"> = string`
  */
-export type ValueMatchingPath<Values, Path extends PathOf<Values>> =
-  string extends Path
-    // if Path is any or never, return that as value
-    ? any
-    : object extends Values
-      // if Values is any, return any
-      ? any
-      : Values extends readonly (infer SingleValue)[]
-        ? Path extends `${number}.${infer NextPath}`
-          ? NextPath extends PathOf<Values[number]>
-            ? ValueMatchingPath<Values[number], NextPath>
-            : never
-          : SingleValue
-        : Path extends keyof Values
-          ? Values[Path]
-          : Path extends `${infer Key}.${infer NextPath}`
-            ? Key extends keyof Values
-              ? NextPath extends PathOf<Values[Key]>
-                ? ValueMatchingPath<Values[Key], NextPath>
-                : never
-              : never
-            : never;
+export type ValueMatchingPath<
+  Values,
+  Path extends PathOf<Values>
+> = string extends Path
+  ? // if Path is any or never, return that as value
+    any
+  : object extends Values
+  ? // if Values is any, return any
+    any
+  : Values extends readonly (infer SingleValue)[]
+  ? Path extends `${number}.${infer NextPath}`
+    ? NextPath extends PathOf<Values[number]>
+      ? ValueMatchingPath<Values[number], NextPath>
+      : never
+    : SingleValue
+  : Path extends keyof Values
+  ? Values[Path]
+  : Path extends `${infer Key}.${infer NextPath}`
+  ? Key extends keyof Values
+    ? NextPath extends PathOf<Values[Key]>
+      ? ValueMatchingPath<Values[Key], NextPath>
+      : never
+    : never
+  : never;
 
 /**
  * Gets PathOf<Values> which match the requested type. Given:
@@ -46,18 +48,19 @@ export type ValueMatchingPath<Values, Path extends PathOf<Values>> =
  *
  * `PathMatchingValue<Values, string> = "name.first" | "name.last"`
  */
-export type PathMatchingValue<Value, Values> =
-  object extends Values
-    ? any
-    // infer individual paths
-    : StringOnlyPathOf<Values> extends (infer Path)
-      // reapply constraint
-      ? Path extends StringOnlyPathOf<Values>
-        ? ValueMatchingPath<Values, Path> extends Value
-          ? RenumerateTemplate<Path> & PathOf<Values>
-          : never
-        : never
-      : never;
+export type PathMatchingValue<Value, Values> = object extends Values
+  ? any
+  : // infer individual paths
+  Value extends any
+  ? PathOf<Values>
+  : StringOnlyPathOf<Values> extends infer Path
+  ? // reapply constraint
+    Path extends StringOnlyPathOf<Values>
+    ? ValueMatchingPath<Values, Path> extends Value
+      ? RenumerateTemplate<Path> & PathOf<Values>
+      : never
+    : never
+  : never;
 
 /**
  * Gets PathOf<Values> which extend the requested type. Allows assigning narrower values to wider types.
@@ -67,18 +70,17 @@ export type PathMatchingValue<Value, Values> =
  *
  * `PathLikeValue<number, Values> = "age" | "friendCount"`
  */
-export type PathLikeValue<Value, Values> =
-  object extends Values
-    ? any
-    // infer individual paths
-    : StringOnlyPathOf<Values> extends (infer Path)
-      // reapply constraint
-      ? Path extends StringOnlyPathOf<Values>
-        ? Value extends ValueMatchingPath<Values, Path>
-          ? RenumerateTemplate<Path> & PathOf<Values>
-          : never
-        : never
-      : never;
+export type PathLikeValue<Value, Values> = object extends Values
+  ? any
+  : // infer individual paths
+  StringOnlyPathOf<Values> extends infer Path
+  ? // reapply constraint
+    Path extends StringOnlyPathOf<Values>
+    ? Value extends ValueMatchingPath<Values, Path>
+      ? RenumerateTemplate<Path> & PathOf<Values>
+      : never
+    : never
+  : never;
 
 /**
  * Recursively convert objects to tuples, like:
@@ -86,19 +88,18 @@ export type PathLikeValue<Value, Values> =
  * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`
  */
 type RecursivelyTuplePaths<Values> = Values extends (infer SingleValue)[]
-  ?
-    // we'll add a special case for numbers, so we can rebuild them with 0s
-    | ["0"]
-    | ["0", ...RecursivelyTuplePaths<SingleValue>]
-    | [number]
-    | [number, ...RecursivelyTuplePaths<SingleValue>]
+  ? // we'll add a special case for numbers, so we can rebuild them with 0s
+    | ['0']
+      | ['0', ...RecursivelyTuplePaths<SingleValue>]
+      | [number]
+      | [number, ...RecursivelyTuplePaths<SingleValue>]
   : Values extends Record<string, any>
-    ?
+  ?
       | [keyof Values]
       | {
-          [Key in keyof Values]: [Key, ...RecursivelyTuplePaths<Values[Key]>]
+          [Key in keyof Values]: [Key, ...RecursivelyTuplePaths<Values[Key]>];
         }[Extract<keyof Values, string>]
-    : [];
+  : [];
 
 /**
  * Flatten tuples created by RecursivelyTupleKeys into a union of paths, like:
@@ -106,18 +107,19 @@ type RecursivelyTuplePaths<Values> = Values extends (infer SingleValue)[]
  * `['name'] | ['name', 'first' ] -> 'name' | 'name.first'`
  */
 type FlattenPathTuples<
-  PathTuples extends any[], ValidSubtypes extends string | number = string | number
+  PathTuples extends any[],
+  ValidSubtypes extends string | number = string | number
 > = PathTuples extends []
   ? never
   : PathTuples extends [infer SinglePath]
-    ? SinglePath extends ValidSubtypes
-      ? `${SinglePath}`
-      : never
-    : PathTuples extends [infer Prefix, ...infer Rest]
-      ? Prefix extends ValidSubtypes
-        ? `${Prefix}.${FlattenPathTuples<Extract<Rest, ValidSubtypes[]>>}`
-        : never
-      : string;
+  ? SinglePath extends ValidSubtypes
+    ? `${SinglePath}`
+    : never
+  : PathTuples extends [infer Prefix, ...infer Rest]
+  ? Prefix extends ValidSubtypes
+    ? `${Prefix}.${FlattenPathTuples<Extract<Rest, ValidSubtypes[]>>}`
+    : never
+  : string;
 
 /**
  * Get Paths of a given `Values` WITHOUT template literals like `path.${number}`
@@ -138,9 +140,9 @@ type StringOnlyPathOf<Values> = object extends Values
 type RenumerateTemplate<Path extends string> = string extends Path
   ? any
   : Path extends `0.${infer NextPath}`
-    ? `${number}.${RenumerateTemplate<NextPath>}`
-    : Path extends `${infer Prefix}.${infer NextPath}`
-      ? `${Prefix}.${RenumerateTemplate<NextPath>}`
-      : Path extends `0`
-        ? `${number}`
-        : Path;
+  ? `${number}.${RenumerateTemplate<NextPath>}`
+  : Path extends `${infer Prefix}.${infer NextPath}`
+  ? `${Prefix}.${RenumerateTemplate<NextPath>}`
+  : Path extends `0`
+  ? `${number}`
+  : Path;
