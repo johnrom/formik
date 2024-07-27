@@ -27,7 +27,7 @@ type CheckboxArrayFieldProps<Values extends FormikValues, Value> = {
 export const CheckboxArrayField = <Values, Value>(
   props: Omit<
     FieldConfigProps<Values, Value[], 'input'>,
-    'type' | 'value' | 'format' | 'as'
+    'value' | 'format' | 'as'
   > &
     CheckboxArrayFieldProps<Values, Value>
 ) => {
@@ -54,7 +54,7 @@ export const CheckboxArrayField = <Values, Value>(
   return (
     <Field
       as="input"
-      type="checkbox"
+      type={props.type ?? 'checkbox'}
       checked={propsValue in stateValue}
       parse={propsParse ?? defaultParse}
       format={singleValueFormatter}

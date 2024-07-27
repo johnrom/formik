@@ -50,7 +50,7 @@ export function useField<
   const { registerField, unregisterField } = formApi;
   const { name, validate } = props;
 
-  const fieldMeta = useFieldMeta<Value>(name);
+  const fieldMeta = useFieldMeta<Values, Value>(name);
 
   React.useEffect(() => {
     if (name) {

@@ -937,7 +937,11 @@ export interface FormControllerProps<Values>
   children?: ((props: FormApi<Values>) => React.ReactNode) | React.ReactNode;
 }
 
-export const FormController = React.forwardRef(
+type FormControllerComponent = <Values extends FormikValues = FormikValues>(
+  props: FormControllerProps<Values>
+) => JSX.Element;
+
+const FormController_Raw = React.forwardRef(
   <Values extends FormikValues = FormikValues>(
     { children, ...useFormControllerProps }: FormControllerProps<Values>,
     ref: React.ForwardedRef<FormApi<Values>>
@@ -955,7 +959,9 @@ export const FormController = React.forwardRef(
   }
 );
 
-FormController.displayName = 'FormController';
+FormController_Raw.displayName = 'FormController';
+
+export const FormController = FormController_Raw as FormControllerComponent;
 
 /**
  * Transform Yup ValidationError to a more usable object

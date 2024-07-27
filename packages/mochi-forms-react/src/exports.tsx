@@ -4,6 +4,8 @@ export * from './Field.helpers';
 export * from './FieldArray';
 export * from './FieldArray.helpers';
 export * from './FieldArray.types';
+export * from './fields/CheckboxArrayField';
+export * from './fields/CheckboxBooleanField';
 export * from './Form';
 export * from './FormContext';
 export * from './FormController';
@@ -16,6 +18,7 @@ export * from './hooks/useFormikSubscriptionByRef';
 export * from './TypedHelpers';
 export * from './types';
 export * from './utils';
+export * from './fields/CheckboxField';
 
 export * from './legacy/connect';
 export * from './legacy/FastField';
